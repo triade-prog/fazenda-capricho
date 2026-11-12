@@ -1,0 +1,32 @@
+{
+  "_sobre": "Folha de pet de bob, gerada por ferramentas/pet_para_jogo.py a partir de arte/animacoes/bob_pet.",
+  "cell_width": 384,
+  "cell_height": 416,
+  "ground_y": 405,
+  "char_height": 294,
+  "colo": 0.5,
+  "sleep": {
+    "state": "idle",
+    "frame": 3
+  },
+  "rows": {
+    "idle": {
+      "sheet": "bob_pet/idle.png",
+      "frames": 6,
+      "ms": 170,
+      "loop": true
+    },
+    "running-right": {
+      "sheet": "bob_pet/running-right.png",
+      "frames": 8,
+      "ms": 85,
+      "loop": true
+    },
+    "running-left": {
+      "sheet": "bob_pet/running-left.png",
+      "frames": 8,
+      "ms": 85,
+      "loop": true
+    }
+  }
+}

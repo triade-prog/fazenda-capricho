@@ -9,6 +9,7 @@ manipula objetos, explora ambientes e cria suas próprias histórias, sem missõ
 - `docs/padrao_geracao_personagens.md` — padrão para gerar os personagens como folhas de pet (a partir da Nina v2).
 - `arte/animacoes/R01/` — entrega R01 de folhas de animação (espera/pulso) e marca.
 - `arte/animacoes/nina_pet_v2/` — Nina gerada como pet do ChatGPT (estilo 3D): folha final, etapas, prompts e referências.
+- `ferramentas/montar_pet.py` — monta a folha de pet a partir de tiras geradas em fundo magenta (ex.: ChatGPT); `ferramentas/pet_para_jogo.py` coloca a folha no jogo.
 - `ferramentas/verificar_folha.py` — confere se uma folha de animação segue as regras do GDD.
 - `prototipo/` — protótipo de interação P-0 em Godot 4.4 (quarto da Catarina), feito para iPad deitado. Veja `prototipo/README.md`.
 - **Versão web para iPad:** <https://triade-prog.github.io/fazenda-capricho/> (GitHub Pages, servida da pasta `docs/`).

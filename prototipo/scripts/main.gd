@@ -117,9 +117,10 @@ func _make_toys() -> void:
 	cat.grab_offset = Vector2(0, -150)
 	cat.lie_half_width = 60.0
 
-	var bob := _add_character("bob", "res://assets/personagens/bob.png", 170.0, Vector2(1090, 770))
+	# Bob: folha 3D montada de tiras (arte/animacoes/bob_pet); vira para o lado em que é levado
+	var bob := _add_pet("bob", "res://assets/personagens/bob_pet.json", 170.0, Vector2(1090, 770))
 	bob.flips = true
-	bob.head_offset = Vector2(56, -120)
+	bob.head_offset = Vector2(34, -112)
 	bob.grab_offset = Vector2(0, -85)
 
 	# Tabela de escala (Catarina = 1,0 = 300 px): ver GDD, seção 7.
@@ -344,7 +345,10 @@ func _drag_to(p: Vector2) -> void:
 	if absf(p.x - last_x) > 4.0:
 		drag_toy.face_left(p.x < last_x)
 		# folha de pet: corre para o lado em que está sendo levado
-		drag_toy.play_state("running-left" if p.x < last_x else "running-right")
+		if drag_toy.flips:
+			drag_toy.play_state("running-right")  # a figura é espelhada para a esquerda
+		else:
+			drag_toy.play_state("running-left" if p.x < last_x else "running-right")
 		last_x = p.x
 		last_move_time = Time.get_ticks_msec()
 	_update_highlight(_drop_point(p))

@@ -136,6 +136,21 @@ func _roteiro() -> void:
 	await _espera(0.8)
 	await _foto("15_carol_cama")
 
+	# ---- Bob 3D: corre e vira para o lado em que é levado
+	main.camera_to(bob.global_position.x)
+	await _espera(0.2)
+	var sb: Vector2 = main.world_to_screen(bob.global_position + Vector2(0, -85))
+	_evento(sb, true)
+	await get_tree().process_frame
+	await _desliza(sb, sb + Vector2(-220, 0), 12)
+	_confere(bob.anim_state == "running-right" and bob.sprite.flip_h, "Bob corre virado para a esquerda ao ser levado para a esquerda")
+	await _foto("14b_bob_corre")
+	await _desliza(sb + Vector2(-220, 0), sb + Vector2(-20, 0), 12)
+	_confere(not bob.sprite.flip_h, "Bob vira para a direita")
+	_evento(sb + Vector2(-20, 0), false)
+	await _espera(0.6)
+	_confere(bob.anim_state == "idle", "Bob para de correr ao ser solto")
+
 	# ---- Catarina com folha de pet 3D
 	main.camera_to(cat.global_position.x)
 	await _espera(0.2)
