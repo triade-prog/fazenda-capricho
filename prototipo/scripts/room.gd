@@ -57,8 +57,10 @@ func _window() -> void:
 	var w := Rect2(990, 120, 260, 230)
 	draw_rect(w, Color("#bfe6ff"))
 	draw_circle(Vector2(1200, 170), 26, Color("#fff3a0"))
-	draw_colored_polygon(Shapes.ellipse(Vector2(1080, 360), Vector2(170, 80)), Color("#9be08f"))
-	draw_colored_polygon(Shapes.ellipse(Vector2(1230, 370), Vector2(130, 70)), Color("#82d47a"))
+	var clip := PackedVector2Array([w.position, Vector2(w.end.x, w.position.y), w.end, Vector2(w.position.x, w.end.y)])
+	for hill in [[Vector2(1080, 360), Vector2(170, 80), Color("#9be08f")], [Vector2(1230, 370), Vector2(130, 70), Color("#82d47a")]]:
+		for part in Geometry2D.intersect_polygons(Shapes.ellipse(hill[0], hill[1]), clip):
+			draw_colored_polygon(part, hill[2])
 	for p in [Vector2(1020, 315), Vector2(1060, 300), Vector2(1110, 310), Vector2(1170, 318), Vector2(1215, 306)]:
 		draw_circle(p, 6, Color("#ff9ac8"))
 		draw_circle(p, 2.5, Color("#fff3a0"))

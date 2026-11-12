@@ -69,12 +69,15 @@ func _pelucia() -> void:
 
 
 func _escova() -> void:
-	_round_rect(Rect2(-r * 0.95, -r * 0.55, r * 1.1, r * 0.4), Color("#ff8fbf"), 10)
-	_round_rect(Rect2(r * 0.05, -r * 0.85, r * 0.9, r * 0.6), Color("#9b59d0"), 10)
-	for i in 6:
-		var x := r * 0.15 + i * r * 0.14
-		draw_line(Vector2(x, -r * 0.25), Vector2(x, -r * 0.02), Color.WHITE, 4.0, true)
-	draw_colored_polygon(Shapes.heart(r * 0.16, Vector2(-r * 0.45, -r * 0.35)), Color.WHITE)
+	# cerdas brancas embaixo, cabeça roxa, cabo rosa com coração
+	for i in 7:
+		var x := r * 0.08 + i * r * 0.13
+		draw_line(Vector2(x, -r * 0.42), Vector2(x, -r * 0.04), Color("#fff6fb"), 6.0, true)
+		draw_line(Vector2(x, -r * 0.08), Vector2(x, -r * 0.02), OUTLINE, 6.0, true)
+	_round_rect(Rect2(-r * 0.05, -r * 0.95, r * 1.05, r * 0.55), Color("#9b59d0"), 12)
+	_round_rect(Rect2(-r * 1.0, -r * 0.82, r * 1.0, r * 0.32), Color("#ff8fbf"), 12)
+	draw_colored_polygon(Shapes.heart(r * 0.18, Vector2(-r * 0.55, -r * 0.66)), Color.WHITE)
+	draw_colored_polygon(Shapes.heart(r * 0.2, Vector2(r * 0.47, -r * 0.68)), Color("#e8c8ff"))
 
 
 func _almofada() -> void:

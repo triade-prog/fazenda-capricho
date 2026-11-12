@@ -7,6 +7,13 @@ brinquedo**: arrastar, segurar, posicionar e combinar personagens e objetos no q
 - **Arte:** Catarina e Bob usam as imagens oficiais (`assets/personagens/`). O quarto e os objetos são
   **desenhos provisórios feitos por código**, para testar a interação antes de produzir a arte final.
 
+![Quarto da Catarina no P-0](capturas/01_inicio.png)
+
+| | |
+|---|---|
+| ![Bob come o biscoito da mão da Catarina](capturas/03_bob_come.png) | ![Catarina e Bob dormindo no beliche](capturas/04_dormindo_juntos.png) |
+| ![Catarina no castelinho](capturas/05_castelinho_aberto.png) | ![Descendo o escorregador](capturas/07_escorregador.png) |
+
 ## Como abrir
 
 1. Instale o [Godot 4.4](https://godotengine.org/download) (versão padrão, não a .NET).
@@ -59,6 +66,17 @@ Para adicionar um personagem (ex.: Nina, Carol), basta uma chamada a `_add_chara
 - [ ] Abrir e fechar a portinha roxa com alguém dentro do castelinho.
 - [ ] Dar petisco ao Bob dos três jeitos (direto, pela mão da Catarina, levando o Bob).
 - [ ] Observar uma criança brincando por 10 minutos, sem explicar nada: o que ela tenta fazer e não consegue?
+
+## Teste automático
+
+`testes/roteiro.tscn` simula toques e confere 15 interações (segurar, trocar, dar biscoito, pote,
+cama, castelinho, porta, escorregador, escada, cochilo):
+
+```bash
+godot --headless --path prototipo res://testes/roteiro.tscn
+```
+
+Com `-- --capturas=/pasta` (e sem `--headless`) ele também salva as capturas de tela.
 
 ## Limitações conhecidas (esperadas nesta fase)
 

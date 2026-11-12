@@ -111,9 +111,9 @@ func _make_toys() -> void:
 	bob.grab_offset = Vector2(0, -85)
 
 	_add_item("biscoito", 26.0, Vector2(1330, 558))
-	_add_item("pelucia", 34.0, Vector2(480, 700))
-	_add_item("escova", 34.0, Vector2(1240, 690))
-	_add_item("almofada", 36.0, Vector2(880, 840))
+	_add_item("pelucia", 40.0, Vector2(480, 700))
+	_add_item("escova", 46.0, Vector2(1240, 690))
+	_add_item("almofada", 42.0, Vector2(880, 840))
 
 
 func _add_character(kind: String, path: String, height: float, pos: Vector2) -> Toy:
