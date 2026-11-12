@@ -3,7 +3,7 @@
 Jogo de faz de conta com interação inspirada em Avatar World: a criança movimenta personagens e animais,
 manipula objetos, explora ambientes e cria suas próprias histórias, sem missões obrigatórias.
 
-- `docs/Fazenda_Capricho_GDD_Revisao3.docx` — documento de visão e design (GDD), Revisão 3.
+- `docs/Fazenda_Capricho_GDD_Revisao4.docx` — documento de visão e design (GDD), Revisão 4.
 - `docs/Fazenda_Capricho_Cenarios.docx` — lista e desenvolvimento dos 13 cenários, incluindo a Plantação com a proposta "fazendinha" inspirada no Mini Fazenda (mapa em `docs/mapa_cenarios.png`).
 - `docs/PROMPT_personagens.md` — prompt pronto para a IA gerar os personagens no padrão da Nina, um de cada vez.
 - `docs/padrao_geracao_personagens.md` — padrão para gerar os personagens como folhas de pet (a partir da Nina v2).

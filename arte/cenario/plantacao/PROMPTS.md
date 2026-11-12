@@ -1,6 +1,7 @@
 # Plantação da Fazenda — prompts para gerar as peças 3D (copiar e colar)
 
 Desenvolvimento completo do cenário: `docs/Fazenda_Capricho_Cenarios.docx`, seção C11.
+**Decidido:** modo fazendinha híbrido, prioridade P1 (GDD Revisão 4).
 Layout com a escala: `plantacao_layout_1.png` e `plantacao_layout_2.png` (nesta pasta).
 
 Mesmo processo do quarto: **uma conversa só**, primeiro a mensagem de contexto, depois um pedido por
@@ -41,7 +42,7 @@ Responda só "Entendido" e espere o primeiro pedido.
 
 ---
 
-## Fase 1: bica, ferramentas, lavoura e macieira
+## Fase 1: bica, ferramentas, lavoura, macieira e a fazendinha (banca, lojinha e moedinhas)
 
 | # | Peça | Tamanho no jogo | Estados (uma imagem cada) | Pedido |
 |---|---|---|---|---|
@@ -57,43 +58,44 @@ Responda só "Entendido" e espere o primeiro pedido.
 | 10 | Colheita da fase 1 | cenoura 30 × 60 · alface 50 × 45 · tomate 30 × 30 | — | Cada legume solto, para segurar na mão. |
 | 11 | Macieira | 230 × 500 | com maçãs · sem maçãs | Árvore arredondada, tronco grosso, copa fofa; maçãs vermelhas brilhantes. |
 | 12 | Maçã | 30 × 32 | — | Maçã solta com folhinha. |
+| 13 | Banca da colheita com lojinha | 260 × 170 | — | Bancada de feirinha com toldo listrado rosa e branco e prateleira de pacotinhos (sem letreiro). |
+| 14 | Ferradurinha dourada (moeda do jogo) | 40 × 40 | — | Ferradura com coração, igual ao ícone da marca. |
+| 15 | Estrelinha | 40 × 40 | — | Estrela amarela fofinha. |
+| 16 | Quadro de pedidos | 140 × 160 | — | Quadrinho de madeira com papeizinhos presos por pregadores; os pedidos são DESENHOS (sem texto). |
+| 17 | Contador de moedas e estrelinhas | 300 × 70 | — | Plaquinha arredondada de madeira clara com espaço para a ferradurinha, a estrelinha e os números (os números são escritos pelo jogo). |
 
 ## Fase 2: morango, abóbora, jardim, canteiro mágico e pomar
 
 | # | Peça | Tamanho no jogo | Estados | Pedido |
 |---|---|---|---|---|
-| 13 | Morangos no canteiro baixo | 160 × 110 | semente · broto · folhas · pronta | Canteiro baixo com borda de madeira. |
-| 14 | Morango solto | 22 × 26 | — | |
-| 15 | Abóbora | 60 × 50 · 110 × 90 · 160 × 150 | pequena · média · GIGANTE | Abóbora laranja fofa; a gigante com topo achatado para alguém sentar. |
-| 16 | Girassol | 90 × 360 | caule com folhas · cabeça (imagem separada, para girar) | Mais alto que a Catarina. |
-| 17 | Canteiro de flores coloridas | 250 × 90 | com flores · colhido (só folhas) | Margaridas brancas, tulipas rosa e flores em forma de coração. |
-| 18 | Flores soltas e buquê | flor 25 × 55 · buquê 50 × 70 | margarida · tulipa · flor de coração · buquê com laço lilás | |
-| 19 | Abelhinha fofa e borboleta | 30 × 25 · 35 × 30 | asas abertas · asas fechadas | Abelha redondinha, SEM ferrão aparente; borboleta lilás e rosa. |
-| 20 | Flor arco-íris | 150 × 180 | rosa · lilás · azul · amarela | A mesma flor em quatro cores. |
-| 21 | Pé de frutinhas mágicas | 160 × 260 | com frutinhas brilhantes · sem frutinhas | Arbusto rosa com frutinhas que parecem estrelinhas. |
-| 22 | Arbusto de corações | 150 × 150 | — | Folhinhas em forma de coração. |
-| 23 | Semente mágica dourada | 25 × 25 | — | Brilhante. |
-| 24 | Laranjeira e laranja | 220 × 470 · 32 × 32 | com laranjas · sem laranjas | |
-| 25 | Bananeira e cacho | 230 × 480 · 60 × 50 | com cacho · sem cacho | Folhas largas; banana solta 50 × 30. |
-| 26 | Escadinha de pomar | 70 × 200 | — | Madeira clara, degraus largos. |
-| 27 | Banca da colheita | 220 × 130 | — | Bancada de feirinha com toldo listrado rosa e branco (sem letreiro). |
-| 28 | Carrinho de mão | 190 × 110 | — | Madeira com roda lilás. |
-| 29 | Nuvem de chuva | 220 × 90 | parada · chovendo | Nuvem fofa e sorridente. |
-| 30 | Espantalho fofo | 100 × 250 | — | Chapéu de cowboy, camisa xadrez, sorriso; nada assustador. |
-| 31 | Minhoca amiga e matinho | 40 × 20 · 40 × 30 | — | Minhoca rosa sorridente; tufinho de mato com uma florzinha. |
-| 32 | Fundo da Plantação | 3300 × 900 | — | Céu com sol, morros verdes, cerca branca e chão de terra clara. SEM nenhuma peça interativa. |
+| 18 | Morangos no canteiro baixo | 160 × 110 | semente · broto · folhas · pronta | Canteiro baixo com borda de madeira. |
+| 19 | Morango solto | 22 × 26 | — | |
+| 20 | Abóbora | 60 × 50 · 110 × 90 · 160 × 150 | pequena · média · GIGANTE | Abóbora laranja fofa; a gigante com topo achatado para alguém sentar. |
+| 21 | Girassol | 90 × 360 | caule com folhas · cabeça (imagem separada, para girar) | Mais alto que a Catarina. |
+| 22 | Canteiro de flores coloridas | 250 × 90 | com flores · colhido (só folhas) | Margaridas brancas, tulipas rosa e flores em forma de coração. |
+| 23 | Flores soltas e buquê | flor 25 × 55 · buquê 50 × 70 | margarida · tulipa · flor de coração · buquê com laço lilás | |
+| 24 | Abelhinha fofa e borboleta | 30 × 25 · 35 × 30 | asas abertas · asas fechadas | Abelha redondinha, SEM ferrão aparente; borboleta lilás e rosa. |
+| 25 | Flor arco-íris | 150 × 180 | rosa · lilás · azul · amarela | A mesma flor em quatro cores. |
+| 26 | Pé de frutinhas mágicas | 160 × 260 | com frutinhas brilhantes · sem frutinhas | Arbusto rosa com frutinhas que parecem estrelinhas. |
+| 27 | Arbusto de corações | 150 × 150 | — | Folhinhas em forma de coração. |
+| 28 | Semente mágica dourada | 25 × 25 | — | Brilhante. |
+| 29 | Laranjeira e laranja | 220 × 470 · 32 × 32 | com laranjas · sem laranjas | |
+| 30 | Bananeira e cacho | 230 × 480 · 60 × 50 | com cacho · sem cacho | Folhas largas; banana solta 50 × 30. |
+| 31 | Escadinha de pomar | 70 × 200 | — | Madeira clara, degraus largos. |
+| 32 | Carrinho de mão | 190 × 110 | — | Madeira com roda lilás. |
+| 33 | Nuvem de chuva | 220 × 90 | parada · chovendo | Nuvem fofa e sorridente. |
+| 34 | Espantalho fofo | 100 × 250 | — | Chapéu de cowboy, camisa xadrez, sorriso; nada assustador. |
+| 35 | Minhoca amiga e matinho | 40 × 20 · 40 × 30 | — | Minhoca rosa sorridente; tufinho de mato com uma florzinha. |
+| 36 | Fundo da Plantação | 3300 × 900 | — | Céu com sol, morros verdes, cerca branca e chão de terra clara. SEM nenhuma peça interativa. |
 
-## Fase 3 (só se o "modo fazendinha" for aprovado)
+## Fase 3: galinheiro e curral (depois da aprovação dos novos bichos)
 
 | # | Peça | Tamanho no jogo | Estados | Pedido |
 |---|---|---|---|---|
-| 33 | Ferradurinha dourada (moeda do jogo) | 40 × 40 | — | Ferradura com coração, igual ao ícone da marca. |
-| 34 | Estrelinha | 40 × 40 | — | Estrela amarela fofinha. |
-| 35 | Balcão da lojinha de sementes | 300 × 220 | — | Para a Casinha de madeira; prateleira com pacotinhos. |
-| 36 | Galinheiro | 260 × 240 | — | Casinha de madeira rosa com rampinha. |
-| 37 | Ninho | 80 × 50 | vazio · com ovos | |
-| 38 | Cocho e milho | 140 × 60 · 30 × 40 | vazio · cheio | |
-| 39 | Balde de leite e novelo de lã | 60 × 70 · 45 × 40 | balde vazio · cheio | |
+| 37 | Galinheiro | 260 × 240 | — | Casinha de madeira rosa com rampinha. |
+| 38 | Ninho | 80 × 50 | vazio · com ovos | |
+| 39 | Cocho e milho | 140 × 60 · 30 × 40 | vazio · cheio | |
+| 40 | Balde de leite e novelo de lã | 60 × 70 · 45 × 40 | balde vazio · cheio | |
 
 Galinhas, vaca e ovelha são **personagens**: devem ser gerados como folhas de pet, no mesmo processo
 dos outros personagens (`docs/PROMPT_personagens.md`), depois da aprovação das criadoras.
