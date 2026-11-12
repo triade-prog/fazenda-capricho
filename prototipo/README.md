@@ -10,7 +10,8 @@ brinquedo**: arrastar, segurar, posicionar e combinar personagens e objetos no q
   (`assets/personagens/`) na **tabela de escala** do GDD (Catarina = 300 px; Carol 1,35; Lumi 1,30;
   Nina 0,62; Bob 0,57; Zoe 0,42; Leo 0,35).
 - **Bob 3D** (folha montada de tiras: parado e correndo para os dois lados; as outras ações usam as reações por código até chegarem).
-- **Catarina e Nina animadas (folhas de pet 3D):** a Catarina acena, corre, pula, faz "ops" e olha para o que é arrastado; a Nina corre ao ser arrastada, acena ao toque, pula ao ganhar
+- **Catarina e Nina animadas (folhas de pet 3D):** a Catarina (folha 3x, montada das tiras em alta resolução de
+  `arte/animacoes/catarina_pet/tiras/`) acena, corre, pula, faz "ops" e olha para o que é arrastado; a Nina corre ao ser arrastada, acena ao toque, pula ao ganhar
   biscoito, fica triste quando não cabe e olha para o objeto que a criança arrasta.
 - **Marca:** abertura com a logo animada da entrega R01 (folha de 8 quadros) e ícone da ferradura
   na Tela de Início do iPad.
@@ -134,9 +135,11 @@ num tamanho de iPad: `--resolution 1180x820`.
 ## Personagens com folha de pet
 
 `ferramentas/pet_para_jogo.py <pasta_do_pet> <nome>` prepara uma folha aprovada: separa uma imagem por
-ação (o jogo carrega só as que usa), amplia 2x com filtro de nitidez (ou usa a versão `@2x` entregue pela
-IA, que é ainda melhor) e grava o JSON com o colo (onde o objeto fica seguro) e o quadro de olhos fechados
-para dormir. As imagens do jogo são comprimidas com perda leve (WebP 90%): o pacote web caiu de 21 MB para
+ação (o jogo carrega só as que usa), usa a folha de maior resolução que existir (`@3x`, depois `@2x`; só a
+1x é ampliada com filtro de nitidez), corta as sobras transparentes em volta do personagem (cada ação cabe
+no limite de 4096 px de textura do Safari) e grava o JSON com o colo (onde o objeto fica seguro) e o quadro
+de olhos fechados para dormir. Tiras grandes (personagem com 450 px ou mais) devem ser montadas com
+`ferramentas/montar_pet.py --resolucao 3`: no iPad o personagem aparece com uns 550 pixels reais de altura. As imagens do jogo são comprimidas com perda leve (WebP 90%): o pacote web caiu de 21 MB para
 6,5 MB. `testes/poses.tscn` captura a Catarina em várias situações para conferência visual.
 
 ## Limitações conhecidas (esperadas nesta fase)

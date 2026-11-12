@@ -51,6 +51,11 @@ REPOSITÓRIO: https://github.com/triade-prog/fazenda-capricho  (branch claude/br
      mesma grade, mesma ordem e mesma linha do chão proporcional. É ela que fica nítida no iPad.)
    - outras/pet_request.json             (mesmo formato do da Nina)
    - prompts/                            (os prompts usados)
+   ALTERNATIVA MAIS SIMPLES (a que deu melhor resultado, na Catarina): suba só as TIRAS grandes, uma
+   imagem por ação com fundo transparente e os quadros lado a lado, em arte/animacoes/<nome>_pet/tiras/
+   (idle.png, running-right.png, running-left.png, waving.png, jumping.png, failed.png, waiting.png,
+   running.png, review.png, look-row-9.png, look-row-10.png) e a pose base em referencias/base.png.
+   A folha em alta resolução é montada depois com ferramentas/montar_pet.py --resolucao 3.
    NÃO inclua as etapas intermediárias com fundo magenta e NÃO deixe caminhos do computador
    (como /Users/...) em nenhum arquivo: o repositório é público.
    Mensagem do commit: "Personagem <Nome>: folha de pet 3D (padrão Nina v2)".

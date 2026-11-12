@@ -1,9 +1,9 @@
 {
   "_sobre": "Folha de pet de catarina, gerada por ferramentas/pet_para_jogo.py a partir de arte/animacoes/catarina_pet.",
-  "cell_width": 384,
-  "cell_height": 416,
-  "ground_y": 404,
-  "char_height": 296,
+  "cell_width": 380,
+  "cell_height": 566,
+  "ground_y": 548,
+  "char_height": 439,
   "colo": 0.36,
   "sleep": {
     "state": "idle",

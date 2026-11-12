@@ -10,13 +10,18 @@ Para cada tira: tira o fundo magenta (com borda suave e limpeza do reflexo magen
 (fatias de largura igual), deixa o personagem com a MESMA altura em todas as ações (padrão: 296 px no
 quadro 2x), alinha os pés na mesma linha do chão e monta:
 
-    final/spritesheet-extended@2x.png   grade 8 x 11, quadros 384 x 416 (a que o jogo usa)
+    final/spritesheet-extended@3x.png   com --resolucao 3: quadros 576 x 624 (o jogo prefere esta)
+    final/spritesheet-extended@2x.png   grade 8 x 11, quadros 384 x 416
     final/spritesheet-extended.png      a mesma, reduzida para 192 x 208 (formato de pet)
     outras/pet_request.json             só com as ações entregues
     referencias/base.png                a pose base, se informada
 
 Ações que faltam ficam de fora: o jogo usa as reações feitas por código até elas chegarem.
+
+Use --resolucao 3 quando as tiras forem grandes (personagem com 450 px de altura ou mais na tira): no iPad o
+personagem aparece com uns 550 pixels reais de altura, e a folha 3x fica bem mais nítida que a 2x.
 """
+import sys
 import argparse
 import json
 from pathlib import Path
@@ -26,8 +31,7 @@ from PIL import Image, ImageFilter
 
 ORDEM = ["idle", "running-right", "running-left", "waving", "jumping", "failed", "waiting", "running",
          "review", "look-row-9", "look-row-10"]
-CW, CH = 384, 416          # quadro 2x
-CHAO = 404                 # linha do chão no quadro 2x (202 no 1x)
+CW1, CH1, CHAO1 = 192, 208, 202   # quadro 1x e linha do chão (formato de pet)
 MAGENTA = np.array([250.0, 12.0, 250.0])
 
 
@@ -58,14 +62,34 @@ def sem_magenta(img: Image.Image) -> Image.Image:
     return out
 
 
+def cortes(tira: Image.Image, n: int):
+    """Onde cortar a tira em n quadros: perto de cada divisão igual, na coluna mais vazia
+    (assim um braço ou uma trança que passa da divisão não é cortado)."""
+    w, _ = tira.size
+    fw = w / n
+    col = np.asarray(tira.getchannel("A")).astype(np.int64).sum(axis=0)
+    xs = [0]
+    for i in range(1, n):
+        c = round(i * fw)
+        r = round(fw * 0.2)
+        trecho = col[c - r:c + r]
+        menor = trecho.min()
+        candidatos = np.where(trecho == menor)[0]
+        # entre colunas igualmente vazias, a mais perto da divisão igual
+        xs.append(c - r + int(candidatos[np.argmin(np.abs(candidatos - r))]))
+    xs.append(w)
+    return xs
+
+
 def quadros(tira: Image.Image, n: int):
     w, h = tira.size
-    fw = w / n
+    xs = cortes(tira, n)
     out = []
     for i in range(n):
-        q = tira.crop((round(i * fw), 0, round((i + 1) * fw), h))
+        q = tira.crop((xs[i], 0, xs[i + 1], h))
         bb = q.getchannel("A").point(lambda v: 255 if v >= 128 else 0).getbbox()
-        out.append((q, bb))
+        centro = (i + 0.5) * w / n - xs[i]      # centro da vaga igual, em coordenadas do quadro
+        out.append((q, bb, centro))
     return out
 
 
@@ -77,7 +101,16 @@ def main():
     ap.add_argument("--espelhar", action="append", default=[], help="ação_nova:ação_origem")
     ap.add_argument("--base")
     ap.add_argument("--altura", type=int, default=296, help="altura do personagem no quadro 2x")
+    ap.add_argument("--resolucao", type=int, default=2, choices=(2, 3),
+                    help="tamanho da folha principal: 2 (quadros 384 x 416) ou 3 (576 x 624)")
+    ap.add_argument("--ajuste", action="append", default=[],
+                    help="ação:fator — corrige a escala de uma ação (ex.: running-right:0.95 se a pose "
+                         "correndo é naturalmente mais baixa que a pose parada)")
     a = ap.parse_args()
+    ajustes = {e: float(f) for e, f in (s.split(":") for s in a.ajuste)}
+    R = a.resolucao
+    CW, CH, CHAO = CW1 * R, CH1 * R, CHAO1 * R
+    altura = a.altura * R / 2
 
     saida = Path(a.saida)
     for sub in ("final", "outras", "referencias"):
@@ -88,17 +121,17 @@ def main():
         estado, n, arq = spec.split(":", 2)
         tira = sem_magenta(Image.open(arq))
         qs = quadros(tira, int(n))
-        alt = max(bb[3] - bb[1] for _, bb in qs)
-        chao = max(bb[3] for _, bb in qs)
-        esc = a.altura / alt
+        alt = max(bb[3] - bb[1] for _, bb, _ in qs)
+        chao = max(bb[3] for _, bb, _ in qs)
+        esc = altura / alt * ajustes.get(estado, 1.0)
         celulas = []
-        for q, bb in qs:
+        for q, bb, centro in qs:
             g = q.resize((round(q.width * esc), round(q.height * esc)), Image.LANCZOS)
             if esc > 1.0:
                 g = g.filter(ImageFilter.UnsharpMask(radius=1.0, percent=60, threshold=1))
             cel = Image.new("RGBA", (CW, CH))
-            # centro da fatia -> centro do quadro; linha do chão da ação -> CHAO
-            x = round(CW / 2 - g.width / 2)
+            # centro da vaga -> centro do quadro; linha do chão da ação -> CHAO
+            x = round(CW / 2 - centro * esc)
             y = round(CHAO - chao * esc)
             cel.alpha_composite(g, (x, max(0, y)) if y >= 0 else (x, 0))
             if y < 0:
@@ -106,36 +139,45 @@ def main():
                 cel.alpha_composite(g.crop((0, -y, g.width, g.height)), (x, 0))
             celulas.append(cel)
         linhas[estado] = celulas
-        relatorio.append(f"{estado}: {n} quadros de {arq}; altura original {alt} px, escala {esc:.2f}x")
+        relatorio.append(f"{estado}: {n} quadros de {Path(arq).name}; altura original {alt} px, escala {esc:.2f}x")
     for spec in a.espelhar:
         novo, origem = spec.split(":")
         linhas[novo] = [c.transpose(Image.FLIP_LEFT_RIGHT) for c in linhas[origem]]
         relatorio.append(f"{novo}: espelho de {origem}")
 
-    folha2 = Image.new("RGBA", (CW * 8, CH * 11))
+    folha = Image.new("RGBA", (CW * 8, CH * 11))
     rows = []
     for i, estado in enumerate(ORDEM):
         if estado not in linhas:
             continue
         for c, cel in enumerate(linhas[estado][:8]):
-            folha2.alpha_composite(cel, (c * CW, i * CH))
+            folha.alpha_composite(cel, (c * CW, i * CH))
         rows.append({"state": estado, "row": i, "frames": len(linhas[estado][:8])})
-    folha2.save(saida / "final" / "spritesheet-extended@2x.png", optimize=True)
-    folha2.resize((CW * 4, CH * 11 // 2), Image.LANCZOS).save(saida / "final" / "spritesheet-extended.png",
-                                                               optimize=True)
+    folha.save(saida / "final" / f"spritesheet-extended@{R}x.png", optimize=True)
+    if R != 2:
+        folha.resize((CW1 * 2 * 8, CH1 * 2 * 11), Image.LANCZOS).save(
+            saida / "final" / "spritesheet-extended@2x.png", optimize=True)
+    elif (saida / "final" / "spritesheet-extended@3x.png").exists():
+        (saida / "final" / "spritesheet-extended@3x.png").unlink()   # sobra de uma montagem 3x anterior
+    folha.resize((CW1 * 8, CH1 * 11), Image.LANCZOS).save(saida / "final" / "spritesheet-extended.png",
+                                                           optimize=True)
     req = {"pet_id": a.nome, "display_name": a.nome.capitalize(),
            "atlas": {"columns": 8, "rows": 11, "cell_width": 192, "cell_height": 208, "width": 1536, "height": 2288},
-           "rows": rows, "montado_por": "ferramentas/montar_pet.py",
+           "rows": rows, "montado_por": "ferramentas/montar_pet.py", "resolucao": R,
            "faltam": [e for e in ORDEM if e not in linhas]}
     json.dump(req, open(saida / "outras" / "pet_request.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
-    if a.base:
-        Image.open(a.base).save(saida / "referencias" / "base.png")
+    base = saida / "referencias" / "base.png"
+    if a.base and Path(a.base).resolve() != base.resolve():
+        Image.open(a.base).save(base)
+    comando = "python3 ferramentas/montar_pet.py " + " \\\n    ".join(
+        f"{x} {y}" if x.startswith("--") else x for x, y in zip(sys.argv[1::2], sys.argv[2::2]))
     (saida / "outras" / "LEIA-ME.md").write_text(
         f"# {a.nome.capitalize()} — folha montada a partir de tiras\n\n"
         + "\n".join(f"- {l}" for l in relatorio)
-        + f"\n\nAções que ainda faltam: {', '.join(req['faltam']) or 'nenhuma'}.\n", encoding="utf-8")
+        + f"\n\nAções que ainda faltam: {', '.join(req['faltam']) or 'nenhuma'}.\n"
+        + f"\nPara montar de novo (da raiz do repositório):\n\n```bash\n{comando}\n```\n", encoding="utf-8")
     print("\n".join(relatorio))
-    print(f"ok: {saida}/final/spritesheet-extended@2x.png  ({len(rows)} ações)")
+    print(f"ok: {saida}/final/spritesheet-extended@{R}x.png  ({len(rows)} ações)")
 
 
 if __name__ == "__main__":

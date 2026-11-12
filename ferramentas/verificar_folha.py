@@ -32,8 +32,10 @@ MINIMO_NITIDO = 280
 MESMO_TAMANHO = {"running-right", "running-left", "waving", "waiting"}
 TOLERANCIA_TAMANHO = 0.10
 
-# ações em que os pés saem do chão de propósito
-MOVIMENTO_LIVRE = {"jumping", "running-right", "running-left"}
+# ações em que os pés saem do chão de propósito (no pulo o corpo todo sobe; nas corridas, as pernas
+# levantam e o corpo fica no lugar, então o topo da cabeça/chapéu é que tem de ficar firme)
+MOVIMENTO_LIVRE = {"jumping", "running-right", "running-left", "running"}
+CORRIDAS = {"running-right", "running-left", "running"}
 
 
 def magenta(px):
@@ -86,7 +88,7 @@ def verificar_pet(sheet, request_path, altura):
     ref_altura = None
     for r in req["rows"]:
         usados[r["row"]] = r["frames"]
-        chao, alt, resid = [], [], 0
+        chao, alt, topo, resid = [], [], [], 0
         for c in range(r["frames"]):
             q = sheet.crop((c * cw, r["row"] * ch, (c + 1) * cw, (r["row"] + 1) * ch))
             bb = bbox_alpha(q)
@@ -94,6 +96,7 @@ def verificar_pet(sheet, request_path, altura):
                 falhas.append(f"{r['state']} quadro {c}: vazio")
                 continue
             chao.append(bb[3])
+            topo.append(bb[1])
             alt.append(bb[3] - bb[1])
             resid += sobra_na_borda(q)
         if not alt:
@@ -105,6 +108,9 @@ def verificar_pet(sheet, request_path, altura):
               f"  sobra magenta {resid}")
         if not livre and max(chao) - min(chao) > 2 * k:
             falhas.append(f"{r['state']}: linha do chão varia {min(chao)}–{max(chao)} px")
+        if r["state"] in CORRIDAS and max(topo) - min(topo) > 0.06 * max(alt):
+            avisos.append(f"{r['state']}: o topo varia {min(topo)}–{max(topo)} px (o corpo pula durante a corrida; "
+                          f"conferir se fica natural)")
         if ref_altura and r["state"] in MESMO_TAMANHO:
             maior = max(alt)
             if abs(maior - ref_altura) / ref_altura > TOLERANCIA_TAMANHO:
