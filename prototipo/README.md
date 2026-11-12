@@ -24,10 +24,17 @@ brinquedo**: arrastar, segurar, posicionar e combinar personagens e objetos no q
 2. Para ficar em tela cheia, como um app: botão **Compartilhar → Adicionar à Tela de Início**,
    e abra pelo ícone "Fazenda Capricho".
 
-A versão web é gerada e publicada automaticamente pelo GitHub Actions
-(`.github/workflows/web.yml`) a cada mudança na pasta `prototipo/`, **depois** de passar no roteiro
-automático de interações. Na primeira vez, é preciso ativar o GitHub Pages: no repositório,
-**Settings → Pages → Source: GitHub Actions**.
+A versão web publicada fica na pasta `docs/` do repositório (GitHub Pages em
+**Settings → Pages → Source: Deploy from a branch → `claude/brave-mendel-g0wd4g` / `docs`**).
+Para atualizar depois de mudar o protótipo:
+
+```bash
+godot --headless --path prototipo --export-release "Web (iPad)" ../build/web/index.html
+cp build/web/* docs/
+```
+
+O workflow `.github/workflows/web.yml` faz esse processo sozinho (testa, exporta e publica) quando o
+GitHub Actions estiver liberado na conta; nesse caso, troque a origem do Pages para **GitHub Actions**.
 
 ## Abrir no computador (Godot)
 
