@@ -1,0 +1,17 @@
+{
+  "_sobre": "Tabela de interações do P-0. 'combinacoes': objeto solto/segurado sobre um alvo. 'toques': toque rápido num personagem ou objeto. Para criar uma nova brincadeira, basta adicionar uma linha aqui (reações disponíveis: comer, escovar, brincar, cochilar, latir, pular).",
+  "combinacoes": [
+    {"item": "biscoito", "alvo": "bob", "reacao": "comer", "fala": "Nham nham!"},
+    {"item": "escova", "alvo": "bob", "reacao": "escovar", "fala": "Que cheiroso!"},
+    {"item": "pelucia", "alvo": "bob", "reacao": "brincar", "fala": "Au au!"},
+    {"item": "almofada", "alvo": "bob", "reacao": "cochilar", "fala": "Zzz..."}
+  ],
+  "toques": [
+    {"alvo": "bob", "reacao": "latir", "falas": ["Au, au!", "Au!", "Atchim!"]},
+    {"alvo": "catarina", "reacao": "pular", "falas": ["Oi!", "Iupi!", "Vamos brincar?"]},
+    {"alvo": "pelucia", "reacao": "pular", "falas": ["Fofinho!"]},
+    {"alvo": "biscoito", "reacao": "pular", "falas": ["Biscoito de coração!"]},
+    {"alvo": "escova", "reacao": "pular", "falas": ["Escovinha!"]},
+    {"alvo": "almofada", "reacao": "pular", "falas": ["Almofada de ursinho!"]}
+  ]
+}
