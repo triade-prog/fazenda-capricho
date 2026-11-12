@@ -2,7 +2,7 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c6a6e82w018u6"
+uid="uid://bq5x4324kxfpo"
 path="res://.godot/imported/porta.png-844729ce109d4a5f98352b80f0ee7a40.ctex"
 metadata={
 "vram_texture": false
@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/porta.png-844729ce109d4a5f98352b80f0ee7a40.ct
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.9
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

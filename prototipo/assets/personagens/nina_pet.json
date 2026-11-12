@@ -1,75 +1,77 @@
 {
-  "_sobre": "Folha no formato de pet (uma linha por ação), gerada a partir de outras/pet_request.json. 'ground_y' e 'char_height' em pixels do quadro; 'ms' = duração de cada quadro.",
-  "sheet": "nina_pet.png",
-  "columns": 8,
-  "rows_count": 11,
-  "cell_width": 192,
-  "cell_height": 208,
-  "ground_y": 202,
-  "char_height": 148,
+  "_sobre": "Folha de pet de nina, gerada por ferramentas/pet_para_jogo.py a partir de arte/animacoes/nina_pet_v2.",
+  "cell_width": 384,
+  "cell_height": 416,
+  "ground_y": 404,
+  "char_height": 296,
+  "colo": 0.36,
+  "sleep": {
+    "state": "idle",
+    "frame": 3
+  },
   "rows": {
     "idle": {
-      "row": 0,
+      "sheet": "nina_pet/idle.png",
       "frames": 6,
       "ms": 170,
       "loop": true
     },
     "running-right": {
-      "row": 1,
+      "sheet": "nina_pet/running-right.png",
       "frames": 8,
       "ms": 85,
       "loop": true
     },
     "running-left": {
-      "row": 2,
+      "sheet": "nina_pet/running-left.png",
       "frames": 8,
       "ms": 85,
       "loop": true
     },
     "waving": {
-      "row": 3,
+      "sheet": "nina_pet/waving.png",
       "frames": 4,
       "ms": 140,
       "loop": false
     },
     "jumping": {
-      "row": 4,
+      "sheet": "nina_pet/jumping.png",
       "frames": 5,
       "ms": 110,
       "loop": false
     },
     "failed": {
-      "row": 5,
+      "sheet": "nina_pet/failed.png",
       "frames": 8,
       "ms": 120,
       "loop": false
     },
     "waiting": {
-      "row": 6,
+      "sheet": "nina_pet/waiting.png",
       "frames": 6,
       "ms": 170,
       "loop": true
     },
     "running": {
-      "row": 7,
+      "sheet": "nina_pet/running.png",
       "frames": 6,
       "ms": 150,
       "loop": true
     },
     "review": {
-      "row": 8,
+      "sheet": "nina_pet/review.png",
       "frames": 6,
       "ms": 150,
       "loop": true
     },
     "look-row-9": {
-      "row": 9,
+      "sheet": "nina_pet/look-row-9.png",
       "frames": 8,
       "ms": 160,
       "loop": true
     },
     "look-row-10": {
-      "row": 10,
+      "sheet": "nina_pet/look-row-10.png",
       "frames": 8,
       "ms": 160,
       "loop": true

@@ -130,6 +130,14 @@ godot --headless --path prototipo res://testes/roteiro.tscn
 Com `-- --capturas=/pasta` (e sem `--headless`) ele também salva as capturas de tela. Para testar
 num tamanho de iPad: `--resolution 1180x820`.
 
+## Personagens com folha de pet
+
+`ferramentas/pet_para_jogo.py <pasta_do_pet> <nome>` prepara uma folha aprovada: separa uma imagem por
+ação (o jogo carrega só as que usa), amplia 2x com filtro de nitidez (ou usa a versão `@2x` entregue pela
+IA, que é ainda melhor) e grava o JSON com o colo (onde o objeto fica seguro) e o quadro de olhos fechados
+para dormir. As imagens do jogo são comprimidas com perda leve (WebP 90%): o pacote web caiu de 21 MB para
+6,5 MB. `testes/poses.tscn` captura a Catarina em várias situações para conferência visual.
+
 ## Limitações conhecidas (esperadas nesta fase)
 
 - Personagens são imagens únicas: "abanar o rabo", "piscar" e "andar" são simulados com o corpo

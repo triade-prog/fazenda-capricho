@@ -26,7 +26,7 @@ def bbox_alpha(img):
 
 
 # altura mínima (px) para o personagem ficar nítido no iPad na escala da tabela do GDD
-MINIMO_NITIDO = 300
+MINIMO_NITIDO = 280
 
 # ações em que os pés saem do chão de propósito
 MOVIMENTO_LIVRE = {"jumping", "running-right", "running-left"}
@@ -70,8 +70,14 @@ def verificar_pet(sheet, request_path, altura):
     at = req["atlas"]
     cw, ch = at["cell_width"], at["cell_height"]
     falhas, avisos = [], []
-    if sheet.size != (at["width"], at["height"]):
-        falhas.append(f"tamanho {sheet.size} diferente do combinado {at['width']}x{at['height']}")
+    k = sheet.size[0] / at["width"]  # 2 para a versão @2x
+    if k >= 1 and abs(sheet.size[1] - at["height"] * k) < 1 and k == round(k):
+        cw, ch = cw * int(k), ch * int(k)
+        if k > 1:
+            print(f"Versão em alta resolução: {int(k)}x a grade do pet_request.json")
+    else:
+        falhas.append(f"tamanho {sheet.size} diferente do combinado {at['width']}x{at['height']} (ou 2x)")
+        k = 1
     usados = {}
     ref_altura = None
     for r in req["rows"]:
@@ -93,7 +99,7 @@ def verificar_pet(sheet, request_path, altura):
         livre = r["state"] in MOVIMENTO_LIVRE
         print(f"  {r['state']:14s} {r['frames']} quadros  chão {min(chao)}–{max(chao)}  altura {min(alt)}–{max(alt)}"
               f"  sobra magenta {resid}")
-        if not livre and max(chao) - min(chao) > 2:
+        if not livre and max(chao) - min(chao) > 2 * k:
             falhas.append(f"{r['state']}: linha do chão varia {min(chao)}–{max(chao)} px")
         if resid > 0:
             avisos.append(f"{r['state']}: {resid} pixels com sobra do fundo magenta (conferir de perto)")

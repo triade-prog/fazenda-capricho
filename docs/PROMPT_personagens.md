@@ -46,13 +46,16 @@ REPOSITÓRIO: https://github.com/triade-prog/fazenda-capricho  (branch claude/br
 
 4) ENTREGA NO REPOSITÓRIO (na branch acima), numa pasta nova arte/animacoes/<nome>_pet/ com:
    - final/spritesheet-extended.png      (a folha)
+   - final/spritesheet-extended@2x.png   (A MESMA folha montada a partir das imagens grandes, ANTES de
+     reduzir: quadros de 384 × 416 px, folha de 3072 × 4576 px, personagem com ~300 px de altura,
+     mesma grade, mesma ordem e mesma linha do chão proporcional. É ela que fica nítida no iPad.)
    - outras/pet_request.json             (mesmo formato do da Nina)
    - prompts/                            (os prompts usados)
    NÃO inclua as etapas intermediárias com fundo magenta e NÃO deixe caminhos do computador
    (como /Users/...) em nenhum arquivo: o repositório é público.
    Mensagem do commit: "Personagem <Nome>: folha de pet 3D (padrão Nina v2)".
 
-5) CONFERÊNCIA OBRIGATÓRIA antes de subir:
+5) CONFERÊNCIA OBRIGATÓRIA antes de subir (das duas folhas):
    python3 ferramentas/verificar_folha.py arte/animacoes/<nome>_pet/final/spritesheet-extended.png \
        --pet arte/animacoes/<nome>_pet/outras/pet_request.json
    Só suba se o resultado for APROVADA. Avisos de "sobra do fundo magenta" acima de 10 pixels numa

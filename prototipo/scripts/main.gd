@@ -113,8 +113,7 @@ func _make_toys() -> void:
 	var cat := _add_pet("catarina", "res://assets/personagens/catarina_pet.json", 300.0, Vector2(720, 730))
 	cat.can_hold = true
 	cat.can_lie = true
-	cat.hand_offset = Vector2(51, -95)     # mão direita (lado direito da tela), medida no quadro "idle"
-	cat.head_offset = Vector2(2, -244)
+	cat.head_offset = Vector2(2, -244)     # o objeto segurado fica no colo ("colo" no JSON)
 	cat.grab_offset = Vector2(0, -150)
 	cat.lie_half_width = 60.0
 
@@ -178,11 +177,13 @@ func _add_character(kind: String, path: String, height: float, pos: Vector2) -> 
 ## Personagem com folha no formato de pet (JSON ao lado da imagem, ver assets/personagens/nina_pet.json).
 func _add_pet(kind: String, json_path: String, height: float, pos: Vector2) -> Toy:
 	var data: Dictionary = (load(json_path) as JSON).data
-	var tex := load(json_path.get_base_dir().path_join(str(data["sheet"]))) as Texture2D
+	var tex: Texture2D = null
+	if data.has("sheet"):
+		tex = load(json_path.get_base_dir().path_join(str(data["sheet"]))) as Texture2D
 	var t := Toy.new()
 	t.kind = kind
 	t.is_character = true
-	t.setup_atlas(tex, data, height)
+	t.setup_atlas(tex, data, height, json_path.get_base_dir())
 	t.position = pos
 	add_child(t)
 	toys.append(t)
@@ -426,6 +427,7 @@ func _start_drag(t: Toy, p: Vector2) -> void:
 		t.mount = null
 	_leave_slot(t)
 	t.pose = "em_pe"
+	t.play_state("idle")  # acorda (folha de pet)
 	t.lifted = true
 	t.z_index = 450
 	drag_offset = -t.grab_offset + Vector2(0, -LIFT)
@@ -560,6 +562,7 @@ func _attach(item: Toy, who: Toy) -> void:
 func _fall(t: Toy, from: Vector2) -> void:
 	var target := _surface_point(from)
 	t.kill_move()
+	t.rotation = 0.0  # objeto que estava no colo de alguém deitado volta a ficar em pé
 	t.global_position = from
 	var d := from.distance_to(target)
 	if d < 3.0:
@@ -630,6 +633,7 @@ func _enter_slot(t: Toy, s: Slot) -> void:
 	var sc := Vector2.ONE
 	if s.pose == "deitar":
 		t.pose = "deitado"
+		t.sleep()
 		if t.can_lie:
 			rot = -PI / 2.0
 			sc = Vector2(0.8, 0.8)
@@ -808,6 +812,7 @@ func _nap(alvo: Toy, item: Toy) -> void:
 	item.global_position = alvo.global_position + Vector2(0, 4)
 	item.z_index = alvo.z_index - 1
 	alvo.pose = "cochilando"
+	alvo.sleep()
 	var tw := alvo.play_anim()
 	tw.tween_property(alvo, "squash", Vector2(1.06, 0.88), 0.3)
 	get_tree().create_timer(4.0).timeout.connect(_nap_end.bind(alvo, item))
@@ -817,6 +822,7 @@ func _nap_end(alvo: Toy, item: Toy) -> void:
 	item.busy = false
 	if alvo.pose == "cochilando" and not alvo.lifted:
 		alvo.pose = "em_pe"
+		alvo.play_state("idle")
 		_hop(alvo, 25.0)
 		_bubble(alvo, "Au!")
 

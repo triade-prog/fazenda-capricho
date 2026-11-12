@@ -66,13 +66,24 @@ func setup_sprite(tex: Texture2D, display_height: float) -> void:
 
 ## Personagem animado por folha de pet: grade `cols` x `rows_count`, quadro `cell`, pés na linha
 ## `ground_y` do quadro e altura do desenho `char_height` (em pixels do quadro).
-func setup_atlas(tex: Texture2D, data: Dictionary, display_height: float) -> void:
-	_atlas_cols = int(data["columns"])
+## Imagens das ações já carregadas (compartilhadas entre personagens e cenas).
+static var _row_tex := {}
+var _atlas_dir := ""
+var sleep_state := ""             # quadro de olhos fechados usado para dormir
+var sleep_frame := 0
+
+
+## Aceita dois formatos: folha única (data["columns"], "rows_count") ou uma imagem por ação
+## (data["rows"][ação]["sheet"]), carregada só quando a ação é usada.
+func setup_atlas(tex: Texture2D, data: Dictionary, display_height: float, base_dir: String = "") -> void:
+	_atlas_dir = base_dir
+	_atlas_cols = int(data.get("columns", 1))
 	var cell := Vector2(float(data["cell_width"]), float(data["cell_height"]))
 	sprite = Sprite2D.new()
-	sprite.texture = tex
-	sprite.hframes = _atlas_cols
-	sprite.vframes = int(data["rows_count"])
+	if tex:
+		sprite.texture = tex
+		sprite.hframes = _atlas_cols
+		sprite.vframes = int(data["rows_count"])
 	sprite.centered = false
 	sprite.offset = Vector2(-cell.x / 2.0, -float(data["ground_y"]))
 	var s := display_height / float(data["char_height"])
@@ -81,6 +92,11 @@ func setup_atlas(tex: Texture2D, data: Dictionary, display_height: float) -> voi
 	art = sprite
 	add_child(sprite)
 	anim_rows = data["rows"]
+	if data.has("colo"):
+		hand_offset = Vector2(0, -float(data["colo"]) * display_height)
+	if data.has("sleep"):
+		sleep_state = str(data["sleep"]["state"])
+		sleep_frame = int(data["sleep"]["frame"])
 	_breath_speed = 0.0  # a respiração já está desenhada na linha "idle"
 	play_state("idle")
 	_anim_t = randf() * 150.0
@@ -118,7 +134,24 @@ func hold_frame(state: String, index: int) -> void:
 
 func _apply_frame() -> void:
 	var row: Dictionary = anim_rows[anim_state]
-	sprite.frame = int(row["row"]) * _atlas_cols + anim_frame
+	if row.has("sheet"):
+		var path := _atlas_dir.path_join(str(row["sheet"]))
+		if not _row_tex.has(path):
+			_row_tex[path] = load(path) as Texture2D
+		var tex: Texture2D = _row_tex[path]
+		if sprite.texture != tex:
+			sprite.texture = tex
+			sprite.hframes = int(row["frames"])
+			sprite.vframes = 1
+		sprite.frame = anim_frame
+	else:
+		sprite.frame = int(row["row"]) * _atlas_cols + anim_frame
+
+
+## Dormindo: quadro de olhos fechados (personagens com folha de pet).
+func sleep() -> void:
+	if sleep_state != "":
+		hold_frame(sleep_state, sleep_frame)
 
 
 func _advance_anim(delta: float) -> void:
@@ -171,11 +204,15 @@ func _process(delta: float) -> void:
 	var b := sin(_t) * 0.012
 	art.scale = base_art_scale * squash * Vector2(lift * (1.0 - b * 0.5), lift * (1.0 + b))
 	if holder != null:
-		global_position = holder.hand_global() + Vector2(0, hit_radius * 0.7)
-		z_index = holder.z_index + 1
+		# acompanha a mão (ou o colo) e o giro de quem segura: deitada, o objeto deita junto
+		global_position = holder.to_global(Vector2(holder.hand_offset.x * holder._facing(),
+			holder.hand_offset.y + hit_radius * 0.7))
+		rotation = holder.rotation
+		z_index = (holder.mount.z_index if holder.mount else holder.z_index) + 1
 	elif mount != null:
+		# atrás do corpo do cavalo: as pernas somem e o cavaleiro parece sentado na sela
 		global_position = mount.seat_global() + Vector2(0, RIDE_DROP)
-		z_index = mount.z_index + 1
+		z_index = mount.z_index - 1
 	elif slot == null and not lifted and not busy:
 		z_index = depth_for(global_position.y)
 
