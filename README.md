@@ -16,6 +16,7 @@ manipula objetos, explora ambientes e cria suas próprias histórias, sem missõ
 - `arte/conceito/colagem_cenarios/` — colagem "Novos Cenários do Jogo" e cada cenário recortado.
 - `arte/conceito/cenarios_R01/` — estudos visuais dos cenários (só referência estética, não são peças do jogo).
 - `arte/cenario/3d/` — arte 3D final do cenário e dos objetos (originais); as versões do jogo ficam em `prototipo/assets/cenario/`.
+- `arte/cenario/estabulo/` — layout e prompts das peças do Estábulo florido + pasto (próximo cenário).
 - `arte/cenario/plantacao/` — layout e prompts das peças da Plantação (horta, pomar, jardim, canteiro mágico).
 - `arte/cenario/referencias_provisorias/` — cada elemento do quarto e cada objeto em PNG separado, com tamanhos o guia `GUIA.md` e os prompts prontos em `PROMPTS.md` para gerar a arte 3D.
 - `arte/personagens/` — imagens oficiais dos personagens (versão final; prevalecem sobre o texto do GDD).
