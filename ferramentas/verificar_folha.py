@@ -28,6 +28,10 @@ def bbox_alpha(img):
 # altura mínima (px) para o personagem ficar nítido no iPad na escala da tabela do GDD
 MINIMO_NITIDO = 280
 
+# ações que precisam ter o personagem do MESMO tamanho da espera (senão ele "encolhe" ao ser arrastado)
+MESMO_TAMANHO = {"running-right", "running-left", "waving", "waiting"}
+TOLERANCIA_TAMANHO = 0.10
+
 # ações em que os pés saem do chão de propósito
 MOVIMENTO_LIVRE = {"jumping", "running-right", "running-left"}
 
@@ -101,6 +105,11 @@ def verificar_pet(sheet, request_path, altura):
               f"  sobra magenta {resid}")
         if not livre and max(chao) - min(chao) > 2 * k:
             falhas.append(f"{r['state']}: linha do chão varia {min(chao)}–{max(chao)} px")
+        if ref_altura and r["state"] in MESMO_TAMANHO:
+            maior = max(alt)
+            if abs(maior - ref_altura) / ref_altura > TOLERANCIA_TAMANHO:
+                falhas.append(f"{r['state']}: personagem com {maior} px de altura, mas {ref_altura} px na espera "
+                              f"(diferença acima de {int(TOLERANCIA_TAMANHO * 100)}%: ele encolhe ou cresce ao mudar de ação)")
         if resid > 0:
             avisos.append(f"{r['state']}: {resid} pixels com sobra do fundo magenta (conferir de perto)")
     for row in range(at["rows"]):
