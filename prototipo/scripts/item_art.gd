@@ -14,7 +14,16 @@ func _init(p_kind: String = "", p_radius: float = 40.0) -> void:
 	r = p_radius
 
 
+## Caixa (largura, altura) de cada objeto na arte final, em pixels do jogo.
+const CAIXA := {"biscoito": Vector2(56, 56), "pelucia": Vector2(90, 104), "escova": Vector2(96, 60),
+	"almofada": Vector2(92, 70)}
+
+
 func _draw() -> void:
+	if CAIXA.has(kind):
+		var c: Vector2 = CAIXA[kind]
+		if Arte.draw(self, "objeto_" + kind, Rect2(-c.x / 2.0, -c.y, c.x, c.y)):
+			return
 	match kind:
 		"biscoito":
 			_biscoito()

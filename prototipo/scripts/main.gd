@@ -94,7 +94,7 @@ func _make_slots() -> void:
 	# Cama de cima: área alta para pegar qualquer soltar acima do beliche.
 	_add_slot("cama", Rect2(112, 0, 408, 320), [Vector2(445, 270), Vector2(480, 272), Vector2(250, 272)], "deitar", "",
 		Toy.depth_for(300.0))
-	slot_castelo = _add_slot("castelo", Rect2(285, 420, 112, 200), [Vector2(340, 598), Vector2(372, 598)],
+	slot_castelo = _add_slot("castelo", Rect2(270, 396, 116, 224), [Vector2(318, 598), Vector2(342, 598)],
 		"dentro", "", castle.z_index - 1)
 	_add_slot("escorregador", Rect2(520, 180, 120, 150), [], "", "escorregar", 0)
 	_add_slot("escada", Rect2(36, 330, 80, 272), [], "", "subir", 0)

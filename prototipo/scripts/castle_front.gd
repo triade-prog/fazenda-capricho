@@ -6,8 +6,8 @@ extends Node2D
 const OUTLINE := Color("#5a3a4a")
 const WALL := Color("#ffb3d1")
 const DOOR := Color("#9b59d0")
-const DOOR_CENTER := Vector2(340, 470)   # centro do arco da porta
-const DOOR_R := 46.0
+const DOOR_CENTER := Vector2(328, 446)   # centro do arco da porta (medido na arte 3D)
+const DOOR_R := 50.0
 const BASE_Y := 600.0
 
 var is_open := false
@@ -37,6 +37,14 @@ func door_hit(p: Vector2) -> bool:
 
 
 func _draw() -> void:
+	var porta := Rect2(DOOR_CENTER.x - DOOR_R, DOOR_CENTER.y - DOOR_R, DOOR_R * 2.0, BASE_Y - DOOR_CENTER.y + DOOR_R)
+	if Arte.tex("castelo_frente") != null:
+		Arte.draw(self, "castelo_frente", Rect2(120, 334, 420, 266), true)
+		if is_open:
+			Arte.draw(self, "porta_castelo_aberta", Rect2(porta.end.x - 6, porta.position.y, 60, porta.size.y))
+		else:
+			Arte.draw(self, "porta_castelo_fechada", porta, true)
+		return
 	var l := DOOR_CENTER.x - DOOR_R
 	var r := DOOR_CENTER.x + DOOR_R
 	# paredes ao redor da abertura

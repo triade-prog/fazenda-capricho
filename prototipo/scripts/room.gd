@@ -52,6 +52,8 @@ func _rect(r: Rect2, col: Color, outline := true) -> void:
 
 
 func _wall() -> void:
+	if Arte.draw_tiled(self, "parede", 0.0, FLOOR_Y, ROOM_W):
+		return
 	draw_rect(Rect2(0, 0, ROOM_W, FLOOR_Y), Color("#ffd6e8"))
 	for x in range(0, int(ROOM_W), 80):
 		draw_rect(Rect2(x, 0, 36, FLOOR_Y), Color("#ffe0ee"))
@@ -60,6 +62,8 @@ func _wall() -> void:
 
 ## Varal de coraçõezinhos no alto da parede.
 func _garland() -> void:
+	if Arte.draw_tiled(self, "varal_coracoes", 18.0, 60.0, ROOM_W):
+		return
 	var pts := PackedVector2Array()
 	for i in int(ROOM_W / 50.0) + 1:
 		var x := i * 50.0
@@ -71,6 +75,8 @@ func _garland() -> void:
 
 
 func _window() -> void:
+	if Arte.draw(self, "janela", Rect2(950, 92, 340, 288)):
+		return
 	var w := Rect2(990, 120, 260, 230)
 	draw_rect(w, Color("#bfe6ff"))
 	draw_circle(Vector2(1200, 170), 26, Color("#fff3a0"))
@@ -97,6 +103,8 @@ func _window() -> void:
 
 
 func _floor() -> void:
+	if Arte.draw_tiled(self, "piso", FLOOR_Y, 300.0, ROOM_W):
+		return
 	draw_rect(Rect2(0, FLOOR_Y, ROOM_W, 300), Color("#f3cfa6"))
 	var y := FLOOR_Y + 30.0
 	var gap := 34.0
@@ -107,6 +115,8 @@ func _floor() -> void:
 
 
 func _rug() -> void:
+	if Arte.draw(self, "tapete", Rect2(660, 675, 680, 190)):
+		return
 	draw_colored_polygon(Shapes.ellipse(Vector2(1000, 770), Vector2(340, 95)), Color("#c9a7f5"))
 	draw_colored_polygon(Shapes.ellipse(Vector2(1000, 770), Vector2(290, 72)), Color("#dcc4fa"))
 	draw_polyline(Shapes.closed(Shapes.ellipse(Vector2(1000, 770), Vector2(340, 95))), OUTLINE, 3.0, true)
@@ -116,6 +126,8 @@ func _rug() -> void:
 
 
 func _table() -> void:
+	if Arte.draw(self, "mesinha", Rect2(1280, 556, 230, 96)):
+		return
 	_rect(Rect2(1300, 572, 14, 80), WOOD)
 	_rect(Rect2(1476, 572, 14, 80), WOOD)
 	_rect(Rect2(1280, 556, 230, 20), Color("#e9b07a"))
@@ -123,6 +135,8 @@ func _table() -> void:
 
 ## Pote de biscoitos (tocar para ganhar um biscoito).
 func _jar() -> void:
+	if Arte.draw(self, "pote_biscoitos", Rect2(1368, 453, 92, 103)):
+		return
 	var jar := Rect2(1368, 478, 92, 78)
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0.82, 0.93, 1.0, 0.85)
@@ -138,12 +152,16 @@ func _jar() -> void:
 
 ## Interior do castelinho (aparece pela porta aberta).
 func _castle_interior() -> void:
+	if Arte.draw(self, "castelo_interior", Rect2(120, 330, 420, 270), true):
+		return
 	draw_rect(Rect2(120, 330, 420, 270), Color("#c46b98"))
 	draw_colored_polygon(Shapes.heart(28, Vector2(240, 430)), Color("#d988b0"))
 	draw_colored_polygon(Shapes.heart(28, Vector2(440, 430)), Color("#d988b0"))
 
 
 func _bunk_bed() -> void:
+	if Arte.draw(self, "beliche", Rect2(98, 140, 464, 462)):
+		return
 	# colunas
 	_rect(Rect2(98, 150, 22, 452), PINK)
 	_rect(Rect2(540, 230, 22, 372), PINK)
@@ -167,6 +185,8 @@ func _bunk_bed() -> void:
 
 
 func _ladder() -> void:
+	if Arte.draw(self, "escada", Rect2(56, 290, 46, 312)):
+		return
 	draw_rect(Rect2(56, 290, 10, 312), WOOD)
 	draw_rect(Rect2(92, 290, 10, 312), WOOD)
 	draw_rect(Rect2(56, 290, 10, 312), OUTLINE, false, 2.0)
@@ -178,6 +198,8 @@ func _ladder() -> void:
 
 
 func _slide() -> void:
+	if Arte.draw(self, "escorregador", Rect2(545, 282, 308, 348)):
+		return
 	var pts := PackedVector2Array()
 	for i in 25:
 		pts.append(Shapes.bezier(SLIDE_P0, SLIDE_P1, SLIDE_P2, i / 24.0))
@@ -192,6 +214,8 @@ func _slide() -> void:
 
 ## Porta para o lado de fora (decorativa nesta fase) e quadro de ferradura.
 func _door() -> void:
+	if Arte.draw(self, "porta", Rect2(1640, 250, 170, 350)):
+		return
 	var d := Rect2(1640, 250, 170, FLOOR_Y - 250)
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color("#e9b07a")
@@ -208,6 +232,8 @@ func _door() -> void:
 
 
 func _picture() -> void:
+	if Arte.draw(self, "quadro_ferradura", Rect2(1914, 164, 182, 162)):
+		return
 	var f := Rect2(1920, 170, 170, 150)
 	draw_rect(f, Color("#fff6e8"))
 	draw_rect(f, Color("#c98b5c"), false, 12.0)

@@ -13,7 +13,8 @@ brinquedo**: arrastar, segurar, posicionar e combinar personagens e objetos no q
   biscoito, fica triste quando não cabe e olha para o objeto que a criança arrasta.
 - **Marca:** abertura com a logo animada da entrega R01 (folha de 8 quadros) e ícone da ferradura
   na Tela de Início do iPad.
-- O quarto e os objetos ainda são **desenhos provisórios feitos por código**.
+- **Cenário 3D:** o quarto e os objetos usam a arte 3D de `assets/cenario/` (originais em `arte/cenario/3d/`).
+  Se uma imagem faltar, o jogo desenha a versão provisória no lugar.
 
 ![Quarto da Catarina no iPad Air (1180 x 820)](capturas/01_inicio.png)
 
