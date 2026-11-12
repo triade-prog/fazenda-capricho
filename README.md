@@ -4,7 +4,7 @@ Jogo de faz de conta com interação inspirada em Avatar World: a criança movim
 manipula objetos, explora ambientes e cria suas próprias histórias, sem missões obrigatórias.
 
 - `docs/Fazenda_Capricho_GDD_Revisao3.docx` — documento de visão e design (GDD), Revisão 3.
-- `docs/Fazenda_Capricho_Cenarios.docx` — lista e desenvolvimento dos 13 cenários (mapa em `docs/mapa_cenarios.png`).
+- `docs/Fazenda_Capricho_Cenarios.docx` — lista e desenvolvimento dos 13 cenários, incluindo a Plantação com a proposta "fazendinha" inspirada no Mini Fazenda (mapa em `docs/mapa_cenarios.png`).
 - `docs/PROMPT_personagens.md` — prompt pronto para a IA gerar os personagens no padrão da Nina, um de cada vez.
 - `docs/padrao_geracao_personagens.md` — padrão para gerar os personagens como folhas de pet (a partir da Nina v2).
 - `arte/animacoes/R01/` — entrega R01 de folhas de animação (espera/pulso) e marca.
@@ -15,6 +15,7 @@ manipula objetos, explora ambientes e cria suas próprias histórias, sem missõ
 - `arte/conceito/colagem_cenarios/` — colagem "Novos Cenários do Jogo" e cada cenário recortado.
 - `arte/conceito/cenarios_R01/` — estudos visuais dos cenários (só referência estética, não são peças do jogo).
 - `arte/cenario/3d/` — arte 3D final do cenário e dos objetos (originais); as versões do jogo ficam em `prototipo/assets/cenario/`.
+- `arte/cenario/plantacao/` — layout e prompts das peças da Plantação (horta, pomar, jardim, canteiro mágico).
 - `arte/cenario/referencias_provisorias/` — cada elemento do quarto e cada objeto em PNG separado, com tamanhos o guia `GUIA.md` e os prompts prontos em `PROMPTS.md` para gerar a arte 3D.
 - `arte/personagens/` — imagens oficiais dos personagens (versão final; prevalecem sobre o texto do GDD).
 
