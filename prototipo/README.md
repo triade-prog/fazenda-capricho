@@ -1,13 +1,17 @@
 # Fazenda Capricho — Protótipo de interação P-0
 
-Primeiro protótipo jogável, previsto na seção 8 do GDD (Revisão 2). Ele testa **apenas a base do
+Primeiro protótipo jogável, previsto na seção 8 do GDD (Revisão 3). Ele testa **apenas a base do
 brinquedo**: arrastar, segurar, posicionar e combinar personagens e objetos no quarto da Catarina.
 
 - **Plataforma-alvo: iPad, deitado (paisagem)**, no estilo Avatar World: o quarto é mais largo que a
   tela, a altura inteira cabe, e a criança rola para os lados com o dedo.
 - **Motor:** Godot 4.4 (renderizador *Compatibility*), exportado para **web** (abre no Safari do iPad).
-- **Arte:** Catarina e Bob usam as imagens oficiais (`assets/personagens/`). O quarto e os objetos são
-  **desenhos provisórios feitos por código**, para testar a interação antes de produzir a arte final.
+- **Personagens:** Catarina, Carol, Bob, Nina, Leo, Zoe e Lumi, com as imagens oficiais
+  (`assets/personagens/`) na **tabela de escala** do GDD (Catarina = 300 px; Carol 1,35; Lumi 1,30;
+  Nina 0,62; Bob 0,57; Zoe 0,42; Leo 0,35).
+- **Marca:** abertura com a logo animada da entrega R01 (folha de 8 quadros) e ícone da ferradura
+  na Tela de Início do iPad.
+- O quarto e os objetos ainda são **desenhos provisórios feitos por código**.
 
 ![Quarto da Catarina no iPad Air (1180 x 820)](capturas/01_inicio.png)
 
@@ -15,6 +19,7 @@ brinquedo**: arrastar, segurar, posicionar e combinar personagens e objetos no q
 |---|---|
 | ![Quarto rolado para a direita com um gesto](capturas/02b_quarto_rolado.png) | ![Bob come o biscoito da mão da Catarina](capturas/03_bob_come.png) |
 | ![Catarina e Bob dormindo no beliche](capturas/04_dormindo_juntos.png) | ![Catarina no castelinho](capturas/05_castelinho_aberto.png) |
+| ![Catarina montada na Lumi](capturas/13_montada.png) | ![Abertura com a logo](capturas/00_abertura.png) |
 
 ## Abrir no iPad (versão web)
 
@@ -49,20 +54,23 @@ de um iPad Air deitado (1180 x 820).
 
 | Ação | Como |
 |---|---|
-| Pegar e mover qualquer coisa | Tocar e arrastar a Catarina, o Bob ou um objeto |
-| Colocar um objeto na mão da Catarina | Soltar o objeto sobre ela (se a mão estiver ocupada, ela troca) |
-| Pegar um objeto do chão com a Catarina | Soltar a Catarina sobre o objeto |
+| Pegar e mover qualquer coisa | Tocar e arrastar qualquer personagem ou objeto |
+| Colocar um objeto na mão da Catarina ou da Carol | Soltar o objeto sobre ela (se a mão estiver ocupada, ela troca) |
+| Pegar um objeto do chão | Soltar a Catarina ou a Carol sobre o objeto |
+| Montar na Lumi | Soltar a Catarina ou a Carol sobre a sela; arrastando a Lumi, quem está montado vai junto |
+| Dar biscoito aos bichos | Bob, Nina, Leo e Zoe comem o biscoito de coração (a Lumi não: petisco certo para cada bicho) |
+| Escovar, brincar, cochilar | Escova, pelúcia ou almofada sobre um bicho (a Lumi gosta de ser escovada) |
 | Dar biscoito ao Bob | Soltar o biscoito no Bob, **ou** levar a Catarina segurando o biscoito até ele, **ou** levar o Bob até o biscoito |
 | Escovar o Bob | Escova sobre o Bob (ou pela mão da Catarina) |
 | Brincar com o Bob | Pelúcia sobre o Bob |
 | Bob tirar um cochilo | Almofada sobre o Bob |
-| Deitar no beliche | Soltar a Catarina (ou o Bob) em cima da cama; os dois cabem juntos |
+| Deitar no beliche | Soltar alguém em cima da cama; cabem três (a Lumi é grande demais) |
 | Subir a escada | Soltar a Catarina na escada: ela sobe e deita na cama |
 | Descer o escorregador | Soltar a Catarina no alto do escorregador |
-| Entrar no castelinho | Soltar a Catarina ou o Bob na porta do castelinho |
+| Entrar no castelinho | Soltar a Catarina ou um bichinho na porta (a Carol e a Lumi não cabem) |
 | Abrir/fechar a portinha roxa | Tocar na porta (com a porta fechada, quem está dentro fica escondido) |
 | Ganhar biscoitos | Tocar no pote de biscoitos na mesinha (até 3 no quarto) |
-| Reações rápidas | Tocar no Bob ("Au, au!" ou "Atchim!"), na Catarina, nos objetos |
+| Reações rápidas | Tocar em qualquer um: Bob late ou espirra, Nina uiva, Leo pede "Dá, dá!", a Lumi relincha e gira |
 | Rolar o quarto | Arrastar o dedo num espaço vazio (parede ou chão); solto, o quarto continua deslizando um pouco |
 | Levar alguém para o outro lado do quarto | Arrastar o personagem até a borda da tela: o quarto rola junto |
 
@@ -97,13 +105,16 @@ Para adicionar um personagem (ex.: Nina, Carol), basta uma chamada a `_add_chara
 - [ ] Descer o escorregador e subir a escada.
 - [ ] Abrir e fechar a portinha roxa com alguém dentro do castelinho.
 - [ ] Dar petisco ao Bob dos três jeitos (direto, pela mão da Catarina, levando o Bob).
+- [ ] Montar a Catarina na Lumi e passear com ela pelo quarto.
+- [ ] Conferir se as proporções entre os personagens parecem certas no iPad.
 - [ ] Observar uma criança brincando por 10 minutos, sem explicar nada: o que ela tenta fazer e não consegue?
 
 ## Teste automático
 
-`testes/roteiro.tscn` simula toques **em coordenadas de tela**, como um dedo, e confere 17 itens:
+`testes/roteiro.tscn` simula toques **em coordenadas de tela**, como um dedo, e confere 24 itens:
 segurar, trocar, dar biscoito, pote, rolar o quarto com gesto, rolar levando um personagem até a
-borda, cama, castelinho, porta, escorregador, escada e cochilo. Foi rodado nos tamanhos de tela
+borda, cama, castelinho, porta, escorregador, escada, cochilo, personagens novos no quarto, Nina
+comendo, montar na Lumi, passear montada, Lumi girando, Lumi barrada no castelinho e Carol na cama. Foi rodado nos tamanhos de tela
 iPad 9,7"/mini (1024 x 768, 4:3) e iPad Air (1180 x 820), além da versão web num navegador emulando
 um iPad Pro 11" com toque.
 
@@ -118,6 +129,9 @@ num tamanho de iPad: `--resolution 1180x820`.
 
 - Personagens são imagens únicas: "abanar o rabo", "piscar" e "andar" são simulados com o corpo
   inteiro (balançar, pular, amassar). As animações reais dependem da arte em partes separadas (GDD, seção 7).
+- Montada na Lumi, a Catarina aparece em pé na sela: a pose sentada depende da folha `catarina_sentada`.
+- As animações de espera da R01 não foram usadas nos personagens (a respiração é feita pelo jogo);
+  ver `docs/especificacao_bob_andar.md`.
 - Sem sons, sem salvamento e sem troca de ambiente.
 - A versão web foi testada no Chromium emulando um iPad; ainda falta testar no Safari de um iPad de verdade.
 - Os textos que aparecem nas falas usam a fonte padrão do Godot; a fonte do jogo ainda será escolhida.

@@ -18,7 +18,7 @@ extends Node2D
 const DATA_PATH := "res://dados/interacoes.json"
 const RoomScript := preload("res://scripts/room.gd")
 
-const W := 1600.0
+const W := 2200.0
 const H := 900.0
 const FLOOR_Y := 600.0
 const DRAG_START := 10.0
@@ -68,6 +68,7 @@ func _ready() -> void:
 	_make_slots()
 	_make_toys()
 	_setup_camera()
+	_show_intro()
 
 
 # ---------------------------------------------------------------- montagem da cena
@@ -90,7 +91,7 @@ func _load_data() -> void:
 
 func _make_slots() -> void:
 	# Cama de cima: área alta para pegar qualquer soltar acima do beliche.
-	_add_slot("cama", Rect2(112, 0, 408, 320), [Vector2(445, 270), Vector2(480, 272)], "deitar", "",
+	_add_slot("cama", Rect2(112, 0, 408, 320), [Vector2(445, 270), Vector2(480, 272), Vector2(250, 272)], "deitar", "",
 		Toy.depth_for(300.0))
 	slot_castelo = _add_slot("castelo", Rect2(285, 420, 112, 200), [Vector2(340, 598), Vector2(372, 598)],
 		"dentro", "", castle.z_index - 1)
@@ -120,9 +121,44 @@ func _make_toys() -> void:
 	bob.head_offset = Vector2(56, -120)
 	bob.grab_offset = Vector2(0, -85)
 
+	# Tabela de escala (Catarina = 1,0 = 300 px): ver GDD, seção 7.
+	var carol := _add_character("carol", "res://assets/personagens/carol.png", 405.0, Vector2(1180, 700))
+	carol.can_hold = true
+	carol.can_lie = true
+	carol.can_ride = true
+	carol.hand_offset = Vector2(58, -147)
+	carol.head_offset = Vector2(1, -330)
+	carol.grab_offset = Vector2(0, -200)
+	carol.lie_half_width = 70.0
+	carol.too_big_for.assign(["castelo"])
+
+	var nina := _add_character("nina", "res://assets/personagens/nina.png", 185.0, Vector2(600, 860))
+	nina.flips = true
+	nina.head_offset = Vector2(20, -128)
+	nina.grab_offset = Vector2(0, -90)
+
+	var leo := _add_character("leo", "res://assets/personagens/leo.png", 105.0, Vector2(1400, 860))
+	leo.flips = true
+	leo.head_offset = Vector2(18, -55)
+	leo.grab_offset = Vector2(0, -50)
+
+	var zoe := _add_character("zoe", "res://assets/personagens/zoe.png", 125.0, Vector2(235, 790))
+	zoe.flips = true
+	zoe.head_offset = Vector2(9, -88)
+	zoe.grab_offset = Vector2(0, -60)
+
+	var lumi := _add_character("lumi", "res://assets/personagens/lumi.png", 390.0, Vector2(1950, 870))
+	lumi.flips = true
+	lumi.head_offset = Vector2(111, -295)
+	lumi.grab_offset = Vector2(0, -200)
+	lumi.seat_offset = Vector2(-24, -223)
+	lumi.too_big_for.assign(["cama", "castelo", "escorregador", "escada"])
+
+	cat.can_ride = true
+
 	_add_item("biscoito", 26.0, Vector2(1330, 558))
 	_add_item("pelucia", 40.0, Vector2(480, 700))
-	_add_item("escova", 46.0, Vector2(1240, 690))
+	_add_item("escova", 46.0, Vector2(1700, 700))
 	_add_item("almofada", 42.0, Vector2(880, 840))
 
 
@@ -147,8 +183,53 @@ func _add_item(kind: String, radius: float, pos: Vector2) -> Toy:
 	return t
 
 
+# ---------------------------------------------------------------- abertura
+
+## Logo animada (folha de 8 quadros da R01, 160 ms por quadro) sobre fundo rosa.
+## Some sozinha em 2,5 s ou com um toque.
+func _show_intro() -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 10
+	add_child(layer)
+	var bg := ColorRect.new()
+	bg.color = Color(1, 0.84, 0.91)
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.mouse_filter = Control.MOUSE_FILTER_STOP
+	layer.add_child(bg)
+	var logo := Sprite2D.new()
+	logo.texture = load("res://assets/marca/logo_fazenda_capricho_pulso_8f.png") as Texture2D
+	logo.hframes = 4
+	logo.vframes = 2
+	bg.add_child(logo)
+	var place := func() -> void:
+		var vis := get_viewport().get_visible_rect().size
+		logo.position = vis / 2.0 + Vector2(0, -20)
+		var sc := minf(vis.x * 0.7 / 768.0, vis.y * 0.7 / 512.0)
+		logo.scale = Vector2(sc, sc)
+	place.call()
+	get_viewport().size_changed.connect(place)
+	var anim := create_tween().set_loops()
+	anim.tween_interval(0.16)
+	anim.tween_callback(func() -> void: logo.frame = (logo.frame + 1) % 8)
+	var state := {"fechando": false}
+	var close := func() -> void:
+		if state["fechando"]:
+			return
+		state["fechando"] = true
+		var tw := create_tween()
+		tw.tween_property(bg, "modulate:a", 0.0, 0.35)
+		tw.tween_callback(func() -> void:
+			anim.kill()
+			get_viewport().size_changed.disconnect(place)
+			layer.queue_free())
+	bg.gui_input.connect(func(ev: InputEvent) -> void:
+		if ev is InputEventScreenTouch and (ev as InputEventScreenTouch).pressed:
+			close.call())
+	get_tree().create_timer(2.5).timeout.connect(close)
+
+
 # ---------------------------------------------------------------- câmera (iPad, estilo Avatar World)
-# O quarto (1600 x 900) é mais largo que a tela do iPad: a altura inteira cabe e a criança rola
+# O quarto (2200 x 900) é mais largo que a tela do iPad: a altura inteira cabe e a criança rola
 # para os lados arrastando o dedo num espaço vazio, ou levando um personagem até a borda.
 
 func _setup_camera() -> void:
@@ -321,6 +402,9 @@ func _start_drag(t: Toy, p: Vector2) -> void:
 	if t.holder:
 		t.holder.held_item = null
 		t.holder = null
+	if t.mount:
+		t.mount.rider = null
+		t.mount = null
 	_leave_slot(t)
 	t.pose = "em_pe"
 	t.lifted = true
@@ -374,6 +458,9 @@ func _resolve(t: Toy, p: Vector2) -> Dictionary:
 					"regra": combos[other.kind + "|" + t.kind], "destaque": other}
 			if t.can_hold:
 				return {"tipo": "pegar", "item": other, "destaque": other}
+		# montar no cavalo: soltar quem pode montar em cima de quem tem sela livre
+		if t.can_ride and other.seat_offset != Vector2.ZERO and other.rider == null:
+			return {"tipo": "montar", "alvo": other, "destaque": other}
 	for s in slots:
 		if s.area.has_point(p) and s.accepts(t):
 			return {"tipo": "vaga", "slot": s}
@@ -394,6 +481,8 @@ func _drop(t: Toy, p: Vector2) -> void:
 			_attach(plan["item"], t)
 		"vaga":
 			_enter_slot(t, plan["slot"])
+		"montar":
+			_mount(t, plan["alvo"])
 		_:
 			_fall(t, t.global_position)
 
@@ -469,6 +558,20 @@ func _land(t: Toy) -> void:
 
 
 # ---------------------------------------------------------------- lugares interativos
+
+func _mount(t: Toy, horse: Toy) -> void:
+	t.kill_move()
+	t.mount = horse
+	horse.rider = t
+	t.pose = "montado"
+	_log("%s montou em %s" % [t.kind, horse.kind])
+	_pop(t)
+	_sparkle(horse.seat_global(), 4)
+	var tw := horse.play_anim()
+	tw.tween_property(horse, "squash", Vector2(1.04, 0.96), 0.1)
+	tw.tween_property(horse, "squash", Vector2.ONE, 0.15)
+	_bubble(horse, "Ehêhêhê!")
+
 
 func _enter_slot(t: Toy, s: Slot) -> void:
 	if s.action == "escorregar":
@@ -575,8 +678,14 @@ func _tap(t: Toy) -> void:
 	var fala := ""
 	if not falas.is_empty():
 		fala = str(falas.pick_random())
+	var reacao := str(rule.get("reacao", ""))
 	if fala.begins_with("Atchim"):
 		_sneeze(t)
+	elif reacao == "girar":
+		var tw := t.play_anim()
+		tw.tween_property(t, "squash", Vector2(0.05, 1.0), 0.18)
+		tw.tween_callback(func() -> void: t.face_left(not t.sprite.flip_h))
+		tw.tween_property(t, "squash", Vector2.ONE, 0.18)
 	else:
 		_hop(t, 30.0)
 		if str(rule.get("reacao", "")) == "latir":

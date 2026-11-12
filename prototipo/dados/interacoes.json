@@ -1,17 +1,195 @@
 {
-  "_sobre": "Tabela de interações do P-0. 'combinacoes': objeto solto/segurado sobre um alvo. 'toques': toque rápido num personagem ou objeto. Para criar uma nova brincadeira, basta adicionar uma linha aqui (reações disponíveis: comer, escovar, brincar, cochilar, latir, pular).",
+  "_sobre": "Tabela de interações do P-0. 'combinacoes': objeto solto/segurado sobre um alvo. 'toques': toque rápido num personagem ou objeto. Para criar uma nova brincadeira, basta adicionar uma linha aqui (reações disponíveis: comer, escovar, brincar, cochilar, latir, pular, girar). Petiscos só para os bichos certos: o biscoito de coração é para cães e gatos, não para a Lumi.",
   "combinacoes": [
-    {"item": "biscoito", "alvo": "bob", "reacao": "comer", "fala": "Nham nham!"},
-    {"item": "escova", "alvo": "bob", "reacao": "escovar", "fala": "Que cheiroso!"},
-    {"item": "pelucia", "alvo": "bob", "reacao": "brincar", "fala": "Au au!"},
-    {"item": "almofada", "alvo": "bob", "reacao": "cochilar", "fala": "Zzz..."}
+    {
+      "item": "biscoito",
+      "alvo": "bob",
+      "reacao": "comer",
+      "fala": "Nham nham!"
+    },
+    {
+      "item": "escova",
+      "alvo": "bob",
+      "reacao": "escovar",
+      "fala": "Que cheiroso!"
+    },
+    {
+      "item": "pelucia",
+      "alvo": "bob",
+      "reacao": "brincar",
+      "fala": "Au au!"
+    },
+    {
+      "item": "almofada",
+      "alvo": "bob",
+      "reacao": "cochilar",
+      "fala": "Zzz..."
+    },
+    {
+      "item": "biscoito",
+      "alvo": "nina",
+      "reacao": "comer",
+      "fala": "Nham!"
+    },
+    {
+      "item": "escova",
+      "alvo": "nina",
+      "reacao": "escovar",
+      "fala": "Que fofinha!"
+    },
+    {
+      "item": "pelucia",
+      "alvo": "nina",
+      "reacao": "brincar",
+      "fala": "Auuuu!"
+    },
+    {
+      "item": "almofada",
+      "alvo": "nina",
+      "reacao": "cochilar",
+      "fala": "Zzz..."
+    },
+    {
+      "item": "biscoito",
+      "alvo": "leo",
+      "reacao": "comer",
+      "fala": "Miau! Mais!"
+    },
+    {
+      "item": "pelucia",
+      "alvo": "leo",
+      "reacao": "brincar",
+      "fala": "Miau!"
+    },
+    {
+      "item": "almofada",
+      "alvo": "leo",
+      "reacao": "cochilar",
+      "fala": "Zzz..."
+    },
+    {
+      "item": "escova",
+      "alvo": "leo",
+      "reacao": "escovar",
+      "fala": "Purrr..."
+    },
+    {
+      "item": "biscoito",
+      "alvo": "zoe",
+      "reacao": "comer",
+      "fala": "Miau~"
+    },
+    {
+      "item": "pelucia",
+      "alvo": "zoe",
+      "reacao": "brincar",
+      "fala": "Miau!"
+    },
+    {
+      "item": "almofada",
+      "alvo": "zoe",
+      "reacao": "cochilar",
+      "fala": "Zzz..."
+    },
+    {
+      "item": "escova",
+      "alvo": "zoe",
+      "reacao": "escovar",
+      "fala": "Purrr..."
+    },
+    {
+      "item": "escova",
+      "alvo": "lumi",
+      "reacao": "escovar",
+      "fala": "Ehêhêhê!"
+    }
   ],
   "toques": [
-    {"alvo": "bob", "reacao": "latir", "falas": ["Au, au!", "Au!", "Atchim!"]},
-    {"alvo": "catarina", "reacao": "pular", "falas": ["Oi!", "Iupi!", "Vamos brincar?"]},
-    {"alvo": "pelucia", "reacao": "pular", "falas": ["Fofinho!"]},
-    {"alvo": "biscoito", "reacao": "pular", "falas": ["Biscoito de coração!"]},
-    {"alvo": "escova", "reacao": "pular", "falas": ["Escovinha!"]},
-    {"alvo": "almofada", "reacao": "pular", "falas": ["Almofada de ursinho!"]}
+    {
+      "alvo": "bob",
+      "reacao": "latir",
+      "falas": [
+        "Au, au!",
+        "Au!",
+        "Atchim!"
+      ]
+    },
+    {
+      "alvo": "catarina",
+      "reacao": "pular",
+      "falas": [
+        "Oi!",
+        "Iupi!",
+        "Vamos brincar?"
+      ]
+    },
+    {
+      "alvo": "carol",
+      "reacao": "pular",
+      "falas": [
+        "Oi, filha!",
+        "Que dia lindo!",
+        "Vamos cuidar dos bichinhos?"
+      ]
+    },
+    {
+      "alvo": "nina",
+      "reacao": "latir",
+      "falas": [
+        "Auuuu!",
+        "Au!"
+      ]
+    },
+    {
+      "alvo": "leo",
+      "reacao": "latir",
+      "falas": [
+        "Dá, dá!",
+        "Miau!"
+      ]
+    },
+    {
+      "alvo": "zoe",
+      "reacao": "pular",
+      "falas": [
+        "Miau~",
+        "Purrr..."
+      ]
+    },
+    {
+      "alvo": "lumi",
+      "reacao": "girar",
+      "falas": [
+        "Ehêhêhê!"
+      ]
+    },
+    {
+      "alvo": "pelucia",
+      "reacao": "pular",
+      "falas": [
+        "Fofinho!"
+      ]
+    },
+    {
+      "alvo": "biscoito",
+      "reacao": "pular",
+      "falas": [
+        "Biscoito de coração!"
+      ]
+    },
+    {
+      "alvo": "escova",
+      "reacao": "pular",
+      "falas": [
+        "Escovinha!"
+      ]
+    },
+    {
+      "alvo": "almofada",
+      "reacao": "pular",
+      "falas": [
+        "Almofada de ursinho!"
+      ]
+    }
   ]
 }

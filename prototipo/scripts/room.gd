@@ -11,6 +11,7 @@ const LIGHT_PINK := Color("#ffe3ef")
 const PURPLE := Color("#b57be0")
 
 const FLOOR_Y := 600.0
+const ROOM_W := 2200.0
 const SLIDE_P0 := Vector2(560, 300)
 const SLIDE_P1 := Vector2(650, 590)
 const SLIDE_P2 := Vector2(830, 612)
@@ -22,6 +23,8 @@ func _ready() -> void:
 
 func _draw() -> void:
 	_wall()
+	_door()
+	_picture()
 	_window()
 	_floor()
 	_rug()
@@ -38,19 +41,19 @@ func _rect(r: Rect2, col: Color, outline := true) -> void:
 
 
 func _wall() -> void:
-	draw_rect(Rect2(0, 0, 1600, FLOOR_Y), Color("#ffd6e8"))
-	for x in range(0, 1600, 80):
+	draw_rect(Rect2(0, 0, ROOM_W, FLOOR_Y), Color("#ffd6e8"))
+	for x in range(0, int(ROOM_W), 80):
 		draw_rect(Rect2(x, 0, 36, FLOOR_Y), Color("#ffe0ee"))
 	# varal de coraçõezinhos
 	var pts := PackedVector2Array()
-	for i in 33:
+	for i in int(ROOM_W / 50.0) + 1:
 		var x := i * 50.0
 		pts.append(Vector2(x, 40 + sin(i * 0.5) * 10.0))
 	draw_polyline(pts, Color("#c98bb0"), 2.0, true)
-	for i in range(1, 32, 2):
+	for i in range(1, int(ROOM_W / 50.0), 2):
 		var col := PINK if i % 4 == 1 else PURPLE
 		draw_colored_polygon(Shapes.heart(11, pts[i] + Vector2(0, 14)), col)
-	draw_rect(Rect2(0, FLOOR_Y - 14, 1600, 14), Color("#f7a8c8"))
+	draw_rect(Rect2(0, FLOOR_Y - 14, ROOM_W, 14), Color("#f7a8c8"))
 
 
 func _window() -> void:
@@ -80,11 +83,11 @@ func _window() -> void:
 
 
 func _floor() -> void:
-	draw_rect(Rect2(0, FLOOR_Y, 1600, 300), Color("#f3cfa6"))
+	draw_rect(Rect2(0, FLOOR_Y, ROOM_W, 300), Color("#f3cfa6"))
 	var y := FLOOR_Y + 30.0
 	var gap := 34.0
 	while y < 900:
-		draw_line(Vector2(0, y), Vector2(1600, y), Color("#e3b98c"), 2.0)
+		draw_line(Vector2(0, y), Vector2(ROOM_W, y), Color("#e3b98c"), 2.0)
 		gap *= 1.12
 		y += gap
 
@@ -166,3 +169,30 @@ func _slide() -> void:
 		edge.append(p + Vector2(0, -12))
 	draw_polyline(edge, Color("#ffb3d1"), 8.0, true)
 	draw_circle(SLIDE_P2, 18, PURPLE)
+
+
+## Porta para o lado de fora (decorativa nesta fase) e quadro de ferradura.
+func _door() -> void:
+	var d := Rect2(1640, 250, 170, FLOOR_Y - 250)
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color("#e9b07a")
+	sb.corner_radius_top_left = 80
+	sb.corner_radius_top_right = 80
+	sb.border_color = OUTLINE
+	sb.set_border_width_all(5)
+	draw_style_box(sb, d)
+	draw_colored_polygon(Shapes.heart(26, Vector2(1725, 340)), Color("#ffb3d1"))
+	draw_rect(Rect2(1665, 400, 120, 70), Color("#d79a62"))
+	draw_rect(Rect2(1665, 490, 120, 80), Color("#d79a62"))
+	draw_circle(Vector2(1785, 440), 9, Color("#ffd84d"))
+	draw_arc(Vector2(1785, 440), 9, 0, TAU, 16, OUTLINE, 2.0, true)
+
+
+func _picture() -> void:
+	var f := Rect2(1920, 170, 170, 150)
+	draw_rect(f, Color("#fff6e8"))
+	draw_rect(f, Color("#c98b5c"), false, 12.0)
+	draw_rect(f.grow(6), OUTLINE, false, 3.0)
+	var c := f.get_center() + Vector2(0, 8)
+	draw_arc(c, 42, PI * 0.7, PI * 2.3, 32, Color("#f0b232"), 18.0, true)
+	draw_colored_polygon(Shapes.heart(22, c + Vector2(0, -4)), Color("#ff6fa8"))

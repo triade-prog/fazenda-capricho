@@ -1,0 +1,23 @@
+FAZENDA CAPRICHO — SPRITE SHEETS R01
+
+PADRÃO APROVADO
+• Uma sprite sheet separada por personagem/elemento + por ação/animação.
+• Arquivos PNG RGBA com fundo transparente, sem legendas e sem bordas nos quadros.
+• Todas as folhas são 4 colunas x 2 linhas = 8 quadros idênticos em dimensão.
+• Ordem dos quadros: esquerda para direita, cima para baixo.
+• Cada animação tem um único loop. Duração em milissegundos e dimensões no manifest.json.
+• Incluídos os 8 quadros separados de cada folha na pasta frames/.
+
+ENTREGAS DA R01
+marca/logo_fazenda_capricho_pulso_8f.png
+marca/icone_ferradura_pulso_8f.png
+marca/estrela_magica_brilho_8f.png
+personagens/<nome>_idle_8f.png (Catarina, Carol, Bob, Nina, Leo, Zoe e Lumi)
+
+IMPORTANTE
+Esses são protótipos técnicos de animação suave (espera e pulso) criados a partir das artes estáticas aprovadas. Eles NÃO simulam caminhar, escovar, latir, dormir ou segurar objetos: esses movimentos exigem novos desenhos por pose e/ou recortes de corpo, roupas e acessórios com rig. Para produção devem ser criadas folhas exclusivas por ação, por exemplo: bob_andar.png, bob_latir.png, lumi_relinchar.png, catarina_abracar.png, etc.
+
+DIREÇÃO DE PRODUÇÃO
+1) Validar o tamanho de cada personagem na tela e a proporção relativa.
+2) Construir primeiro uma animação real de andar do Bob (ou equivalente com rig) e testar toque/arrastar no iPad.
+3) Seguir para os demais personagens e interações.

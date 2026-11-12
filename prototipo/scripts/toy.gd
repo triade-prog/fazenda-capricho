@@ -16,6 +16,11 @@ var hand_offset := Vector2.ZERO   # posição da mão, relativa aos pés
 var head_offset := Vector2(0, -100)
 var grab_offset := Vector2(0, -50)  # ponto do corpo que fica sob o dedo ao arrastar
 var lie_half_width := 40.0
+var can_ride := false             # pode montar no cavalo
+var seat_offset := Vector2.ZERO   # onde fica a sela (só para quem pode ser montado)
+var too_big_for: Array[String] = []  # lugares onde não cabe (ex.: Lumi não entra no castelinho)
+var mount: Toy = null             # em quem está montado
+var rider: Toy = null             # quem está montado em mim
 var hit_radius := 40.0            # objetos desenhados: raio de toque
 
 var art: Node2D
@@ -66,7 +71,7 @@ func display_size() -> Vector2:
 
 ## Sombra suave nos pés: ajuda a ler onde cada coisa está apoiada no chão.
 func _draw() -> void:
-	if holder != null or pose != "em_pe" or busy:
+	if holder != null or mount != null or pose != "em_pe" or busy:
 		return
 	var w := display_size().x * (0.32 if is_character else 0.45)
 	var a := 0.06 if lifted else 0.13
@@ -82,6 +87,9 @@ func _process(delta: float) -> void:
 	if holder != null:
 		global_position = holder.hand_global() + Vector2(0, hit_radius * 0.7)
 		z_index = holder.z_index + 1
+	elif mount != null:
+		global_position = mount.seat_global() + Vector2(0, RIDE_DROP)
+		z_index = mount.z_index + 1
 	elif slot == null and not lifted and not busy:
 		z_index = depth_for(global_position.y)
 
@@ -92,6 +100,13 @@ static func depth_for(y: float) -> int:
 
 func _facing() -> float:
 	return -1.0 if (sprite and sprite.flip_h) else 1.0
+
+
+const RIDE_DROP := 110.0  # pés do cavaleiro abaixo da sela: a cintura fica na sela
+
+
+func seat_global() -> Vector2:
+	return to_global(Vector2(seat_offset.x * _facing(), seat_offset.y))
 
 
 func hand_global() -> Vector2:

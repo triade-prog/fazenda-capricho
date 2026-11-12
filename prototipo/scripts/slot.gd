@@ -31,7 +31,7 @@ func setup(p_id: String, p_area: Rect2, p_spots: Array, p_pose: String, p_action
 
 
 func accepts(t: Toy) -> bool:
-	return t.is_character and (action != "" or free_spot() >= 0)
+	return t.is_character and not (id in t.too_big_for) and (action != "" or free_spot() >= 0)
 
 
 func free_spot() -> int:

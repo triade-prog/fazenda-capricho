@@ -4,7 +4,7 @@
 // Incrementing CACHE_VERSION will kick off the install event and force
 // previously cached resources to be updated from the network.
 /** @type {string} */
-const CACHE_VERSION = '1794450249|3608046';
+const CACHE_VERSION = '1794452163|4375794';
 /** @type {string} */
 const CACHE_PREFIX = 'Fazenda Capricho-sw-cache-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;

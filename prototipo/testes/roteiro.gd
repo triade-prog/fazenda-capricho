@@ -14,7 +14,9 @@ func _ready() -> void:
 			capturas = a.get_slice("=", 1)
 	main = load("res://main.tscn").instantiate()
 	add_child(main)
-	await _espera(0.5)
+	await _espera(0.6)
+	await _foto("00_abertura")
+	await _espera(2.6)  # a logo de abertura some sozinha
 	await _roteiro()
 	print("RESULTADO: ", "OK" if falhas == 0 else "%d FALHA(S)" % falhas)
 	get_tree().quit(1 if falhas else 0)
@@ -99,6 +101,40 @@ func _roteiro() -> void:
 	await _toca(bob.global_position + Vector2(0, -85))
 	await _espera(0.3)
 	await _foto("11_toque_bob")
+
+	# ---- personagens novos: Carol, Nina, Leo, Zoe e Lumi
+	var carol: Toy = main._find("carol")
+	var nina: Toy = main._find("nina")
+	var lumi: Toy = main._find("lumi")
+	_confere(carol != null and nina != null and lumi != null and main._find("leo") != null \
+		and main._find("zoe") != null, "Carol, Nina, Leo, Zoe e Lumi estão no quarto")
+	await _foto("12_todos")
+
+	var biscoito: Toy = main._find("biscoito")
+	await _arrasta(biscoito.global_position + Vector2(0, -26), nina.global_position + Vector2(0, -90), 0.9)
+	_confere(main._find("biscoito") == null, "Nina comeu o biscoito")
+
+	await _arrasta(cat.to_global(Vector2(0, -150)), lumi.seat_global() + Vector2(0, -20))
+	_confere(cat.mount == lumi and lumi.rider == cat, "Catarina montou na Lumi")
+	await _foto("13_montada")
+	var antes := lumi.global_position
+	await _arrasta(lumi.global_position + Vector2(60, -200), Vector2(1500, 640), 0.8)
+	_confere(lumi.global_position.distance_to(antes) > 100.0 and cat.mount == lumi \
+		and cat.global_position.distance_to(lumi.seat_global() + Vector2(0, Toy.RIDE_DROP)) < 2.0,
+		"Lumi levou a Catarina junto")
+	var virada := lumi.sprite.flip_h
+	await _toca(lumi.global_position + Vector2(-80, -250))
+	await _espera(0.5)
+	_confere(lumi.sprite.flip_h != virada, "Lumi gira ao ser tocada")
+	await _foto("14_lumi_passeio")
+
+	await _arrasta(lumi.global_position + Vector2(60, -200), Vector2(340, 520))
+	_confere(lumi.slot == null, "Lumi não entra no castelinho (grande demais)")
+
+	await _arrasta(carol.to_global(Vector2(0, -200)), Vector2(300, 200))
+	_confere(carol.pose == "deitado", "Carol deitou no beliche")
+	await _espera(0.8)
+	await _foto("15_carol_cama")
 
 
 # ---------------------------------------------------------------- utilidades
