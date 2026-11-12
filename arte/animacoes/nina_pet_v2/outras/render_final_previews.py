@@ -1,7 +1,7 @@
 from pathlib import Path
 import sys,json
 from PIL import Image,ImageDraw
-sys.path.insert(0,'/Users/carolina/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/skills/create-pet/scripts')
+sys.path.insert(0,'~/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/skills/create-pet/scripts')
 from render_animation_previews import ROW_DURATIONS,save_preview
 root=Path('/private/tmp/nina-orange/run')
 im=Image.open(root/'final/spritesheet-extended.png').convert('RGBA')

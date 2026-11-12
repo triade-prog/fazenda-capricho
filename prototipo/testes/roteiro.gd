@@ -136,6 +136,54 @@ func _roteiro() -> void:
 	await _espera(0.8)
 	await _foto("15_carol_cama")
 
+	# ---- Nina com folha de pet (ações desenhadas)
+	main.camera_to(600.0)
+	await _espera(0.2)
+	await _toca(nina.global_position + Vector2(0, -90))
+	_confere(nina.anim_state == "waving", "Nina acena com a pata ao ser tocada")
+	await _foto("16_nina_acena")
+	await _espera(0.8)
+	_confere(nina.anim_state == "idle", "Nina volta a ficar parada depois do aceno")
+
+	# arrastando a Nina para a direita: ela corre
+	var sp: Vector2 = main.world_to_screen(nina.global_position + Vector2(0, -90))
+	_evento(sp, true)
+	await get_tree().process_frame
+	await _desliza(sp, sp + Vector2(260, 0), 14)
+	_confere(nina.anim_state == "running-right", "Nina corre para a direita enquanto é arrastada")
+	await _foto("17_nina_corre")
+	await _desliza(sp + Vector2(260, 0), sp + Vector2(40, 0), 14)
+	_confere(nina.anim_state == "running-left", "Nina corre para a esquerda")
+	_evento(sp + Vector2(40, 0), false)
+	await _espera(0.6)
+	_confere(nina.anim_state == "idle", "Nina para de correr ao ser solta")
+
+	# arrastando a pelúcia: a Nina acompanha com o olhar
+	var pel: Toy = main._find("pelucia")
+	if pel.holder:
+		pel = main._find("almofada")
+	main.camera_to(pel.global_position.x)
+	await _espera(0.2)
+	sp = main.world_to_screen(pel.global_position + Vector2(0, -36))
+	_evento(sp, true)
+	await get_tree().process_frame
+	await _desliza(sp, main.world_to_screen(nina.head_global() + Vector2(-260, -60)), 10)
+	await get_tree().process_frame
+	_confere(nina.anim_state.begins_with("look"), "Nina olha para o objeto que está sendo arrastado")
+	await _foto("18_nina_olha")
+	_evento(main.world_to_screen(nina.head_global() + Vector2(-260, -60)), false)
+	await _espera(0.6)
+
+	# castelinho cheio: a Nina fica triste
+	var leo: Toy = main._find("leo")
+	var zoe: Toy = main._find("zoe")
+	await _arrasta(leo.global_position + Vector2(0, -50), Vector2(340, 540))
+	await _arrasta(zoe.global_position + Vector2(0, -60), Vector2(340, 540))
+	_confere(leo.slot != null and zoe.slot != null, "Leo e Zoe entraram no castelinho")
+	await _arrasta(nina.global_position + Vector2(0, -90), Vector2(340, 540), 0.3)
+	_confere(nina.anim_state == "failed" and nina.slot == null, "castelinho cheio: Nina fica triste e não entra")
+	await _foto("19_nina_triste")
+
 
 # ---------------------------------------------------------------- utilidades
 # Todos os toques são enviados em coordenadas de TELA, como um dedo de verdade no iPad.

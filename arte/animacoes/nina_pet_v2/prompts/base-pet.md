@@ -1,6 +1,6 @@
 Create one clean full-body reference sprite for ChatGPT pet Nina.
 
-Pet identity: Preserve approved Nina grey-white husky puppy warm brown eyes orange spacesuit grey collar and trim uncovered paws ears head tail. Canonical approved image /Users/carolina/Documents/Pets/Nina/visual-aprovado.png.
+Pet identity: Preserve approved Nina grey-white husky puppy warm brown eyes orange spacesuit grey collar and trim uncovered paws ears head tail. Canonical approved image ~/Documents/Pets/Nina/visual-aprovado.png.
 Style: Pet-safe sprite: compact full-body mascot, readable in a 192x208 cell, clear silhouette, simple face, stable palette/materials, and crisp edges for chroma-key extraction. Style `3d-toy`: Stylized 3D toy mascot with smooth rounded forms, simple materials, clear silhouette, and no photoreal complexity.
 
 

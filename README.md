@@ -4,8 +4,9 @@ Jogo de faz de conta com interação inspirada em Avatar World: a criança movim
 manipula objetos, explora ambientes e cria suas próprias histórias, sem missões obrigatórias.
 
 - `docs/Fazenda_Capricho_GDD_Revisao3.docx` — documento de visão e design (GDD), Revisão 3.
-- `docs/especificacao_bob_andar.md` — especificação da próxima folha de animação (R02).
+- `docs/padrao_geracao_personagens.md` — padrão para gerar os personagens como folhas de pet (a partir da Nina v2).
 - `arte/animacoes/R01/` — entrega R01 de folhas de animação (espera/pulso) e marca.
+- `arte/animacoes/nina_pet_v2/` — Nina gerada como pet do ChatGPT (estilo 3D): folha final, etapas, prompts e referências.
 - `ferramentas/verificar_folha.py` — confere se uma folha de animação segue as regras do GDD.
 - `prototipo/` — protótipo de interação P-0 em Godot 4.4 (quarto da Catarina), feito para iPad deitado. Veja `prototipo/README.md`.
 - **Versão web para iPad:** <https://triade-prog.github.io/fazenda-capricho/> (GitHub Pages, servida da pasta `docs/`).

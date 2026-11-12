@@ -48,6 +48,7 @@ var press_screen := Vector2.ZERO
 var last_screen := Vector2.ZERO
 var panning := false
 var pan_velocity := 0.0
+var last_move_time := 0
 var press_toy: Toy = null
 var press_ui := ""
 var drag_toy: Toy = null
@@ -132,9 +133,9 @@ func _make_toys() -> void:
 	carol.lie_half_width = 70.0
 	carol.too_big_for.assign(["castelo"])
 
-	var nina := _add_character("nina", "res://assets/personagens/nina.png", 185.0, Vector2(600, 860))
-	nina.flips = true
-	nina.head_offset = Vector2(20, -128)
+	# Nina: primeira personagem com folha de pet (ações desenhadas): ver _add_pet().
+	var nina := _add_pet("nina", "res://assets/personagens/nina_pet.json", 185.0, Vector2(600, 860))
+	nina.head_offset = Vector2(0, -144)
 	nina.grab_offset = Vector2(0, -90)
 
 	var leo := _add_character("leo", "res://assets/personagens/leo.png", 105.0, Vector2(1400, 860))
@@ -167,6 +168,20 @@ func _add_character(kind: String, path: String, height: float, pos: Vector2) -> 
 	t.kind = kind
 	t.is_character = true
 	t.setup_sprite(load(path) as Texture2D, height)
+	t.position = pos
+	add_child(t)
+	toys.append(t)
+	return t
+
+
+## Personagem com folha no formato de pet (JSON ao lado da imagem, ver assets/personagens/nina_pet.json).
+func _add_pet(kind: String, json_path: String, height: float, pos: Vector2) -> Toy:
+	var data: Dictionary = (load(json_path) as JSON).data
+	var tex := load(json_path.get_base_dir().path_join(str(data["sheet"]))) as Texture2D
+	var t := Toy.new()
+	t.kind = kind
+	t.is_character = true
+	t.setup_atlas(tex, data, height)
 	t.position = pos
 	add_child(t)
 	toys.append(t)
@@ -326,7 +341,10 @@ func _drag_to(p: Vector2) -> void:
 	drag_toy.global_position = p + drag_offset
 	if absf(p.x - last_x) > 4.0:
 		drag_toy.face_left(p.x < last_x)
+		# folha de pet: corre para o lado em que está sendo levado
+		drag_toy.play_state("running-left" if p.x < last_x else "running-right")
 		last_x = p.x
+		last_move_time = Time.get_ticks_msec()
 	_update_highlight(_drop_point(p))
 
 
@@ -468,6 +486,7 @@ func _resolve(t: Toy, p: Vector2) -> Dictionary:
 
 
 func _drop(t: Toy, p: Vector2) -> void:
+	t.play_state("idle")
 	var plan := _resolve(t, p)
 	match str(plan["tipo"]):
 		"combo":
@@ -485,6 +504,20 @@ func _drop(t: Toy, p: Vector2) -> void:
 			_mount(t, plan["alvo"])
 		_:
 			_fall(t, t.global_position)
+			for s in slots:
+				if t.is_character and s.area.has_point(p) and not s.accepts(t):
+					_blocked(t)  # soltou num lugar onde não cabe
+					break
+
+
+## Reação de "não deu": orelhas baixas (folha de pet) ou balançar a cabeça.
+func _blocked(t: Toy) -> void:
+	_log("%s não cabe aqui" % t.kind)
+	if t.has_anim("failed"):
+		t.play_state("failed", "idle")
+	else:
+		_add_wiggle(t.play_anim(), t, 4, 5.0)
+	_bubble(t, "Hmm, aqui não cabe...")
 
 
 func _update_highlight(p: Vector2) -> void:
@@ -679,7 +712,9 @@ func _tap(t: Toy) -> void:
 	if not falas.is_empty():
 		fala = str(falas.pick_random())
 	var reacao := str(rule.get("reacao", ""))
-	if fala.begins_with("Atchim"):
+	if t.has_anim("waving"):
+		t.play_state("waving", "idle")  # folha de pet: acena com a pata
+	elif fala.begins_with("Atchim"):
 		_sneeze(t)
 	elif reacao == "girar":
 		var tw := t.play_anim()
@@ -721,6 +756,9 @@ func _do_combo(item: Toy, alvo: Toy, regra: Dictionary) -> void:
 			_nap(alvo, item)
 		_:
 			_hop(alvo, 20.0)
+	# folha de pet: a ação desenhada acompanha a reação
+	var acao := {"comer": "jumping", "brincar": "jumping", "escovar": "waiting", "cochilar": "waiting"}
+	alvo.play_state(str(acao.get(str(regra.get("reacao", "")), "jumping")), "idle")
 	_bubble(alvo, str(regra.get("fala", "")))
 
 
@@ -894,9 +932,36 @@ func _find(kind: String) -> Toy:
 
 # ---------------------------------------------------------------- vida no cenário
 
+## Quem tem as linhas de olhar da folha de pet acompanha com a cabeça o que está sendo arrastado.
+func _update_looks() -> void:
+	for t in toys:
+		if not t.has_anim("look-row-9") or t == drag_toy or t.lifted or t.busy or t.pose != "em_pe":
+			continue
+		var looking := t.anim_state.begins_with("look")
+		if not dragging or drag_toy == null:
+			if looking:
+				t.play_state("idle")
+			continue
+		if not looking and t.anim_state != "idle":
+			continue  # não interrompe um aceno ou um pulo
+		var d := drag_toy.global_position + drag_toy.grab_offset - t.head_global()
+		if d.length() > 900.0:
+			if looking:
+				t.play_state("idle")
+			continue
+		# 0° = para cima, sentido horário, 16 direções de 22,5°
+		var ang := fposmod(rad_to_deg(atan2(d.x, -d.y)), 360.0)
+		var idx := int(round(ang / 22.5)) % 16
+		t.hold_frame("look-row-9" if idx < 8 else "look-row-10", idx % 8)
+
+
 func _process(delta: float) -> void:
+	_update_looks()
 	if dragging:
 		_edge_scroll(delta)
+		if drag_toy and drag_toy.anim_state.begins_with("running") \
+				and Time.get_ticks_msec() - last_move_time > 250:
+			drag_toy.play_state("idle")  # parou de mexer o dedo
 	elif not panning and absf(pan_velocity) > 5.0:
 		camera_to(cam.position.x + pan_velocity * delta)
 		pan_velocity = lerpf(pan_velocity, 0.0, minf(1.0, 6.0 * delta))

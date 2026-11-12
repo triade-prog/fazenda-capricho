@@ -41,6 +41,16 @@ var anim_tween: Tween
 var _t := 0.0
 var _breath_speed := 2.2
 
+# Animação por folha no formato "pet" (uma linha da grade por ação): ver setup_atlas().
+var anim_rows := {}               # ação -> {"row", "frames", "ms", "loop"}
+var anim_state := ""
+var anim_frame := 0
+var anim_hold := false            # quadro parado (ex.: olhando numa direção)
+var _anim_t := 0.0
+var _anim_next := ""
+var _atlas_cols := 1
+var _atlas_size := Vector2.ZERO
+
 
 func setup_sprite(tex: Texture2D, display_height: float) -> void:
 	sprite = Sprite2D.new()
@@ -54,6 +64,79 @@ func setup_sprite(tex: Texture2D, display_height: float) -> void:
 	_t = randf() * TAU
 
 
+## Personagem animado por folha de pet: grade `cols` x `rows_count`, quadro `cell`, pés na linha
+## `ground_y` do quadro e altura do desenho `char_height` (em pixels do quadro).
+func setup_atlas(tex: Texture2D, data: Dictionary, display_height: float) -> void:
+	_atlas_cols = int(data["columns"])
+	var cell := Vector2(float(data["cell_width"]), float(data["cell_height"]))
+	sprite = Sprite2D.new()
+	sprite.texture = tex
+	sprite.hframes = _atlas_cols
+	sprite.vframes = int(data["rows_count"])
+	sprite.centered = false
+	sprite.offset = Vector2(-cell.x / 2.0, -float(data["ground_y"]))
+	var s := display_height / float(data["char_height"])
+	base_art_scale = Vector2(s, s)
+	_atlas_size = Vector2(display_height * 0.75, display_height)
+	art = sprite
+	add_child(sprite)
+	anim_rows = data["rows"]
+	_breath_speed = 0.0  # a respiração já está desenhada na linha "idle"
+	play_state("idle")
+	_anim_t = randf() * 150.0
+
+
+func has_anim(state: String) -> bool:
+	return anim_rows.has(state)
+
+
+## Toca uma ação da folha. Se `then` for dado, a ação toca uma vez e depois passa para `then`.
+func play_state(state: String, then: String = "") -> void:
+	if not anim_rows.has(state):
+		return
+	if state == anim_state and then == "" and not anim_hold:
+		return
+	anim_state = state
+	anim_frame = 0
+	anim_hold = false
+	_anim_t = 0.0
+	var row: Dictionary = anim_rows[state]
+	_anim_next = then if then != "" else ("" if bool(row["loop"]) else "idle")
+	_apply_frame()
+
+
+## Mostra um quadro parado de uma ação (usado para olhar numa direção).
+func hold_frame(state: String, index: int) -> void:
+	if not anim_rows.has(state):
+		return
+	anim_state = state
+	anim_frame = clampi(index, 0, int(anim_rows[state]["frames"]) - 1)
+	anim_hold = true
+	_anim_next = ""
+	_apply_frame()
+
+
+func _apply_frame() -> void:
+	var row: Dictionary = anim_rows[anim_state]
+	sprite.frame = int(row["row"]) * _atlas_cols + anim_frame
+
+
+func _advance_anim(delta: float) -> void:
+	if anim_rows.is_empty() or anim_hold or anim_state == "":
+		return
+	var row: Dictionary = anim_rows[anim_state]
+	_anim_t += delta * 1000.0
+	while _anim_t >= float(row["ms"]):
+		_anim_t -= float(row["ms"])
+		anim_frame += 1
+		if anim_frame >= int(row["frames"]):
+			if _anim_next != "":
+				play_state(_anim_next)
+				return
+			anim_frame = 0
+		_apply_frame()
+
+
 func setup_art(node: Node2D, radius: float) -> void:
 	art = node
 	hit_radius = radius
@@ -64,6 +147,8 @@ func setup_art(node: Node2D, radius: float) -> void:
 
 
 func display_size() -> Vector2:
+	if _atlas_size != Vector2.ZERO:
+		return _atlas_size
 	if sprite:
 		return sprite.texture.get_size() * base_art_scale
 	return Vector2(hit_radius * 2.0, hit_radius * 2.0)
@@ -80,6 +165,7 @@ func _draw() -> void:
 
 func _process(delta: float) -> void:
 	queue_redraw()
+	_advance_anim(delta)
 	_t += delta * _breath_speed
 	var lift := 1.08 if lifted else 1.0
 	var b := sin(_t) * 0.012

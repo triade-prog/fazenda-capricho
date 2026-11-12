@@ -2,7 +2,11 @@
 """Confere uma folha de animação da Fazenda Capricho contra as regras do GDD (seção 7).
 
 Uso:
+    python3 ferramentas/verificar_folha.py FOLHA.png --pet pet_request.json [--altura 150]
     python3 ferramentas/verificar_folha.py FOLHA.png --altura 340 [--chao 480] [--colunas 4 --linhas 2]
+
+O modo --pet confere uma folha no formato de pet do ChatGPT (padrão do projeto): uma linha por ação,
+com o número de quadros de cada linha lido do pet_request.json.
 
 Confere: tamanho divisível pela grade, fundo transparente, bordas dos quadros vazias (sem legendas
 ou molduras), linha do chão fixa em todos os quadros, altura do personagem dentro de ±3% e
@@ -21,10 +25,78 @@ def bbox_alpha(img):
     return a.getbbox()
 
 
+# altura mínima (px) para o personagem ficar nítido no iPad na escala da tabela do GDD
+MINIMO_NITIDO = 300
+
+# ações em que os pés saem do chão de propósito
+MOVIMENTO_LIVRE = {"jumping", "running-right", "running-left"}
+
+
+def magenta(px):
+    """Sobra do fundo de recorte #FF00FF: tom entre roxo e magenta (280°–320°), bem saturado.
+    Rosa de língua e orelha (tom acima de 330°) não conta."""
+    import colorsys
+
+    r, g, b, a = px
+    if a < 40:
+        return False
+    h, sat, v = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
+    return 0.78 <= h <= 0.89 and sat > 0.3 and v > 0.55
+
+
+def verificar_pet(sheet, request_path, altura):
+    import json
+
+    req = json.load(open(request_path, encoding="utf-8"))
+    at = req["atlas"]
+    cw, ch = at["cell_width"], at["cell_height"]
+    falhas, avisos = [], []
+    if sheet.size != (at["width"], at["height"]):
+        falhas.append(f"tamanho {sheet.size} diferente do combinado {at['width']}x{at['height']}")
+    usados = {}
+    ref_altura = None
+    for r in req["rows"]:
+        usados[r["row"]] = r["frames"]
+        chao, alt, resid = [], [], 0
+        for c in range(r["frames"]):
+            q = sheet.crop((c * cw, r["row"] * ch, (c + 1) * cw, (r["row"] + 1) * ch))
+            bb = bbox_alpha(q)
+            if bb is None:
+                falhas.append(f"{r['state']} quadro {c}: vazio")
+                continue
+            chao.append(bb[3])
+            alt.append(bb[3] - bb[1])
+            resid += sum(1 for px in (q.get_flattened_data() if hasattr(q, 'get_flattened_data') else q.getdata()) if magenta(px))
+        if not alt:
+            continue
+        if r["state"] == "idle":
+            ref_altura = max(alt)
+        livre = r["state"] in MOVIMENTO_LIVRE
+        print(f"  {r['state']:14s} {r['frames']} quadros  chão {min(chao)}–{max(chao)}  altura {min(alt)}–{max(alt)}"
+              f"  sobra magenta {resid}")
+        if not livre and max(chao) - min(chao) > 2:
+            falhas.append(f"{r['state']}: linha do chão varia {min(chao)}–{max(chao)} px")
+        if resid > 0:
+            avisos.append(f"{r['state']}: {resid} pixels com sobra do fundo magenta (conferir de perto)")
+    for row in range(at["rows"]):
+        for c in range(usados.get(row, 0), at["columns"]):
+            q = sheet.crop((c * cw, row * ch, (c + 1) * cw, (row + 1) * ch))
+            if bbox_alpha(q) is not None:
+                falhas.append(f"linha {row} quadro {c}: deveria estar vazio")
+    alvo = altura or ref_altura
+    if altura and ref_altura and abs(ref_altura - altura) / altura > 0.03:
+        falhas.append(f"altura na espera {ref_altura} px, esperada {altura:.0f} px (±3%)")
+    if ref_altura and ref_altura < MINIMO_NITIDO:
+        avisos.append(f"o personagem tem {ref_altura} px de altura: no iPad (tela 2x) ele aparece ampliado e fica "
+                      f"menos nítido; para nitidez, gerar com pelo menos {MINIMO_NITIDO} px (quadro ~2x maior)")
+    return falhas, avisos
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("folha")
-    ap.add_argument("--altura", type=float, required=True, help="altura esperada do personagem no quadro, em px")
+    ap.add_argument("--altura", type=float, default=None, help="altura esperada do personagem no quadro, em px")
+    ap.add_argument("--pet", default=None, help="pet_request.json da folha (formato de pet do ChatGPT)")
     ap.add_argument("--chao", type=int, default=None, help="linha do chão esperada (y), em px; padrão: não confere")
     ap.add_argument("--colunas", type=int, default=4)
     ap.add_argument("--linhas", type=int, default=2)
@@ -37,6 +109,19 @@ def main():
     if sheet.mode != "RGBA":
         falhas.append("a folha não tem canal de transparência (precisa ser PNG RGBA)")
         sheet = sheet.convert("RGBA")
+    if args.pet:
+        falhas, avisos = verificar_pet(sheet, args.pet, args.altura)
+        for a in avisos:
+            print("Aviso: " + a)
+        if falhas:
+            print("\nREPROVADA:")
+            for f in falhas:
+                print("  - " + f)
+            sys.exit(1)
+        print("\nAPROVADA")
+        return
+    if args.altura is None:
+        ap.error("--altura é obrigatório fora do modo --pet")
     w, h = sheet.size
     if w % args.colunas or h % args.linhas:
         falhas.append(f"tamanho {w}x{h} não divide em {args.colunas}x{args.linhas} quadros iguais")

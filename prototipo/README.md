@@ -9,6 +9,8 @@ brinquedo**: arrastar, segurar, posicionar e combinar personagens e objetos no q
 - **Personagens:** Catarina, Carol, Bob, Nina, Leo, Zoe e Lumi, com as imagens oficiais
   (`assets/personagens/`) na **tabela de escala** do GDD (Catarina = 300 px; Carol 1,35; Lumi 1,30;
   Nina 0,62; Bob 0,57; Zoe 0,42; Leo 0,35).
+- **Nina animada (folha de pet, estilo 3D):** corre ao ser arrastada, acena ao toque, pula ao ganhar
+  biscoito, fica triste quando não cabe e olha para o objeto que a criança arrasta.
 - **Marca:** abertura com a logo animada da entrega R01 (folha de 8 quadros) e ícone da ferradura
   na Tela de Início do iPad.
 - O quarto e os objetos ainda são **desenhos provisórios feitos por código**.
@@ -20,6 +22,7 @@ brinquedo**: arrastar, segurar, posicionar e combinar personagens e objetos no q
 | ![Quarto rolado para a direita com um gesto](capturas/02b_quarto_rolado.png) | ![Bob come o biscoito da mão da Catarina](capturas/03_bob_come.png) |
 | ![Catarina e Bob dormindo no beliche](capturas/04_dormindo_juntos.png) | ![Catarina no castelinho](capturas/05_castelinho_aberto.png) |
 | ![Catarina montada na Lumi](capturas/13_montada.png) | ![Abertura com a logo](capturas/00_abertura.png) |
+| ![Nina acenando ao toque](capturas/16_nina_acena.png) | ![Nina correndo enquanto é arrastada](capturas/17_nina_corre.png) |
 
 ## Abrir no iPad (versão web)
 
@@ -111,10 +114,11 @@ Para adicionar um personagem (ex.: Nina, Carol), basta uma chamada a `_add_chara
 
 ## Teste automático
 
-`testes/roteiro.tscn` simula toques **em coordenadas de tela**, como um dedo, e confere 24 itens:
+`testes/roteiro.tscn` simula toques **em coordenadas de tela**, como um dedo, e confere 33 itens:
 segurar, trocar, dar biscoito, pote, rolar o quarto com gesto, rolar levando um personagem até a
 borda, cama, castelinho, porta, escorregador, escada, cochilo, personagens novos no quarto, Nina
-comendo, montar na Lumi, passear montada, Lumi girando, Lumi barrada no castelinho e Carol na cama. Foi rodado nos tamanhos de tela
+comendo, montar na Lumi, passear montada, Lumi girando, Lumi barrada no castelinho, Carol na cama e as ações da Nina (acenar, correr para os dois lados, parar,
+olhar para o objeto arrastado, ficar triste com o castelinho cheio). Foi rodado nos tamanhos de tela
 iPad 9,7"/mini (1024 x 768, 4:3) e iPad Air (1180 x 820), além da versão web num navegador emulando
 um iPad Pro 11" com toque.
 
@@ -130,8 +134,8 @@ num tamanho de iPad: `--resolution 1180x820`.
 - Personagens são imagens únicas: "abanar o rabo", "piscar" e "andar" são simulados com o corpo
   inteiro (balançar, pular, amassar). As animações reais dependem da arte em partes separadas (GDD, seção 7).
 - Montada na Lumi, a Catarina aparece em pé na sela: a pose sentada depende da folha `catarina_sentada`.
-- As animações de espera da R01 não foram usadas nos personagens (a respiração é feita pelo jogo);
-  ver `docs/especificacao_bob_andar.md`.
+- Só a Nina tem animações desenhadas (folha de pet). Os outros personagens ainda são imagens únicas
+  com respiração feita pelo jogo; ver `docs/padrao_geracao_personagens.md`.
 - Sem sons, sem salvamento e sem troca de ambiente.
 - A versão web foi testada no Chromium emulando um iPad; ainda falta testar no Safari de um iPad de verdade.
 - Os textos que aparecem nas falas usam a fonte padrão do Godot; a fonte do jogo ainda será escolhida.

@@ -1,6 +1,6 @@
 Create ChatGPT pet row `running-right` for `nina`: exactly 8 full-body frames in one horizontal strip on flat pure magenta #FF00FF.
 
-Use the attached canonical base for identity and the layout guide only for spacing. Same pet in every frame: Preserve approved Nina grey-white husky puppy warm brown eyes orange spacesuit grey collar and trim uncovered paws ears head tail. Canonical approved image /Users/carolina/Documents/Pets/Nina/visual-aprovado.png. Preserve silhouette, face, palette, material, proportions, markings, and props.
+Use the attached canonical base for identity and the layout guide only for spacing. Same pet in every frame: Preserve approved Nina grey-white husky puppy warm brown eyes orange spacesuit grey collar and trim uncovered paws ears head tail. Canonical approved image ~/Documents/Pets/Nina/visual-aprovado.png. Preserve silhouette, face, palette, material, proportions, markings, and props.
 
 Keep apparent pet scale and baseline stable within the row unless the state itself intentionally changes vertical position, such as `jumping`.
 
