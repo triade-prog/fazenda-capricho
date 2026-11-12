@@ -1,0 +1,11 @@
+FAZENDA CAPRICHO — CONCEITOS VISUAIS R01
+
+Estudos extraídos de painéis visuais gerados com IA para avaliação estética. Não são assets prontos para o motor do jogo.
+
+01 Entrada da fazenda: proposta visual extra (posição e detalhes não aprovados).
+02 Casa principal: estudo do exterior. No GDD a casa deve ser grande, rosa e colorida com detalhes de madeira; a proposta ainda deve ser ajustada para intensificar essa definição.
+03 Estábulo: estudo da área da Lumi; o pasto florido deve ser ampliado no cenário jogável.
+04 Pátio / casa na árvore: referência inicial; NÃO é a versão final — ainda requer árvore rosa, escada de corda e escorregador rosa/roxo mágico.
+05 Quarto da Catarina: referência de continuidade visual, não um novo ambiente.
+
+Ainda pendentes imagens fiéis ao GDD: cabana externa, casinha de madeira da Catarina, quarto de Carol e casa na árvore rosa completa.
