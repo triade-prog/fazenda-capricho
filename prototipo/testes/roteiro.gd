@@ -25,14 +25,18 @@ func _roteiro() -> void:
 	var bob: Toy = main._find("bob")
 	await _foto("01_inicio")
 
-	await _arrasta(Vector2(480, 660), Vector2(720, 600))
+	await _arrasta(Vector2(480, 660), Vector2(720, 560))
 	_confere(cat.held_item != null and cat.held_item.kind == "pelucia", "Catarina segura a pelúcia")
 	await _foto("02_segura_pelucia")
 
-	await _arrasta(Vector2(1330, 532), Vector2(720, 600))
+	var x0: float = main.cam.position.x
+	await _mostra(1400.0)
+	_confere(main.cam.position.x > x0 + 100.0, "gesto no espaço vazio rola o quarto")
+	await _foto("02b_quarto_rolado")
+	await _arrasta(Vector2(1330, 532), Vector2(720, 560))
 	_confere(cat.held_item != null and cat.held_item.kind == "biscoito", "troca: Catarina segura o biscoito")
 
-	await _arrasta(Vector2(720, 600), Vector2(1060, 690), 0.25)
+	await _arrasta(cat.global_position + Vector2(0, -150), Vector2(1060, 660), 0.25)
 	await _foto("03_bob_come")
 	await _espera(0.6)
 	_confere(main._count("biscoito") == 0, "Bob comeu o biscoito da mão da Catarina")
@@ -42,8 +46,12 @@ func _roteiro() -> void:
 	await _espera(0.8)
 	_confere(main._count("biscoito") == 1, "pote de biscoitos deu um biscoito")
 
+	main.camera_to(1600.0)
+	await _espera(0.2)
+	var cam_antes: float = main.cam.position.x
 	var p := cat.global_position + Vector2(0, -150)
 	await _arrasta(p, Vector2(300, 200))
+	_confere(main.cam.position.x < cam_antes - 100.0, "levar a Catarina até a borda rola o quarto")
 	_confere(cat.pose == "deitado", "Catarina deitou no beliche")
 	p = bob.global_position + Vector2(0, -85)
 	await _arrasta(p, Vector2(330, 200))
@@ -94,6 +102,8 @@ func _roteiro() -> void:
 
 
 # ---------------------------------------------------------------- utilidades
+# Todos os toques são enviados em coordenadas de TELA, como um dedo de verdade no iPad.
+# Se o destino está fora da tela, o dedo vai até a borda e espera o quarto rolar.
 
 func _confere(ok: bool, o_que: String) -> void:
 	print(("  ok    " if ok else "  FALHA ") + o_que)
@@ -105,32 +115,85 @@ func _espera(s: float) -> void:
 	await get_tree().create_timer(s).timeout
 
 
-func _evento_toque(pos: Vector2, pressed: bool) -> void:
+func _vis() -> Vector2:
+	return get_viewport().get_visible_rect().size
+
+
+func _na_tela(wp: Vector2, margem: float = 150.0) -> bool:
+	var sp: Vector2 = main.world_to_screen(wp)
+	return sp.x > margem and sp.x < _vis().x - margem
+
+
+func _evento(sp: Vector2, pressed: bool) -> void:
 	var e := InputEventScreenTouch.new()
 	e.index = 0
-	e.position = pos
+	e.position = sp
 	e.pressed = pressed
 	main._unhandled_input(e)
 
 
-func _toca(pos: Vector2) -> void:
-	_evento_toque(pos, true)
+func _move(sp: Vector2) -> void:
+	var d := InputEventScreenDrag.new()
+	d.index = 0
+	d.position = sp
+	main._unhandled_input(d)
+
+
+## Arrasta o dedo de sp_de até sp_para (tela), em passos, um por quadro.
+func _desliza(sp_de: Vector2, sp_para: Vector2, passos: int = 12) -> void:
+	for i in range(1, passos + 1):
+		_move(sp_de.lerp(sp_para, float(i) / passos))
+		await get_tree().process_frame
+
+
+## Rola o quarto com um gesto no espaço vazio da parede até a posição x ficar visível.
+func _mostra(x: float) -> void:
+	for tentativa in 5:
+		if _na_tela(Vector2(x, 450)):
+			return
+		var zoom: float = main.cam.zoom.x
+		var dx := clampf((main.cam.position.x - x) * zoom, -_vis().x * 0.6, _vis().x * 0.6)
+		var y: float = main.world_to_screen(Vector2(0, 110)).y
+		var de := Vector2(_vis().x / 2.0 - dx / 2.0, y)
+		_evento(de, true)
+		await get_tree().process_frame
+		await _desliza(de, de + Vector2(dx, 0), 8)
+		var antes: float = main.cam.position.x
+		_evento(de + Vector2(dx, 0), false)
+		await _espera(0.6)
+		if is_equal_approx(antes, main.cam.position.x) and absf(dx) > 1.0 and tentativa > 0:
+			return  # já está no fim do quarto
+
+
+func _toca(wp: Vector2) -> void:
+	await _mostra(wp.x)
+	var sp: Vector2 = main.world_to_screen(wp)
+	_evento(sp, true)
 	await get_tree().process_frame
-	_evento_toque(pos, false)
+	_evento(sp, false)
 	await _espera(0.35)
 
 
+## Pega em `de` e solta com o corpo do personagem em `para` (coordenadas do quarto).
 func _arrasta(de: Vector2, para: Vector2, espera_final: float = 0.6) -> void:
-	_evento_toque(de, true)
+	await _mostra(de.x)
+	var sp: Vector2 = main.world_to_screen(de)
+	_evento(sp, true)
 	await get_tree().process_frame
-	var passos := 12
-	for i in range(1, passos + 1):
-		var d := InputEventScreenDrag.new()
-		d.index = 0
-		d.position = de.lerp(para, float(i) / passos)
-		main._unhandled_input(d)
-		await get_tree().process_frame
-	_evento_toque(para, false)
+	var dedo := para + Vector2(0, main.LIFT)  # o personagem fica acima do dedo
+	if not _na_tela(dedo, 160.0):
+		# leva o dedo até a borda e espera o quarto rolar
+		var borda_x := 50.0 if dedo.x < main.screen_to_world(sp).x else _vis().x - 50.0
+		var borda := Vector2(borda_x, main.world_to_screen(dedo).y)
+		await _desliza(sp, borda)
+		sp = borda
+		var parado := 0
+		while not _na_tela(dedo, 160.0) and parado < 5:
+			var antes: float = main.cam.position.x
+			await get_tree().process_frame
+			parado = parado + 1 if main.cam.position.x == antes else 0  # chegou ao fim do quarto
+	await _desliza(sp, main.world_to_screen(dedo))
+	_evento(main.world_to_screen(dedo), false)
 	await _espera(espera_final)
 
 

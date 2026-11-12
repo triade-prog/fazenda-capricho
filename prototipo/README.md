@@ -3,24 +3,40 @@
 Primeiro protótipo jogável, previsto na seção 8 do GDD (Revisão 2). Ele testa **apenas a base do
 brinquedo**: arrastar, segurar, posicionar e combinar personagens e objetos no quarto da Catarina.
 
-- **Motor:** Godot 4.4 (renderizador *Compatibility*, que roda em celular, computador e web).
+- **Plataforma-alvo: iPad, deitado (paisagem)**, no estilo Avatar World: o quarto é mais largo que a
+  tela, a altura inteira cabe, e a criança rola para os lados com o dedo.
+- **Motor:** Godot 4.4 (renderizador *Compatibility*), exportado para **web** (abre no Safari do iPad).
 - **Arte:** Catarina e Bob usam as imagens oficiais (`assets/personagens/`). O quarto e os objetos são
   **desenhos provisórios feitos por código**, para testar a interação antes de produzir a arte final.
 
-![Quarto da Catarina no P-0](capturas/01_inicio.png)
+![Quarto da Catarina no iPad Air (1180 x 820)](capturas/01_inicio.png)
 
 | | |
 |---|---|
-| ![Bob come o biscoito da mão da Catarina](capturas/03_bob_come.png) | ![Catarina e Bob dormindo no beliche](capturas/04_dormindo_juntos.png) |
-| ![Catarina no castelinho](capturas/05_castelinho_aberto.png) | ![Descendo o escorregador](capturas/07_escorregador.png) |
+| ![Quarto rolado para a direita com um gesto](capturas/02b_quarto_rolado.png) | ![Bob come o biscoito da mão da Catarina](capturas/03_bob_come.png) |
+| ![Catarina e Bob dormindo no beliche](capturas/04_dormindo_juntos.png) | ![Catarina no castelinho](capturas/05_castelinho_aberto.png) |
 
-## Como abrir
+## Abrir no iPad (versão web)
+
+**Endereço:** <https://triade-prog.github.io/fazenda-capricho/>
+
+1. Abra o endereço no **Safari** do iPad, com o iPad deitado.
+2. Para ficar em tela cheia, como um app: botão **Compartilhar → Adicionar à Tela de Início**,
+   e abra pelo ícone "Fazenda Capricho".
+
+A versão web é gerada e publicada automaticamente pelo GitHub Actions
+(`.github/workflows/web.yml`) a cada mudança na pasta `prototipo/`, **depois** de passar no roteiro
+automático de interações. Na primeira vez, é preciso ativar o GitHub Pages: no repositório,
+**Settings → Pages → Source: GitHub Actions**.
+
+## Abrir no computador (Godot)
 
 1. Instale o [Godot 4.4](https://godotengine.org/download) (versão padrão, não a .NET).
 2. No Godot, clique em **Importar** e escolha o arquivo `prototipo/project.godot`.
 3. Pressione **F5** (ou o botão ▶) para rodar.
 
-O mouse funciona como um dedo: clicar = tocar, clicar e arrastar = pegar.
+O mouse funciona como um dedo: clicar = tocar, clicar e arrastar = pegar. A janela abre no tamanho
+de um iPad Air deitado (1180 x 820).
 
 ## O que dá para fazer
 
@@ -40,9 +56,17 @@ O mouse funciona como um dedo: clicar = tocar, clicar e arrastar = pegar.
 | Abrir/fechar a portinha roxa | Tocar na porta (com a porta fechada, quem está dentro fica escondido) |
 | Ganhar biscoitos | Tocar no pote de biscoitos na mesinha (até 3 no quarto) |
 | Reações rápidas | Tocar no Bob ("Au, au!" ou "Atchim!"), na Catarina, nos objetos |
+| Rolar o quarto | Arrastar o dedo num espaço vazio (parede ou chão); solto, o quarto continua deslizando um pouco |
+| Levar alguém para o outro lado do quarto | Arrastar o personagem até a borda da tela: o quarto rola junto |
 
-Enquanto algo está sendo arrastado, o lugar ou o personagem que vai receber o soltar **brilha**,
-para a criança saber o que vai acontecer antes de soltar.
+Pensado para dedos no iPad:
+
+- o personagem pego fica **um pouco acima do dedo**, para o dedo não cobrir o rosto;
+- tocar tem uma folga de 14 px e **soltar em cima** de alguém tem folga de 40 px, para a criança
+  não precisar acertar exatamente o corpo do Bob;
+- enquanto algo está sendo arrastado, o lugar ou o personagem que vai receber o soltar **brilha**;
+- só um dedo vale por vez: um segundo dedo na tela é ignorado, para não haver confusão;
+- sombra nos pés de quem está em pé, para mostrar onde cada coisa está apoiada.
 
 ## Onde mexer
 
@@ -59,7 +83,8 @@ Para adicionar um personagem (ex.: Nina, Carol), basta uma chamada a `_add_chara
 
 ## Roteiro de teste (critério de aceite do P-0)
 
-- [ ] Arrastar Catarina e Bob pelo quarto com mouse **e** com toque (celular/tablet).
+- [ ] Abrir a versão web num iPad de verdade (Safari), deitado, e adicionar à Tela de Início.
+- [ ] Arrastar Catarina e Bob pelo quarto e rolar o quarto com o dedo.
 - [ ] Colocar pelúcia, escova e biscoito na mão da Catarina; trocar o que ela segura.
 - [ ] Deitar a Catarina no beliche (com e sem o Bob junto).
 - [ ] Descer o escorregador e subir a escada.
@@ -69,18 +94,23 @@ Para adicionar um personagem (ex.: Nina, Carol), basta uma chamada a `_add_chara
 
 ## Teste automático
 
-`testes/roteiro.tscn` simula toques e confere 15 interações (segurar, trocar, dar biscoito, pote,
-cama, castelinho, porta, escorregador, escada, cochilo):
+`testes/roteiro.tscn` simula toques **em coordenadas de tela**, como um dedo, e confere 17 itens:
+segurar, trocar, dar biscoito, pote, rolar o quarto com gesto, rolar levando um personagem até a
+borda, cama, castelinho, porta, escorregador, escada e cochilo. Foi rodado nos tamanhos de tela
+iPad 9,7"/mini (1024 x 768, 4:3) e iPad Air (1180 x 820), além da versão web num navegador emulando
+um iPad Pro 11" com toque.
 
 ```bash
 godot --headless --path prototipo res://testes/roteiro.tscn
 ```
 
-Com `-- --capturas=/pasta` (e sem `--headless`) ele também salva as capturas de tela.
+Com `-- --capturas=/pasta` (e sem `--headless`) ele também salva as capturas de tela. Para testar
+num tamanho de iPad: `--resolution 1180x820`.
 
 ## Limitações conhecidas (esperadas nesta fase)
 
 - Personagens são imagens únicas: "abanar o rabo", "piscar" e "andar" são simulados com o corpo
   inteiro (balançar, pular, amassar). As animações reais dependem da arte em partes separadas (GDD, seção 7).
 - Sem sons, sem salvamento e sem troca de ambiente.
-- O protótipo ainda não foi exportado para Android/iOS/web; isso será feito depois da validação no computador.
+- A versão web foi testada no Chromium emulando um iPad; ainda falta testar no Safari de um iPad de verdade.
+- Os textos que aparecem nas falas usam a fonte padrão do Godot; a fonte do jogo ainda será escolhida.

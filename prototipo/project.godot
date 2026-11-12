@@ -13,12 +13,13 @@ config/icon="res://icon.svg"
 [display]
 
 window/size/viewport_width=1600
-window/size/viewport_height=900
-window/size/window_width_override=1280
-window/size/window_height_override=720
+window/size/viewport_height=1200
+window/size/window_width_override=1180
+window/size/window_height_override=820
 window/stretch/mode="canvas_items"
-window/stretch/aspect="keep"
+window/stretch/aspect="expand"
 window/handheld/orientation=4
+window/energy_saving/keep_screen_on=true
 
 [input_devices]
 

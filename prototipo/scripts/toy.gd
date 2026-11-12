@@ -64,7 +64,17 @@ func display_size() -> Vector2:
 	return Vector2(hit_radius * 2.0, hit_radius * 2.0)
 
 
+## Sombra suave nos pés: ajuda a ler onde cada coisa está apoiada no chão.
+func _draw() -> void:
+	if holder != null or pose != "em_pe" or busy:
+		return
+	var w := display_size().x * (0.32 if is_character else 0.45)
+	var a := 0.06 if lifted else 0.13
+	draw_colored_polygon(Shapes.ellipse(Vector2.ZERO, Vector2(w, w * 0.16), 24), Color(0.35, 0.15, 0.3, a))
+
+
 func _process(delta: float) -> void:
+	queue_redraw()
 	_t += delta * _breath_speed
 	var lift := 1.08 if lifted else 1.0
 	var b := sin(_t) * 0.012
@@ -98,11 +108,16 @@ func face_left(left: bool) -> void:
 
 
 ## Toque generoso: alguns pixels de folga ao redor do desenho, pensando em dedos pequenos.
-func hit(p: Vector2) -> bool:
+## `slack` = folga em pixels: pequena para tocar, maior para soltar algo em cima.
+func hit(p: Vector2, slack: float = 14.0) -> bool:
 	if sprite == null:
 		var c := to_global(Vector2(0, -hit_radius))
-		return c.distance_to(p) <= hit_radius + 10.0
-	for o in [Vector2.ZERO, Vector2(14, 0), Vector2(-14, 0), Vector2(0, 14), Vector2(0, -14)]:
+		return c.distance_to(p) <= hit_radius + maxf(10.0, slack)
+	var offsets: Array[Vector2] = [Vector2.ZERO]
+	for ring in [slack * 0.5, slack]:
+		for i in 8:
+			offsets.append(Vector2.from_angle(TAU * i / 8.0) * ring)
+	for o in offsets:
 		var lp := sprite.to_local(p + o)
 		if sprite.get_rect().has_point(lp) and sprite.is_pixel_opaque(lp):
 			return true

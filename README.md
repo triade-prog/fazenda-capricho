@@ -4,7 +4,8 @@ Jogo de faz de conta com interação inspirada em Avatar World: a criança movim
 manipula objetos, explora ambientes e cria suas próprias histórias, sem missões obrigatórias.
 
 - `docs/Fazenda_Capricho_GDD_Revisao2.docx` — documento de visão e design (GDD), Revisão 2.
-- `prototipo/` — protótipo de interação P-0 em Godot 4.4 (quarto da Catarina). Veja `prototipo/README.md`.
+- `prototipo/` — protótipo de interação P-0 em Godot 4.4 (quarto da Catarina), feito para iPad deitado. Veja `prototipo/README.md`.
+- **Versão web para iPad:** <https://triade-prog.github.io/fazenda-capricho/> (publicada pelo GitHub Actions).
 - `arte/personagens/` — imagens oficiais dos personagens (versão final; prevalecem sobre o texto do GDD).
 
 | Arquivo | Personagem |

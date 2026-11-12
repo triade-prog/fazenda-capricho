@@ -25,8 +25,13 @@ const DRAG_START := 10.0
 const JAR_RECT := Rect2(1360, 448, 108, 112)
 const MAX_COOKIES := 3
 const TEXT_COLOR := Color("#7a3fa8")
+const DROP_SLACK := 40.0    # folga ao soltar algo sobre um personagem
+const LIFT := 40.0          # quanto o personagem sobe acima do dedo ao ser pego
+const EDGE := 110.0         # faixa da borda da tela que faz o quarto rolar
+const EDGE_SPEED := 650.0
 
 var castle: CastleFront
+var cam: Camera2D
 var toys: Array[Toy] = []
 var slots: Array[Slot] = []
 var slot_castelo: Slot
@@ -39,6 +44,10 @@ var combos := {}
 var taps := {}
 
 var press_pos := Vector2.ZERO
+var press_screen := Vector2.ZERO
+var last_screen := Vector2.ZERO
+var panning := false
+var pan_velocity := 0.0
 var press_toy: Toy = null
 var press_ui := ""
 var drag_toy: Toy = null
@@ -58,6 +67,7 @@ func _ready() -> void:
 	add_child(castle)
 	_make_slots()
 	_make_toys()
+	_setup_camera()
 
 
 # ---------------------------------------------------------------- montagem da cena
@@ -137,34 +147,71 @@ func _add_item(kind: String, radius: float, pos: Vector2) -> Toy:
 	return t
 
 
+# ---------------------------------------------------------------- câmera (iPad, estilo Avatar World)
+# O quarto (1600 x 900) é mais largo que a tela do iPad: a altura inteira cabe e a criança rola
+# para os lados arrastando o dedo num espaço vazio, ou levando um personagem até a borda.
+
+func _setup_camera() -> void:
+	cam = Camera2D.new()
+	add_child(cam)
+	cam.make_current()
+	get_viewport().size_changed.connect(_fit_camera)
+	_fit_camera()
+	camera_to(720.0)
+
+
+func _fit_camera() -> void:
+	var vis := get_viewport().get_visible_rect().size
+	var z := vis.y / H
+	cam.zoom = Vector2(z, z)
+	camera_to(cam.position.x)
+
+
+func camera_to(x: float) -> void:
+	var half := get_viewport().get_visible_rect().size.x / cam.zoom.x / 2.0
+	cam.position = Vector2(clampf(x, half, maxf(half, W - half)), H / 2.0)
+
+
+func screen_to_world(sp: Vector2) -> Vector2:
+	var vis := get_viewport().get_visible_rect().size
+	return cam.position + (sp - vis / 2.0) / cam.zoom.x
+
+
+func world_to_screen(wp: Vector2) -> Vector2:
+	var vis := get_viewport().get_visible_rect().size
+	return (wp - cam.position) * cam.zoom.x + vis / 2.0
+
+
 # ---------------------------------------------------------------- entrada (toque e mouse)
 
 func _unhandled_input(event: InputEvent) -> void:
 	# O mouse é convertido em toque (emulate_touch_from_mouse), então só tratamos toque.
+	# Um dedo de cada vez: outros dedos na tela são ignorados.
 	if event is InputEventScreenTouch:
 		var st := event as InputEventScreenTouch
 		if st.pressed:
 			if touch_index == -1:
 				touch_index = st.index
-				_on_press(_to_world(st.position))
+				_on_press(st.position)
 		elif st.index == touch_index:
 			touch_index = -1
-			_on_release(_to_world(st.position))
+			_on_release(st.position)
 	elif event is InputEventScreenDrag:
 		var sd := event as InputEventScreenDrag
 		if sd.index == touch_index:
-			_on_move(_to_world(sd.position))
+			_on_move(sd.position)
 
 
-func _to_world(p: Vector2) -> Vector2:
-	return get_canvas_transform().affine_inverse() * p
-
-
-func _on_press(p: Vector2) -> void:
+func _on_press(sp: Vector2) -> void:
+	var p := screen_to_world(sp)
 	press_pos = p
+	press_screen = sp
+	last_screen = sp
 	press_toy = null
 	press_ui = ""
 	dragging = false
+	panning = false
+	pan_velocity = 0.0
 	var t := _toy_at(p, [])
 	if t and t.z_index > castle.z_index:
 		press_toy = t
@@ -174,47 +221,92 @@ func _on_press(p: Vector2) -> void:
 		press_toy = t
 	elif JAR_RECT.has_point(p):
 		press_ui = "pote"
+	else:
+		press_ui = "rolar"
 
 
-func _on_move(p: Vector2) -> void:
-	if press_toy and not dragging and p.distance_to(press_pos) > DRAG_START:
-		_start_drag(press_toy, p)
+func _on_move(sp: Vector2) -> void:
+	var moved := sp.distance_to(press_screen) > DRAG_START
+	if press_toy and not dragging and moved:
+		_start_drag(press_toy, screen_to_world(sp))
+	elif press_ui == "rolar" and moved:
+		panning = true
+	if panning:
+		var dx := (sp.x - last_screen.x) / cam.zoom.x
+		camera_to(cam.position.x - dx)
+		pan_velocity = clampf(-dx / maxf(get_process_delta_time(), 0.001), -2500.0, 2500.0)
+	last_screen = sp
 	if dragging:
-		p = p.clamp(Vector2(10, 10), Vector2(W - 10, H - 10))
-		drag_toy.global_position = p + drag_offset
-		if absf(p.x - last_x) > 4.0:
-			drag_toy.face_left(p.x < last_x)
-			last_x = p.x
-		_update_highlight(p)
+		_drag_to(screen_to_world(sp))
 
 
-func _on_release(p: Vector2) -> void:
+func _drag_to(p: Vector2) -> void:
+	p = p.clamp(Vector2(10, 10), Vector2(W - 10, H - 10))
+	drag_toy.global_position = p + drag_offset
+	if absf(p.x - last_x) > 4.0:
+		drag_toy.face_left(p.x < last_x)
+		last_x = p.x
+	_update_highlight(_drop_point(p))
+
+
+## O personagem fica um pouco acima do dedo (para o dedo não cobrir o rosto);
+## o que conta para soltar é o ponto do corpo, não a ponta do dedo.
+func _drop_point(finger: Vector2) -> Vector2:
+	return finger + Vector2(0, -LIFT)
+
+
+func _on_release(sp: Vector2) -> void:
+	var p := screen_to_world(sp)
 	if dragging:
 		var t := drag_toy
 		dragging = false
 		drag_toy = null
 		_clear_highlight()
 		t.lifted = false
-		_drop(t, p.clamp(Vector2(10, 10), Vector2(W - 10, H - 10)))
+		var fp := p.clamp(Vector2(10, 10), Vector2(W - 10, H - 10))
+		_drop(t, _drop_point(fp))
+	elif panning:
+		panning = false  # continua rolando um pouco (inércia), em _process
 	elif press_toy:
 		_tap(press_toy)
 	elif press_ui == "porta":
 		castle.toggle()
 		_sparkle(CastleFront.DOOR_CENTER, 4)
+		_log("porta " + ("aberta" if castle.is_open else "fechada"))
 	elif press_ui == "pote":
 		_spawn_cookie()
 	press_toy = null
 	press_ui = ""
 
 
-func _toy_at(p: Vector2, exclude: Array) -> Toy:
+## Enquanto arrasta perto da borda da tela, o quarto rola junto (como no Avatar World).
+func _edge_scroll(delta: float) -> void:
+	var vis := get_viewport().get_visible_rect().size
+	var dir := 0.0
+	if last_screen.x < EDGE:
+		dir = -1.0
+	elif last_screen.x > vis.x - EDGE:
+		dir = 1.0
+	if dir == 0.0:
+		return
+	var before := cam.position.x
+	camera_to(cam.position.x + dir * EDGE_SPEED * delta)
+	if cam.position.x != before:
+		_drag_to(screen_to_world(last_screen))
+
+
+func _log(msg: String) -> void:
+	print("[P-0] ", msg)
+
+
+func _toy_at(p: Vector2, exclude: Array, slack: float = 14.0) -> Toy:
 	var best: Toy = null
 	for t in toys:
 		if t in exclude or t.busy or not t.visible:
 			continue
 		if t.slot == slot_castelo and not castle.is_open:
 			continue  # escondido atrás da porta fechada
-		if t.hit(p) and (best == null or t.z_index > best.z_index):
+		if t.hit(p, slack) and (best == null or t.z_index > best.z_index):
 			best = t
 	return best
 
@@ -233,7 +325,7 @@ func _start_drag(t: Toy, p: Vector2) -> void:
 	t.pose = "em_pe"
 	t.lifted = true
 	t.z_index = 450
-	drag_offset = -t.grab_offset
+	drag_offset = -t.grab_offset + Vector2(0, -LIFT)
 	last_x = p.x
 
 
@@ -249,7 +341,7 @@ func _leave_slot(t: Toy) -> void:
 ## Decide o que aconteceria se `t` fosse solto no ponto `p`.
 func _resolve(t: Toy, p: Vector2) -> Dictionary:
 	if not t.is_character:
-		var alvo := _toy_at(p, [t])
+		var alvo := _toy_at(p, [t], DROP_SLACK)
 		if alvo and alvo.holder:
 			alvo = alvo.holder  # soltou sobre o que alguém segura: vale a pessoa
 		if alvo:
@@ -263,7 +355,7 @@ func _resolve(t: Toy, p: Vector2) -> Dictionary:
 	var excl: Array = [t]
 	if t.held_item:
 		excl.append(t.held_item)
-	var other := _toy_at(p, excl)
+	var other := _toy_at(p, excl, DROP_SLACK)
 	if other and other.holder and other.holder != t:
 		other = other.holder
 	if other:
@@ -338,6 +430,7 @@ func _attach(item: Toy, who: Toy) -> void:
 	who.held_item = item
 	_pop(item)
 	_sparkle(who.hand_global(), 3)
+	_log("%s segura %s" % [who.kind, item.kind])
 
 
 ## Cai até a superfície logo abaixo (colchão, mesinha ou piso).
@@ -390,6 +483,7 @@ func _enter_slot(t: Toy, s: Slot) -> void:
 		return
 	if s == slot_castelo:
 		castle.set_open(true)
+	_log("%s -> %s" % [t.kind, s.id])
 	s.occupants[i] = t
 	t.slot = s
 	t.spot_index = i
@@ -438,6 +532,7 @@ func _slide_step(v: float, t: Toy) -> void:
 
 
 func _slide_end(t: Toy) -> void:
+	_log("%s desceu o escorregador" % t.kind)
 	t.busy = false
 	t.art.rotation = 0.0
 	_fall(t, t.global_position + Vector2(40, 12))
@@ -458,6 +553,7 @@ func _climb(t: Toy) -> void:
 
 
 func _climb_end(t: Toy) -> void:
+	_log("%s subiu a escada" % t.kind)
 	t.busy = false
 	for s in slots:
 		if s.id == "cama" and s.free_spot() >= 0:
@@ -469,6 +565,7 @@ func _climb_end(t: Toy) -> void:
 # ---------------------------------------------------------------- reações
 
 func _tap(t: Toy) -> void:
+	_log("toque " + t.kind)
 	if t.pose == "deitado" or t.pose == "cochilando":
 		_bubble(t, "Zzz...")
 		_hop(t, 8.0)
@@ -490,6 +587,7 @@ func _tap(t: Toy) -> void:
 
 
 func _do_combo(item: Toy, alvo: Toy, regra: Dictionary) -> void:
+	_log("%s + %s -> %s" % [item.kind, alvo.kind, str(regra.get("reacao", ""))])
 	match str(regra.get("reacao", "")):
 		"comer":
 			_consume(item, alvo)
@@ -580,6 +678,7 @@ func _spawn_cookie() -> void:
 		_float_text(JAR_RECT.get_center() + Vector2(0, -60), "Já tem biscoito!", 28)
 		return
 	var c := _add_item("biscoito", 26.0, Vector2(1414, 470))
+	_log("pote deu biscoito")
 	var tw := c.play_anim()
 	c.squash = Vector2(0.2, 0.2)
 	tw.tween_property(c, "squash", Vector2.ONE, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -687,6 +786,11 @@ func _find(kind: String) -> Toy:
 # ---------------------------------------------------------------- vida no cenário
 
 func _process(delta: float) -> void:
+	if dragging:
+		_edge_scroll(delta)
+	elif not panning and absf(pan_velocity) > 5.0:
+		camera_to(cam.position.x + pan_velocity * delta)
+		pan_velocity = lerpf(pan_velocity, 0.0, minf(1.0, 6.0 * delta))
 	zzz_timer -= delta
 	if zzz_timer <= 0.0:
 		zzz_timer = 1.1
