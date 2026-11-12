@@ -44,6 +44,25 @@ def magenta(px):
     return 0.78 <= h <= 0.89 and sat > 0.3 and v > 0.55
 
 
+def sobra_na_borda(q):
+    """Conta pixels com tom de magenta só na BORDA do desenho (semitransparentes ou encostados no fundo).
+    Roupas roxas ou lilás no meio do personagem não contam: sobra de recorte aparece na borda."""
+    from PIL import ImageFilter
+
+    a = q.getchannel("A")
+    fundo = a.point(lambda v: 255 if v < 128 else 0).filter(ImageFilter.MaxFilter(3))
+    n = 0
+    dados = q.load()
+    borda = fundo.load()
+    w, h = q.size
+    for y in range(h):
+        for x in range(w):
+            px = dados[x, y]
+            if px[3] >= 40 and (px[3] < 250 or borda[x, y]) and magenta(px):
+                n += 1
+    return n
+
+
 def verificar_pet(sheet, request_path, altura):
     import json
 
@@ -66,7 +85,7 @@ def verificar_pet(sheet, request_path, altura):
                 continue
             chao.append(bb[3])
             alt.append(bb[3] - bb[1])
-            resid += sum(1 for px in (q.get_flattened_data() if hasattr(q, 'get_flattened_data') else q.getdata()) if magenta(px))
+            resid += sobra_na_borda(q)
         if not alt:
             continue
         if r["state"] == "idle":

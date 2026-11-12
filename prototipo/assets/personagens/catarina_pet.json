@@ -1,0 +1,78 @@
+{
+  "_sobre": "Folha de pet de catarina, gerada por ferramentas/pet_para_jogo.py a partir de arte/animacoes/catarina_pet.",
+  "sheet": "catarina_pet.png",
+  "columns": 8,
+  "rows_count": 11,
+  "cell_width": 192,
+  "cell_height": 208,
+  "ground_y": 202,
+  "char_height": 148,
+  "rows": {
+    "idle": {
+      "row": 0,
+      "frames": 6,
+      "ms": 170,
+      "loop": true
+    },
+    "running-right": {
+      "row": 1,
+      "frames": 8,
+      "ms": 85,
+      "loop": true
+    },
+    "running-left": {
+      "row": 2,
+      "frames": 8,
+      "ms": 85,
+      "loop": true
+    },
+    "waving": {
+      "row": 3,
+      "frames": 4,
+      "ms": 140,
+      "loop": false
+    },
+    "jumping": {
+      "row": 4,
+      "frames": 5,
+      "ms": 110,
+      "loop": false
+    },
+    "failed": {
+      "row": 5,
+      "frames": 8,
+      "ms": 120,
+      "loop": false
+    },
+    "waiting": {
+      "row": 6,
+      "frames": 6,
+      "ms": 170,
+      "loop": true
+    },
+    "running": {
+      "row": 7,
+      "frames": 6,
+      "ms": 150,
+      "loop": true
+    },
+    "review": {
+      "row": 8,
+      "frames": 6,
+      "ms": 150,
+      "loop": true
+    },
+    "look-row-9": {
+      "row": 9,
+      "frames": 8,
+      "ms": 160,
+      "loop": true
+    },
+    "look-row-10": {
+      "row": 10,
+      "frames": 8,
+      "ms": 160,
+      "loop": true
+    }
+  }
+}

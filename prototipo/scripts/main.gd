@@ -109,11 +109,12 @@ func _add_slot(id: String, area: Rect2, spots: Array, pose: String, action: Stri
 
 
 func _make_toys() -> void:
-	var cat := _add_character("catarina", "res://assets/personagens/catarina.png", 300.0, Vector2(720, 730))
+	# Catarina: folha de pet 3D (arte/animacoes/catarina_pet), como a Nina.
+	var cat := _add_pet("catarina", "res://assets/personagens/catarina_pet.json", 300.0, Vector2(720, 730))
 	cat.can_hold = true
 	cat.can_lie = true
-	cat.hand_offset = Vector2(51, -102)    # mão direita (lado direito da tela)
-	cat.head_offset = Vector2(9, -235)
+	cat.hand_offset = Vector2(51, -95)     # mão direita (lado direito da tela), medida no quadro "idle"
+	cat.head_offset = Vector2(2, -244)
 	cat.grab_offset = Vector2(0, -150)
 	cat.lie_half_width = 60.0
 

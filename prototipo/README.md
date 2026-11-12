@@ -1,6 +1,6 @@
 # Fazenda Capricho — Protótipo de interação P-0
 
-Primeiro protótipo jogável, previsto na seção 8 do GDD (Revisão 3). Ele testa **apenas a base do
+Primeiro protótipo jogável, previsto na seção 8 do GDD (Revisão 4). Ele testa **apenas a base do
 brinquedo**: arrastar, segurar, posicionar e combinar personagens e objetos no quarto da Catarina.
 
 - **Plataforma-alvo: iPad, deitado (paisagem)**, no estilo Avatar World: o quarto é mais largo que a
@@ -9,7 +9,7 @@ brinquedo**: arrastar, segurar, posicionar e combinar personagens e objetos no q
 - **Personagens:** Catarina, Carol, Bob, Nina, Leo, Zoe e Lumi, com as imagens oficiais
   (`assets/personagens/`) na **tabela de escala** do GDD (Catarina = 300 px; Carol 1,35; Lumi 1,30;
   Nina 0,62; Bob 0,57; Zoe 0,42; Leo 0,35).
-- **Nina animada (folha de pet, estilo 3D):** corre ao ser arrastada, acena ao toque, pula ao ganhar
+- **Catarina e Nina animadas (folhas de pet 3D):** a Catarina acena, corre, pula, faz "ops" e olha para o que é arrastado; corre ao ser arrastada, acena ao toque, pula ao ganhar
   biscoito, fica triste quando não cabe e olha para o objeto que a criança arrasta.
 - **Marca:** abertura com a logo animada da entrega R01 (folha de 8 quadros) e ícone da ferradura
   na Tela de Início do iPad.

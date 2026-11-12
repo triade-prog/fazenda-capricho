@@ -136,6 +136,18 @@ func _roteiro() -> void:
 	await _espera(0.8)
 	await _foto("15_carol_cama")
 
+	# ---- Catarina com folha de pet 3D
+	main.camera_to(cat.global_position.x)
+	await _espera(0.2)
+	if cat.pose == "em_pe" and cat.mount == null:
+		await _toca(cat.global_position + Vector2(0, -150))
+	else:
+		await _arrasta(cat.to_global(Vector2(0, -150)), Vector2(900, 560))
+		await _toca(cat.global_position + Vector2(0, -150))
+	_confere(cat.anim_state == "waving", "Catarina (3D) acena ao ser tocada")
+	await _foto("15b_catarina_acena")
+	await _espera(0.8)
+
 	# ---- Nina com folha de pet (ações desenhadas)
 	main.camera_to(600.0)
 	await _espera(0.2)
