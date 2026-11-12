@@ -17,18 +17,29 @@ const SLIDE_P1 := Vector2(650, 590)
 const SLIDE_P2 := Vector2(830, 612)
 
 
+## Usado só para exportar os elementos separados (ferramentas/exportar_elementos):
+## com um nome de função aqui, desenha apenas aquele elemento.
+var only := ""
+
+
 func _ready() -> void:
 	z_index = -100
 
 
 func _draw() -> void:
+	if only != "":
+		call(only)
+		return
 	_wall()
+	_garland()
 	_door()
 	_picture()
 	_window()
 	_floor()
 	_rug()
-	_table_and_jar()
+	_table()
+	_jar()
+	_castle_interior()
 	_bunk_bed()
 	_ladder()
 	_slide()
@@ -44,7 +55,11 @@ func _wall() -> void:
 	draw_rect(Rect2(0, 0, ROOM_W, FLOOR_Y), Color("#ffd6e8"))
 	for x in range(0, int(ROOM_W), 80):
 		draw_rect(Rect2(x, 0, 36, FLOOR_Y), Color("#ffe0ee"))
-	# varal de coraçõezinhos
+	draw_rect(Rect2(0, FLOOR_Y - 14, ROOM_W, 14), Color("#f7a8c8"))
+
+
+## Varal de coraçõezinhos no alto da parede.
+func _garland() -> void:
 	var pts := PackedVector2Array()
 	for i in int(ROOM_W / 50.0) + 1:
 		var x := i * 50.0
@@ -53,7 +68,6 @@ func _wall() -> void:
 	for i in range(1, int(ROOM_W / 50.0), 2):
 		var col := PINK if i % 4 == 1 else PURPLE
 		draw_colored_polygon(Shapes.heart(11, pts[i] + Vector2(0, 14)), col)
-	draw_rect(Rect2(0, FLOOR_Y - 14, ROOM_W, 14), Color("#f7a8c8"))
 
 
 func _window() -> void:
@@ -101,12 +115,14 @@ func _rug() -> void:
 		draw_colored_polygon(Shapes.heart(10, Vector2(1000, 770) + Vector2(cos(a) * 230, sin(a) * 52)), Color.WHITE)
 
 
-func _table_and_jar() -> void:
-	# mesinha
+func _table() -> void:
 	_rect(Rect2(1300, 572, 14, 80), WOOD)
 	_rect(Rect2(1476, 572, 14, 80), WOOD)
 	_rect(Rect2(1280, 556, 230, 20), Color("#e9b07a"))
-	# pote de biscoitos (tocar para ganhar um biscoito)
+
+
+## Pote de biscoitos (tocar para ganhar um biscoito).
+func _jar() -> void:
 	var jar := Rect2(1368, 478, 92, 78)
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0.82, 0.93, 1.0, 0.85)
@@ -120,11 +136,14 @@ func _table_and_jar() -> void:
 	draw_circle(Vector2(1414, 460), 7, PURPLE)
 
 
-func _bunk_bed() -> void:
-	# interior do castelinho (aparece pela porta aberta)
+## Interior do castelinho (aparece pela porta aberta).
+func _castle_interior() -> void:
 	draw_rect(Rect2(120, 330, 420, 270), Color("#c46b98"))
 	draw_colored_polygon(Shapes.heart(28, Vector2(240, 430)), Color("#d988b0"))
 	draw_colored_polygon(Shapes.heart(28, Vector2(440, 430)), Color("#d988b0"))
+
+
+func _bunk_bed() -> void:
 	# colunas
 	_rect(Rect2(98, 150, 22, 452), PINK)
 	_rect(Rect2(540, 230, 22, 372), PINK)

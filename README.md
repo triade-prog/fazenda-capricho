@@ -10,6 +10,7 @@ manipula objetos, explora ambientes e cria suas próprias histórias, sem missõ
 - `ferramentas/verificar_folha.py` — confere se uma folha de animação segue as regras do GDD.
 - `prototipo/` — protótipo de interação P-0 em Godot 4.4 (quarto da Catarina), feito para iPad deitado. Veja `prototipo/README.md`.
 - **Versão web para iPad:** <https://triade-prog.github.io/fazenda-capricho/> (GitHub Pages, servida da pasta `docs/`).
+- `arte/cenario/referencias_provisorias/` — cada elemento do quarto e cada objeto em PNG separado, com tamanhos e o guia `GUIA.md` para gerar a arte 3D.
 - `arte/personagens/` — imagens oficiais dos personagens (versão final; prevalecem sobre o texto do GDD).
 
 | Arquivo | Personagem |
