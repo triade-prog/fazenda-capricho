@@ -4,6 +4,7 @@ Jogo de faz de conta com interação inspirada em Avatar World: a criança movim
 manipula objetos, explora ambientes e cria suas próprias histórias, sem missões obrigatórias.
 
 - `docs/Fazenda_Capricho_GDD_Revisao3.docx` — documento de visão e design (GDD), Revisão 3.
+- `docs/PROMPT_personagens.md` — prompt pronto para a IA gerar os personagens no padrão da Nina, um de cada vez.
 - `docs/padrao_geracao_personagens.md` — padrão para gerar os personagens como folhas de pet (a partir da Nina v2).
 - `arte/animacoes/R01/` — entrega R01 de folhas de animação (espera/pulso) e marca.
 - `arte/animacoes/nina_pet_v2/` — Nina gerada como pet do ChatGPT (estilo 3D): folha final, etapas, prompts e referências.
