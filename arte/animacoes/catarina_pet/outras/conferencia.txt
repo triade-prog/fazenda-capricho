@@ -1,0 +1,26 @@
+Folha: arte/animacoes/catarina_pet/final/spritesheet-extended.png  1536x2288  modo RGBA
+  idle           6 quadros  chão 202–202  altura 147–150  sobra magenta 4552
+  running-right  8 quadros  chão 202–202  altura 137–150  sobra magenta 2057
+  running-left   8 quadros  chão 202–202  altura 149–150  sobra magenta 725
+  waving         4 quadros  chão 202–202  altura 150–150  sobra magenta 3048
+  jumping        5 quadros  chão 167–202  altura 132–150  sobra magenta 2531
+  failed         8 quadros  chão 202–202  altura 148–150  sobra magenta 5556
+  waiting        6 quadros  chão 202–202  altura 150–150  sobra magenta 2674
+  running        6 quadros  chão 202–202  altura 129–150  sobra magenta 1707
+  review         6 quadros  chão 202–202  altura 149–150  sobra magenta 4335
+  look-row-9     8 quadros  chão 202–202  altura 149–150  sobra magenta 5509
+  look-row-10    8 quadros  chão 202–202  altura 149–150  sobra magenta 5755
+Aviso: idle: 4552 pixels com sobra do fundo magenta (conferir de perto)
+Aviso: running-right: 2057 pixels com sobra do fundo magenta (conferir de perto)
+Aviso: running-left: 725 pixels com sobra do fundo magenta (conferir de perto)
+Aviso: waving: 3048 pixels com sobra do fundo magenta (conferir de perto)
+Aviso: jumping: 2531 pixels com sobra do fundo magenta (conferir de perto)
+Aviso: failed: 5556 pixels com sobra do fundo magenta (conferir de perto)
+Aviso: waiting: 2674 pixels com sobra do fundo magenta (conferir de perto)
+Aviso: running: 1707 pixels com sobra do fundo magenta (conferir de perto)
+Aviso: review: 4335 pixels com sobra do fundo magenta (conferir de perto)
+Aviso: look-row-9: 5509 pixels com sobra do fundo magenta (conferir de perto)
+Aviso: look-row-10: 5755 pixels com sobra do fundo magenta (conferir de perto)
+Aviso: o personagem tem 150 px de altura: no iPad (tela 2x) ele aparece ampliado e fica menos nítido; para nitidez, gerar com pelo menos 300 px (quadro ~2x maior)
+
+APROVADA
