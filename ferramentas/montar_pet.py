@@ -32,7 +32,14 @@ MAGENTA = np.array([250.0, 12.0, 250.0])
 
 
 def sem_magenta(img: Image.Image) -> Image.Image:
-    """Fundo magenta -> transparente, com borda suave e remoção do reflexo magenta na borda."""
+    """Fundo magenta -> transparente, com borda suave e remoção do reflexo magenta na borda.
+    Se a tira já vier com fundo transparente, só limpa a borda."""
+    if img.mode in ("RGBA", "LA", "PA") or "transparency" in img.info:
+        rgba = img.convert("RGBA")
+        if rgba.getchannel("A").getextrema()[0] < 10:
+            alfa = rgba.getchannel("A").filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.6))
+            rgba.putalpha(alfa)
+            return rgba
     rgb = np.asarray(img.convert("RGB")).astype(np.float32)
     d = np.sqrt(((rgb - MAGENTA) ** 2).sum(axis=2))
     a = np.clip((d - 70.0) / (150.0 - 70.0), 0.0, 1.0)
