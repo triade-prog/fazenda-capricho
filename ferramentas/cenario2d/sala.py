@@ -211,3 +211,20 @@ if __name__ == "__main__":
                     ordem="\nGere primeiro a lareira com o fogo, o sofá e a porta: são as peças das brincadeiras principais.\n"
                           "A lareira é decorativa: o fogo só crepita, não aceita objetos nem personagens.\n")
     gerar_cenario("sala", P, W, H, POS, "C03 Sala da Família · Catarina = 300 px · chão a partir de y = 600 · tela 2200 × 900", pr, le)
+
+# ---------------------------------------------------------------- no jogo (ferramentas/cenario2d/para_jogo.py)
+# Peças que mudam de estado com um toque, lugares onde os personagens se encaixam e superfícies.
+JOGO = {
+    "interativos": {
+        "porta_frente": {"estados": ["porta_fechada", "porta_aberta"], "x": 40, "y": 250, "leva": "", "chegada": 125, "estado": 0},
+        "porta_cozinha": {"estados": ["porta_fechada", "porta_aberta"], "x": 600, "y": 250, "leva": "", "chegada": 685},
+        "porta_catarina": {"estados": ["porta_fechada", "porta_aberta"], "x": 1820, "y": 250, "leva": "quarto", "chegada": 1905},
+        "porta_carol": {"estados": ["porta_fechada", "porta_aberta"], "x": 2010, "y": 250, "leva": "", "chegada": 2095},
+        "abajur": {"estados": ["abajur_apagado", "abajur_aceso"], "x": 1715, "y": 412},
+        "fogo": {"estados": ["fogo_baixo", "fogo_alto"], "x": 940, "y": 508},
+    },
+    # sofá: deitam até 3 (pose "deitar", como no beliche)
+    "lugares": [{"id": "sofa", "area": [1250, 330, 440, 220], "spots": [[1520, 528], [1600, 530], [1360, 530]], "pose": "deitar"}],
+    # superfícies onde os objetos se apoiam: [x inicial, x final, altura]
+    "superficies": [[1076, 1324, 682], [266, 534, 382], [266, 534, 482], [266, 534, 572]],
+}

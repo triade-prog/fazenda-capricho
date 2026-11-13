@@ -211,6 +211,33 @@ func _roteiro() -> void:
 	_confere(nina.anim_state == "failed" and nina.slot == null, "castelinho cheio: Nina fica triste e não entra")
 	await _foto("19_nina_triste")
 
+	# Sala: a porta do quarto leva à Sala, e de volta
+	if cat.slot:
+		await _arrasta(cat.to_global(Vector2(0, -150)), Vector2(900, 640))
+	await _arrasta(cat.to_global(Vector2(0, -150)), Vector2(1725, 560), 1.2)
+	_confere(main.cena == "sala" and cat.cena == "sala", "Catarina passa pela porta do quarto e chega na Sala")
+	_confere(not bob.visible, "na Sala, quem ficou no quarto não aparece")
+	await _foto("20_sala_chegada")
+	var c: Cenario = main.cenarios["sala"]
+	var abajur := c.estado("abajur")
+	await _toca(c.rect_de("abajur").get_center())
+	_confere(c.estado("abajur") != abajur, "tocar no abajur acende/apaga")
+	await _toca(c.rect_de("fogo").get_center())
+	_confere(c.estado("fogo") == 0, "tocar no fogo da lareira deixa o fogo baixo")
+	await _toca(c.rect_de("porta_cozinha").get_center())
+	_confere(c.estado("porta_cozinha") == 1, "porta da cozinha abre (cômodo ainda não montado)")
+	await _arrasta(cat.to_global(Vector2(0, -150)), Vector2(1500, 470), 1.0)
+	_confere(cat.slot != null and cat.slot.id == "sofa", "Catarina deita no sofá da Sala")
+	await _foto("21_sala_sofa")
+	await _toca(c.rect_de("porta_catarina").get_center())
+	await _espera(0.8)
+	_confere(main.cena == "quarto" and cat.cena == "sala", "tocar na porta da Sala volta para o quarto (Catarina fica na Sala)")
+	_confere(not cat.visible, "Catarina não aparece no quarto enquanto está na Sala")
+	await _foto("22_volta_quarto")
+	await _toca(Vector2(1725, 450))
+	await _espera(0.8)
+	_confere(main.cena == "sala" and cat.visible, "a porta do quarto leva de novo à Sala")
+
 
 # ---------------------------------------------------------------- utilidades
 # Todos os toques são enviados em coordenadas de TELA, como um dedo de verdade no iPad.

@@ -1,0 +1,319 @@
+{
+ "id": "sala",
+ "largura": 2200,
+ "pecas": [
+  [
+   "fundo",
+   0,
+   0,
+   2200,
+   900
+  ],
+  [
+   "@porta_frente",
+   40,
+   250,
+   170,
+   350
+  ],
+  [
+   "placa_casa",
+   95,
+   180,
+   70,
+   60
+  ],
+  [
+   "estante",
+   250,
+   270,
+   300,
+   330
+  ],
+  [
+   "livro_rosa",
+   280,
+   330,
+   40,
+   50
+  ],
+  [
+   "livro_azul",
+   322,
+   330,
+   40,
+   50
+  ],
+  [
+   "porta_retrato",
+   440,
+   330,
+   50,
+   50
+  ],
+  [
+   "plantinha",
+   470,
+   420,
+   50,
+   60
+  ],
+  [
+   "livro_rosa",
+   300,
+   430,
+   40,
+   50
+  ],
+  [
+   "@porta_cozinha",
+   600,
+   250,
+   170,
+   350
+  ],
+  [
+   "placa_panela",
+   650,
+   180,
+   70,
+   60
+  ],
+  [
+   "lareira",
+   800,
+   180,
+   420,
+   420
+  ],
+  [
+   "@fogo",
+   940,
+   508,
+   140,
+   90
+  ],
+  [
+   "vaso_flores",
+   830,
+   330,
+   50,
+   70
+  ],
+  [
+   "vaso_flores",
+   1110,
+   330,
+   50,
+   70
+  ],
+  [
+   "sofa",
+   1240,
+   410,
+   460,
+   200
+  ],
+  [
+   "almofada_rosa",
+   1290,
+   450,
+   70,
+   60
+  ],
+  [
+   "almofada_lilas",
+   1600,
+   450,
+   70,
+   60
+  ],
+  [
+   "@abajur",
+   1715,
+   412,
+   90,
+   200
+  ],
+  [
+   "@porta_catarina",
+   1820,
+   250,
+   170,
+   350
+  ],
+  [
+   "placa_coracao",
+   1870,
+   180,
+   70,
+   60
+  ],
+  [
+   "@porta_carol",
+   2010,
+   250,
+   170,
+   350
+  ],
+  [
+   "placa_flor",
+   2060,
+   180,
+   70,
+   60
+  ],
+  [
+   "tapete",
+   900,
+   700,
+   600,
+   150
+  ],
+  [
+   "mesa_centro",
+   1070,
+   660,
+   260,
+   100
+  ],
+  [
+   "vaso_flores",
+   1170,
+   600,
+   50,
+   70
+  ],
+  [
+   "cesto_brinquedos",
+   520,
+   690,
+   140,
+   110
+  ]
+ ],
+ "interativos": {
+  "porta_frente": {
+   "estados": [
+    "porta_fechada",
+    "porta_aberta"
+   ],
+   "x": 40,
+   "y": 250,
+   "leva": "",
+   "chegada": 125,
+   "estado": 0,
+   "w": 170,
+   "h": 350
+  },
+  "porta_cozinha": {
+   "estados": [
+    "porta_fechada",
+    "porta_aberta"
+   ],
+   "x": 600,
+   "y": 250,
+   "leva": "",
+   "chegada": 685,
+   "estado": 0,
+   "w": 170,
+   "h": 350
+  },
+  "porta_catarina": {
+   "estados": [
+    "porta_fechada",
+    "porta_aberta"
+   ],
+   "x": 1820,
+   "y": 250,
+   "leva": "quarto",
+   "chegada": 1905,
+   "estado": 0,
+   "w": 170,
+   "h": 350
+  },
+  "porta_carol": {
+   "estados": [
+    "porta_fechada",
+    "porta_aberta"
+   ],
+   "x": 2010,
+   "y": 250,
+   "leva": "",
+   "chegada": 2095,
+   "estado": 0,
+   "w": 170,
+   "h": 350
+  },
+  "abajur": {
+   "estados": [
+    "abajur_apagado",
+    "abajur_aceso"
+   ],
+   "x": 1715,
+   "y": 412,
+   "estado": 1,
+   "w": 90,
+   "h": 200
+  },
+  "fogo": {
+   "estados": [
+    "fogo_baixo",
+    "fogo_alto"
+   ],
+   "x": 940,
+   "y": 508,
+   "estado": 1,
+   "w": 140,
+   "h": 90
+  }
+ },
+ "lugares": [
+  {
+   "id": "sofa",
+   "area": [
+    1250,
+    330,
+    440,
+    220
+   ],
+   "spots": [
+    [
+     1520,
+     528
+    ],
+    [
+     1600,
+     530
+    ],
+    [
+     1360,
+     530
+    ]
+   ],
+   "pose": "deitar"
+  }
+ ],
+ "superficies": [
+  [
+   1076,
+   1324,
+   682
+  ],
+  [
+   266,
+   534,
+   382
+  ],
+  [
+   266,
+   534,
+   482
+  ],
+  [
+   266,
+   534,
+   572
+  ]
+ ]
+}

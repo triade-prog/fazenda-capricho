@@ -79,6 +79,9 @@ de um iPad Air deitado (1180 x 820).
 | Reações rápidas | Tocar em qualquer um: Bob late ou espirra, Nina uiva, Leo pede "Dá, dá!", a Lumi relincha e gira |
 | Rolar o quarto | Arrastar o dedo num espaço vazio (parede ou chão); solto, o quarto continua deslizando um pouco |
 | Levar alguém para o outro lado do quarto | Arrastar o personagem até a borda da tela: o quarto rola junto |
+| Ir para a Sala | Tocar na porta do quarto (vai só a "câmera") **ou** soltar alguém na porta (vai junto, com o que estiver segurando e com quem estiver montado) |
+| Voltar ao quarto | Na Sala, a porta com a placa de coração leva de volta ao quarto (da mesma forma: tocar ou soltar alguém nela) |
+| Brincar na Sala | Tocar no abajur (acende/apaga) e no fogo da lareira (alto/baixo); deitar no sofá; as outras portas abrem e fecham (cômodos ainda não montados) |
 
 Pensado para dedos no iPad:
 
@@ -98,6 +101,12 @@ Pensado para dedos no iPad:
 | `scripts/toy.gd` | Tudo que pode ser pego: pose, mão, cabeça, toque generoso, animação de respirar. |
 | `scripts/slot.gd` | Lugares de encaixe (cama, castelinho, escorregador, escada). |
 | `scripts/room.gd`, `castle_front.gd`, `item_art.gd` | Desenhos provisórios do quarto, do castelinho e dos objetos. |
+| `scripts/cenario.gd` + `dados/cenarios/<cena>.json` | Cenários montados por dados (por enquanto, a Sala): peças, interativos (portas, abajur, fogo), lugares e superfícies. |
+| `assets/cenario/<cena>/` | Peças 2D provisórias do cenário, com os mesmos nomes da entrega 3D: trocar a arte é só substituir o PNG. |
+
+Para montar um cenário novo a partir das peças 2D de `arte/cenario/<cena>/2d/`, defina o dicionário
+`JOGO` no módulo `ferramentas/cenario2d/<cena>.py` e rode `python3 ferramentas/cenario2d/para_jogo.py <cena>`;
+depois chame `_add_cenario("<cena>")` em `main.gd` e ponha o id do cenário no `"leva"` da porta que leva até ele.
 
 Para adicionar um personagem (ex.: Nina, Carol), basta uma chamada a `_add_character()` em
 `main.gd` com a imagem, a altura e a posição da mão/cabeça, e linhas novas em `interacoes.json`.
@@ -121,7 +130,8 @@ Para adicionar um personagem (ex.: Nina, Carol), basta uma chamada a `_add_chara
 segurar, trocar, dar biscoito, pote, rolar o quarto com gesto, rolar levando um personagem até a
 borda, cama, castelinho, porta, escorregador, escada, cochilo, personagens novos no quarto, Nina
 comendo, montar na Lumi, passear montada, Lumi girando, Lumi barrada no castelinho, Carol na cama e as ações da Nina (acenar, correr para os dois lados, parar,
-olhar para o objeto arrastado, ficar triste com o castelinho cheio). Foi rodado nos tamanhos de tela
+olhar para o objeto arrastado, ficar triste com o castelinho cheio) e a Sala (passar pela porta
+levando a Catarina, abajur, fogo, porta da cozinha, deitar no sofá, voltar ao quarto e ir de novo). Foi rodado nos tamanhos de tela
 iPad 9,7"/mini (1024 x 768, 4:3) e iPad Air (1180 x 820), além da versão web num navegador emulando
 um iPad Pro 11" com toque.
 

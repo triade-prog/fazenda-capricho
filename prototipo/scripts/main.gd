@@ -14,6 +14,10 @@ extends Node2D
 ##       3. personagem sobre um lugar (cama, castelo...)     -> encaixa
 ##       4. caso contrário                                   -> cai na superfície abaixo
 ##   - enquanto arrasta, o lugar ou personagem que vai receber o soltar brilha.
+##
+## Cenários: o quarto (room.gd, desenhado por código/arte 3D) e os cenários montados por dados
+## (cenario.gd + dados/cenarios/<id>.json). Portas ligam um ao outro: tocar na porta leva só a
+## câmera; soltar um personagem na porta leva o personagem junto (com o que estiver segurando).
 
 const DATA_PATH := "res://dados/interacoes.json"
 const RoomScript := preload("res://scripts/room.gd")
@@ -29,8 +33,13 @@ const DROP_SLACK := 40.0    # folga ao soltar algo sobre um personagem
 const LIFT := 40.0          # quanto o personagem sobe acima do dedo ao ser pego
 const EDGE := 110.0         # faixa da borda da tela que faz o quarto rolar
 const EDGE_SPEED := 650.0
+const QUARTO_PORTA := Rect2(1640, 250, 170, 350)   # porta do quarto: leva à Sala
 
 var castle: CastleFront
+var cena := "quarto"              # cenário que está na tela
+var cenarios := {}                # id -> nó do cenário (room.gd ou Cenario)
+var porta_quarto_aberta: Sprite2D
+var trocando := false             # durante a passagem de um cenário para outro
 var cam: Camera2D
 var toys: Array[Toy] = []
 var slots: Array[Slot] = []
@@ -63,10 +72,14 @@ var idle_timer := 4.0
 
 func _ready() -> void:
 	_load_data()
-	add_child(RoomScript.new())
+	var room: Node2D = RoomScript.new()
+	add_child(room)
+	cenarios["quarto"] = room
 	castle = CastleFront.new()
 	add_child(castle)
 	_make_slots()
+	_make_porta_quarto()
+	_add_cenario("sala")
 	_make_toys()
 	_setup_camera()
 	_show_intro()
@@ -98,6 +111,37 @@ func _make_slots() -> void:
 		"dentro", "", castle.z_index - 1)
 	_add_slot("escorregador", Rect2(520, 180, 120, 150), [], "", "escorregar", 0)
 	_add_slot("escada", Rect2(36, 330, 80, 272), [], "", "subir", 0)
+
+
+## Cenário montado por dados (ver scripts/cenario.gd), com seus lugares; começa escondido.
+func _add_cenario(id: String) -> Cenario:
+	var c := Cenario.new().carregar(id)
+	add_child(c)
+	c.visible = false
+	cenarios[id] = c
+	for l in c.lugares:
+		var a: Array = l["area"]
+		var spots: Array = []
+		for sp in l["spots"]:
+			spots.append(Vector2(sp[0], sp[1]))
+		var s := _add_slot(str(l["id"]), Rect2(a[0], a[1], a[2], a[3]), spots, str(l.get("pose", "deitar")), "",
+			Toy.depth_for(float(spots[0].y)) if spots.size() > 0 else 0)
+		s.cena = id
+		s.visible = false
+	return c
+
+
+## A porta do quarto aberta usa a mesma arte da porta da Sala, por cima do desenho do quarto.
+func _make_porta_quarto() -> void:
+	porta_quarto_aberta = Sprite2D.new()
+	var tex := load("res://assets/cenario/sala/porta_aberta.png") as Texture2D
+	porta_quarto_aberta.texture = tex
+	porta_quarto_aberta.centered = false
+	porta_quarto_aberta.position = QUARTO_PORTA.position
+	porta_quarto_aberta.scale = QUARTO_PORTA.size / Vector2(tex.get_width(), tex.get_height())
+	porta_quarto_aberta.z_index = -99
+	porta_quarto_aberta.visible = false
+	add_child(porta_quarto_aberta)
 
 
 func _add_slot(id: String, area: Rect2, spots: Array, pose: String, action: String, depth: int) -> Slot:
@@ -286,6 +330,8 @@ func world_to_screen(wp: Vector2) -> Vector2:
 func _unhandled_input(event: InputEvent) -> void:
 	# O mouse é convertido em toque (emulate_touch_from_mouse), então só tratamos toque.
 	# Um dedo de cada vez: outros dedos na tela são ignorados.
+	if trocando:
+		return
 	if event is InputEventScreenTouch:
 		var st := event as InputEventScreenTouch
 		if st.pressed:
@@ -312,7 +358,15 @@ func _on_press(sp: Vector2) -> void:
 	panning = false
 	pan_velocity = 0.0
 	var t := _toy_at(p, [])
-	if t and t.z_index > castle.z_index:
+	if cena != "quarto":
+		var iid: String = (cenarios[cena] as Cenario).interativo_em(p)
+		if t:
+			press_toy = t
+		elif iid != "":
+			press_ui = "i:" + iid
+		else:
+			press_ui = "rolar"
+	elif t and t.z_index > castle.z_index:
 		press_toy = t
 	elif castle.door_hit(p):
 		press_ui = "porta"
@@ -320,6 +374,8 @@ func _on_press(sp: Vector2) -> void:
 		press_toy = t
 	elif JAR_RECT.has_point(p):
 		press_ui = "pote"
+	elif QUARTO_PORTA.has_point(p):
+		press_ui = "porta_quarto"
 	else:
 		press_ui = "rolar"
 
@@ -380,6 +436,10 @@ func _on_release(sp: Vector2) -> void:
 		_log("porta " + ("aberta" if castle.is_open else "fechada"))
 	elif press_ui == "pote":
 		_spawn_cookie()
+	elif press_ui == "porta_quarto":
+		_abrir_e_ir(null, "sala")
+	elif press_ui.begins_with("i:"):
+		_tocar_interativo(press_ui.substr(2))
 	press_toy = null
 	press_ui = ""
 
@@ -406,7 +466,7 @@ func _log(msg: String) -> void:
 
 func _toy_at(p: Vector2, exclude: Array, slack: float = 14.0) -> Toy:
 	var best: Toy = null
-	for t in toys:
+	for t in _toys_aqui():
 		if t in exclude or t.busy or not t.visible:
 			continue
 		if t.slot == slot_castelo and not castle.is_open:
@@ -486,7 +546,7 @@ func _resolve(t: Toy, p: Vector2) -> Dictionary:
 		# montar no cavalo: soltar quem pode montar em cima de quem tem sela livre
 		if t.can_ride and other.seat_offset != Vector2.ZERO and other.rider == null:
 			return {"tipo": "montar", "alvo": other, "destaque": other}
-	for s in slots:
+	for s in _slots_aqui():
 		if s.area.has_point(p) and s.accepts(t):
 			return {"tipo": "vaga", "slot": s}
 	return {"tipo": "chao"}
@@ -494,6 +554,11 @@ func _resolve(t: Toy, p: Vector2) -> Dictionary:
 
 func _drop(t: Toy, p: Vector2) -> void:
 	t.play_state("idle")
+	if t.is_character:
+		var dest := _porta_em(p)
+		if dest != "":
+			_abrir_e_ir(t, dest)
+			return
 	var plan := _resolve(t, p)
 	match str(plan["tipo"]):
 		"combo":
@@ -511,7 +576,7 @@ func _drop(t: Toy, p: Vector2) -> void:
 			_mount(t, plan["alvo"])
 		_:
 			_fall(t, t.global_position)
-			for s in slots:
+			for s in _slots_aqui():
 				if t.is_character and s.area.has_point(p) and not s.accepts(t):
 					_blocked(t)  # soltou num lugar onde não cabe
 					break
@@ -529,7 +594,7 @@ func _blocked(t: Toy) -> void:
 
 func _update_highlight(p: Vector2) -> void:
 	var plan := _resolve(drag_toy, p)
-	for s in slots:
+	for s in _slots_aqui():
 		s.highlight = plan.get("slot") == s
 	var tt: Toy = plan.get("destaque")
 	if tt != hl_toy:
@@ -541,7 +606,7 @@ func _update_highlight(p: Vector2) -> void:
 
 
 func _clear_highlight() -> void:
-	for s in slots:
+	for s in _slots_aqui():
 		s.highlight = false
 	if hl_toy:
 		hl_toy.modulate = Color.WHITE
@@ -584,7 +649,7 @@ func _surface_point(p: Vector2) -> Vector2:
 	if p.y >= FLOOR_Y + 10.0:
 		return Vector2(x, minf(p.y, H - 12.0))
 	var best := FLOOR_Y + 14.0
-	for s in surfaces:
+	for s in _superficies():
 		if x >= s.x and x <= s.y and s.z >= p.y - 30.0 and s.z < best:
 			best = s.z
 	return Vector2(x, best)
@@ -700,7 +765,7 @@ func _climb(t: Toy) -> void:
 func _climb_end(t: Toy) -> void:
 	_log("%s subiu a escada" % t.kind)
 	t.busy = false
-	for s in slots:
+	for s in _slots_aqui():
 		if s.id == "cama" and s.free_spot() >= 0:
 			_enter_slot(t, s)
 			return
@@ -928,24 +993,190 @@ func _float_fx(f: Node2D, p: Vector2, delay: float) -> void:
 
 func _count(kind: String) -> int:
 	var n := 0
-	for t in toys:
+	for t in _toys_aqui():
 		if t.kind == kind:
 			n += 1
 	return n
 
 
 func _find(kind: String) -> Toy:
-	for t in toys:
+	for t in _toys_aqui():
 		if t.kind == kind:
 			return t
 	return null
+
+
+# ---------------------------------------------------------------- cenários e portas
+
+func _toys_aqui() -> Array[Toy]:
+	var r: Array[Toy] = []
+	for t in toys:
+		if t.cena == cena:
+			r.append(t)
+	return r
+
+
+func _slots_aqui() -> Array[Slot]:
+	var r: Array[Slot] = []
+	for s in slots:
+		if s.cena == cena:
+			r.append(s)
+	return r
+
+
+func _superficies() -> Array[Vector3]:
+	if cena == "quarto":
+		return surfaces
+	return (cenarios[cena] as Cenario).superficies
+
+
+## Para onde leva a porta que está no ponto p ("" se não há porta que leve a algum lugar).
+func _porta_em(p: Vector2) -> String:
+	if cena == "quarto":
+		return "sala" if QUARTO_PORTA.has_point(p) else ""
+	var c := cenarios[cena] as Cenario
+	var iid := c.interativo_em(p)
+	return c.destino(iid) if iid != "" else ""
+
+
+## x de chegada no cenário `dest` vindo do cenário atual (diante da porta que liga os dois).
+func _chegada(dest: String) -> float:
+	if dest == "quarto":
+		return QUARTO_PORTA.get_center().x
+	var c := cenarios[dest] as Cenario
+	for iid in c.interativos:
+		if c.destino(iid) == cena:
+			return float(c.interativos[iid].get("chegada", c.rect_de(iid).get_center().x))
+	return W / 2.0
+
+
+func _porta_para(dest: String) -> String:
+	var c := cenarios[cena] as Cenario
+	for iid in c.interativos:
+		if c.destino(iid) == dest:
+			return iid
+	return ""
+
+
+## Toque numa peça interativa de um cenário montado por dados.
+func _tocar_interativo(iid: String) -> void:
+	var c := cenarios[cena] as Cenario
+	var r := c.rect_de(iid)
+	if c.interativos[iid].has("leva"):
+		if c.destino(iid) != "":
+			_abrir_e_ir(null, c.destino(iid))
+		else:
+			c.alternar(iid)  # porta de um cômodo que ainda não existe: só abre e fecha
+			_sparkle(r.get_center(), 3)
+			_log("%s %s" % [iid, "aberta" if c.estado(iid) == 1 else "fechada"])
+		return
+	var e := c.alternar(iid)
+	_sparkle(r.get_center(), 5 if e == 1 else 2)
+	_log("%s -> %s" % [iid, c.interativos[iid]["estados"][e]])
+
+
+## Abre a porta e passa para o outro cenário; com `t`, o personagem (e quem vai com ele) vai junto.
+func _abrir_e_ir(t: Toy, dest: String) -> void:
+	if trocando:
+		return
+	if cena == "quarto":
+		porta_quarto_aberta.visible = true
+		_sparkle(QUARTO_PORTA.get_center(), 4)
+	else:
+		var iid := _porta_para(dest)
+		if iid != "":
+			(cenarios[cena] as Cenario).set_estado(iid, 1)
+			_sparkle((cenarios[cena] as Cenario).rect_de(iid).get_center(), 4)
+	var x := _chegada(dest)
+	var grupo: Array[Toy] = []
+	if t:
+		for o in [t, t.held_item, t.rider, t.mount]:
+			if o and not (o in grupo):
+				grupo.append(o)
+		var cavalo := t.mount if t.mount else t
+		if cavalo.rider and not (cavalo.rider in grupo):
+			grupo.append(cavalo.rider)
+		if cavalo.rider and cavalo.rider.held_item and not (cavalo.rider.held_item in grupo):
+			grupo.append(cavalo.rider.held_item)
+	trocando = true
+	_log("%s vai para %s" % ["a câmera" if t == null else t.kind, dest])
+	var veu := ColorRect.new()
+	veu.color = Color(1, 0.88, 0.94, 0.0)
+	veu.set_anchors_preset(Control.PRESET_FULL_RECT)
+	veu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var camada := CanvasLayer.new()
+	camada.layer = 5
+	camada.add_child(veu)
+	add_child(camada)
+	var tw := create_tween()
+	tw.tween_interval(0.25)
+	tw.tween_property(veu, "color:a", 1.0, 0.2)
+	tw.tween_callback(func() -> void:
+		var origem := cena
+		_mostrar_cenario(dest)
+		_fechar_portas(origem)
+		for o in grupo:
+			o.cena = dest
+			o.visible = true
+		if t:
+			var cavalo := t.mount if t.mount else t
+			cavalo.kill_move()
+			cavalo.global_position = Vector2(x, FLOOR_Y + 120.0)
+			if cavalo.held_item:
+				cavalo.held_item.global_position = cavalo.hand_global()
+		camera_to(x)
+		_abrir_chegada(origem))
+	tw.tween_property(veu, "color:a", 0.0, 0.25)
+	tw.tween_callback(func() -> void:
+		camada.queue_free()
+		trocando = false
+		if t:
+			_pop(t.mount if t.mount else t)
+			_hearts((t.mount if t.mount else t).head_global(), 2))
+
+
+func _mostrar_cenario(dest: String) -> void:
+	cena = dest
+	for id in cenarios:
+		(cenarios[id] as Node2D).visible = id == dest
+	castle.visible = dest == "quarto"
+	for t in toys:
+		t.visible = t.cena == dest
+	for s in slots:
+		s.visible = s.cena == dest
+
+
+func _fechar_portas(origem: String) -> void:
+	if origem == "quarto":
+		porta_quarto_aberta.visible = false
+		return
+	var c := cenarios[origem] as Cenario
+	for iid in c.interativos:
+		if c.destino(iid) != "":
+			c.set_estado(iid, 0)
+
+
+## A porta por onde se chega fica aberta um instante e fecha.
+func _abrir_chegada(origem: String) -> void:
+	if cena == "quarto":
+		porta_quarto_aberta.visible = true
+		get_tree().create_timer(0.9).timeout.connect(func() -> void:
+			if cena == "quarto":
+				porta_quarto_aberta.visible = false)
+		return
+	var c := cenarios[cena] as Cenario
+	var iid := _porta_para(origem)
+	if iid == "":
+		return
+	c.set_estado(iid, 1)
+	get_tree().create_timer(0.9).timeout.connect(func() -> void: c.set_estado(iid, 0))
 
 
 # ---------------------------------------------------------------- vida no cenário
 
 ## Quem tem as linhas de olhar da folha de pet acompanha com a cabeça o que está sendo arrastado.
 func _update_looks() -> void:
-	for t in toys:
+	for t in _toys_aqui():
 		if not t.has_anim("look-row-9") or t == drag_toy or t.lifted or t.busy or t.pose != "em_pe":
 			continue
 		var looking := t.anim_state.begins_with("look")
@@ -979,7 +1210,7 @@ func _process(delta: float) -> void:
 	zzz_timer -= delta
 	if zzz_timer <= 0.0:
 		zzz_timer = 1.1
-		for t in toys:
+		for t in _toys_aqui():
 			if (t.pose == "deitado" or t.pose == "cochilando") and not t.lifted:
 				_float_text(t.head_global() + Vector2(randf_range(-6, 18), 0), "z", 26)
 	idle_timer -= delta
@@ -988,5 +1219,5 @@ func _process(delta: float) -> void:
 		var bob := _find("bob")
 		if bob and bob.pose == "em_pe" and not bob.lifted and not bob.busy and not bob.is_animating():
 			_add_wiggle(bob.play_anim(), bob, 4, 4.0)  # Bob fica inquieto de vez em quando
-		if _count("biscoito") == 0:
+		if cena == "quarto" and _count("biscoito") == 0:
 			_sparkle(JAR_RECT.get_center(), 2)  # dica: o pote dá biscoitos

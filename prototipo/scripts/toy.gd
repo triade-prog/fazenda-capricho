@@ -33,6 +33,7 @@ var holder: Toy = null            # quem está segurando este objeto
 var slot: Slot = null
 var spot_index := -1
 var pose := "em_pe"               # em_pe, deitado, dentro, cochilando
+var cena := "quarto"              # cenário onde está (quarto, sala...)
 var lifted := false
 var busy := false                 # em animação de deslocamento (escorregar, subir)
 var move_tween: Tween

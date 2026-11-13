@@ -10,6 +10,7 @@ var occupants: Array = []
 var pose := ""                    # "deitar", "dentro" ou "" para lugares de ação
 var action := ""                  # "escorregar", "subir" ou "" para lugares de ficar
 var depth := 0                    # z_index de quem está no lugar
+var cena := "quarto"              # cenário a que pertence
 var highlight := false:
 	set(v):
 		if v != highlight:
