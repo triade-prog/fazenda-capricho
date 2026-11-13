@@ -89,6 +89,7 @@ de um iPad Air deitado (1180 x 820).
 | Plantação: preparar e plantar | Arrastar a **enxadinha** até um quadradinho de terra dura (fica fofinha) e depois um **pacotinho de sementes** (cenoura e alface, 2 ferradurinhas; a cenoura sai de graça se faltar) |
 | Plantação: regar e crescer | Arrastar o **regador** até a planta: cresce um estágio na hora. O regador esvazia e enche na **bica**. O tempo também faz crescer (cenoura e alface em 1 min) e tocar na **nuvem** rega tudo. Planta pronta nunca estraga |
 | Plantação: colher e vender | Tocar na planta pronta: os legumes pulam para o chão e ela dá estrelinhas. Soltar a colheita na **banca** ou na **cesta** vende por ferradurinhas (contador no canto de cima) |
+| Plantação: progresso guardado | A fazendinha é salva no aparelho a cada 5 s e ao sair do jogo (ferradurinhas, estrelinhas, canteiros, árvores, regador e a colheita no chão). Ao abrir de novo, as plantas cresceram pelo tempo que o jogo ficou fechado. Para recomeçar do zero, apagar os dados do site no navegador |
 | Plantação: pomar, morangos e terreno | Tocar numa árvore com frutas derruba as frutas (voltam com o tempo ou com uma rega); os canteiros de morango crescem e são colhidos do mesmo jeito; com 10 estrelinhas os quadradinhos com cadeado abrem e chega a semente de tomate |
 | Pet Care | Do Estábulo, plaquinha da pata: chuveirinho, banheira (vazia, com água, com espuma), tigelas; pegar xampu, toalha, brinquedos e petiscos (os bichos comem o biscoito) |
 | Casa na Árvore | Da Sede, plaquinha da árvore: cachos de frutinhas, escorregador, cesto; a porta roxa leva para dentro (baú, fogãozinho, passarinho, caminha, brinquedos) |
@@ -156,7 +157,8 @@ da panela, fogão, tigela, prato, segurar a xícara, comer a maçã e a geladeir
 luzinhas, rede), a Entrada (caminho de pedras, correio, floreira, portão), o Quarto da Carol e uma volta
 pela fazenda inteira pelas plaquinhas (Estábulo, Pet Care, Plantação, Casa na Árvore por fora e por dentro,
 Cabana e Casinha), conferindo cada ligação do mapa, o mapa da ferradura e o ciclo da fazendinha (enxada, semente, regar,
-bica, nuvem, colher, vender na cesta e na banca, tempo, terreno novo e pomar). Foi rodado nos tamanhos de tela
+bica, nuvem, colher, vender na cesta e na banca, tempo, terreno novo, pomar e salvamento, com o tempo
+de jogo fechado contando). O teste usa um arquivo de salvamento só dele (`user://teste_fazendinha.json`). Foi rodado nos tamanhos de tela
 iPad 9,7"/mini (1024 x 768, 4:3) e iPad Air (1180 x 820), além da versão web num navegador emulando
 um iPad Pro 11" com toque.
 
@@ -184,7 +186,7 @@ de olhos fechados para dormir. Tiras grandes (personagem com 450 px ou mais) dev
 - Montada na Lumi, a Catarina aparece em pé na sela: a pose sentada depende da folha `catarina_sentada`.
 - Só a Nina tem animações desenhadas (folha de pet). Os outros personagens ainda são imagens únicas
   com respiração feita pelo jogo; ver `docs/padrao_geracao_personagens.md`.
-- Sem sons e sem salvamento: ao fechar o jogo, a fazendinha (ferradurinhas, estrelinhas e plantas) volta ao começo, e as plantas só crescem com o jogo aberto.
+- Sem sons. O salvamento por enquanto guarda só a fazendinha: os outros cenários (onde ficou cada personagem e objeto, portas, luzes) voltam ao começo quando o jogo fecha.
 - Fazendinha: ainda sem pedidos da família, lojinha de enfeites, níveis além do primeiro terreno, girassol, abóbora e flores plantáveis (documento de cenários, C11).
 - A versão web foi testada no Chromium emulando um iPad; ainda falta testar no Safari de um iPad de verdade.
 - Os textos que aparecem nas falas usam a fonte padrão do Godot; a fonte do jogo ainda será escolhida.

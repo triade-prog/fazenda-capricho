@@ -9,10 +9,15 @@ extends Node2D
 ##   soltar a colheita na banca ou na cesta     -> vende por ferradurinhas
 ##   tocar numa árvore do pomar com frutas      -> as frutas caem; voltam com o tempo ou com uma rega
 ## Números (preços, tempos, posições) em dados/fazendinha.json. Sem punição: nada murcha, nada se perde.
-## Ainda não guarda o progresso quando o jogo fecha (o salvamento vem com o P1 do GDD).
+## O progresso fica guardado no aparelho (user://fazendinha.json): ao abrir de novo, a fazendinha está
+## como ficou, e as plantas cresceram pelo tempo que o jogo passou fechado.
 
 const CENA := "plantacao"
 const LARGURA := 200.0            # largura de um quadradinho
+const SALVAR_A_CADA := 5.0        # segundos entre um salvamento e outro
+const MAX_FECHADO := 900.0        # tempo fechado que conta para crescer (basta para tudo ficar pronto)
+
+static var arquivo := "user://fazendinha.json"   # o roteiro de teste troca por outro arquivo
 
 var main: Node2D                  # main.gd (efeitos, objetos e cenários)
 var cen: Cenario
@@ -31,6 +36,7 @@ var hud: CanvasLayer
 var txt_ferraduras: Label
 var txt_estrelas: Label
 var _tex := {}
+var _desde_salvar := 0.0
 
 
 func preparar(p_main: Node2D) -> void:
@@ -48,7 +54,9 @@ func preparar(p_main: Node2D) -> void:
 	for c in dados["pacotes"]:
 		if not dados["culturas"][c].get("libera_com_terreno", false):
 			pacotes[c] = _objeto("sementes_" + c, dados["pacotes"][c], Vector2(60, 80))
+	cen.set_estado("nuvem", 0)  # a nuvem só chove quando a criança toca nela
 	_fazer_hud()
+	carregar()
 
 
 func _objeto(tipo: String, pos: Array, tam: Vector2) -> Toy:
@@ -365,6 +373,13 @@ func _voa(imagem: String, de: Vector2) -> void:
 
 ## Chamado a cada quadro, mesmo com a criança em outro cenário: a plantação continua crescendo.
 func passar(delta: float) -> void:
+	_desde_salvar += delta
+	if _desde_salvar >= SALVAR_A_CADA:
+		salvar()
+	_crescer_com_o_tempo(delta)
+
+
+func _crescer_com_o_tempo(delta: float) -> void:
 	if chovendo > 0.0:
 		chovendo -= delta
 		if chovendo <= 0.0:
@@ -387,6 +402,103 @@ func passar(delta: float) -> void:
 			if float(relogio[iid]) >= float(dados["arvores"][iid]["tempo"]):
 				relogio[iid] = 0.0
 				cen.set_estado(iid, 1)
+
+
+# ---------------------------------------------------------------- salvamento
+
+func _notification(what: int) -> void:
+	# ao fechar o jogo ou trocar de aplicativo no iPad, guarda na hora
+	if what in [NOTIFICATION_WM_CLOSE_REQUEST, NOTIFICATION_APPLICATION_PAUSED,
+			NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_WINDOW_FOCUS_OUT]:
+		if main:
+			salvar()
+
+
+func _soltos() -> Array:
+	var r: Array = []
+	for t in main.toys:
+		if t.cena == CENA and dados["vende"].has(t.kind) and t.holder == null:
+			r.append([t.kind, snappedf(t.global_position.x, 1.0), snappedf(t.global_position.y, 1.0)])
+	return r
+
+
+func salvar(agora: float = -1.0) -> void:
+	_desde_salvar = 0.0
+	var pecas := {}
+	for iid in ["morango_1", "morango_2", "macieira", "laranjeira", "bananeira"]:
+		pecas[iid] = cen.estado(iid)
+	var d := {
+		"v": 1,
+		"salvo_em": agora if agora >= 0.0 else Time.get_unix_time_from_system(),
+		"ferraduras": ferraduras, "estrelas": estrelas, "terreno_aberto": terreno_aberto,
+		"plots": plots, "pecas": pecas, "relogio": relogio,
+		"regador": {"cheio": regador_cheio, "x": regador.global_position.x, "y": regador.global_position.y},
+		"soltos": _soltos(),
+	}
+	var f := FileAccess.open(arquivo, FileAccess.WRITE)
+	if f:
+		f.store_string(JSON.stringify(d))
+		f.close()
+
+
+## Recupera a fazendinha guardada e faz crescer o que cresceria com o jogo fechado.
+func carregar(agora: float = -1.0) -> bool:
+	if not FileAccess.file_exists(arquivo):
+		return false
+	var lido: Variant = JSON.parse_string(FileAccess.get_file_as_string(arquivo))
+	if not (lido is Dictionary) or int(lido.get("v", 0)) != 1:
+		return false
+	var d: Dictionary = lido
+	ferraduras = int(d.get("ferraduras", ferraduras))
+	estrelas = int(d.get("estrelas", estrelas))
+	var salvos: Array = d.get("plots", [])
+	for i in mini(plots.size(), salvos.size()):
+		var q: Dictionary = salvos[i]
+		var cultura := str(q.get("cultura", ""))
+		if str(q.get("estado", "")) == "planta" and not dados["culturas"].has(cultura):
+			continue  # cultura que não existe mais: o quadradinho fica como está
+		plots[i]["aberto"] = bool(q.get("aberto", plots[i]["aberto"]))
+		plots[i]["estado"] = str(q.get("estado", "dura"))
+		plots[i]["cultura"] = cultura
+		plots[i]["estagio"] = clampi(int(q.get("estagio", 0)), 0, 4)
+		plots[i]["t"] = float(q.get("t", 0.0))
+	if bool(d.get("terreno_aberto", false)) and not terreno_aberto:
+		terreno_aberto = true
+		for c in dados["pacotes"]:
+			if not pacotes.has(c):
+				pacotes[c] = _objeto("sementes_" + c, dados["pacotes"][c], Vector2(60, 80))
+	var pecas: Dictionary = d.get("pecas", {})
+	for iid in pecas:
+		if cen.interativos.has(iid):
+			cen.set_estado(iid, int(pecas[iid]))
+	relogio.clear()
+	var rel: Dictionary = d.get("relogio", {})
+	for iid in rel:
+		relogio[iid] = float(rel[iid])
+	var rg: Dictionary = d.get("regador", {})
+	_encher(bool(rg.get("cheio", true)))
+	if rg.has("x"):
+		regador.kill_move()
+		regador.global_position = Vector2(float(rg["x"]), float(rg["y"]))
+	# a colheita solta no chão volta para onde estava
+	for t in main.toys.duplicate():
+		if t.cena == CENA and dados["vende"].has(t.kind) and t.holder == null:
+			main.toys.erase(t)
+			t.queue_free()
+	for s in d.get("soltos", []):
+		if dados["tamanhos"].has(str(s[0])):
+			var tam: Array = dados["tamanhos"][str(s[0])]
+			main._add_objeto(CENA, {"tipo": str(s[0]), "x": float(s[1]), "y": float(s[2]), "w": tam[0], "h": tam[1]})
+	# o tempo que o jogo ficou fechado também faz crescer
+	var t_agora := agora if agora >= 0.0 else Time.get_unix_time_from_system()
+	var fechado := clampf(t_agora - float(d.get("salvo_em", t_agora)), 0.0, MAX_FECHADO)
+	while fechado > 0.0:
+		var passo := minf(fechado, 5.0)
+		_crescer_com_o_tempo(passo)
+		fechado -= passo
+	queue_redraw()
+	_atualiza_hud()
+	return true
 
 
 # ---------------------------------------------------------------- contador

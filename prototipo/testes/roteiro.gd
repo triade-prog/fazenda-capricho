@@ -12,6 +12,10 @@ func _ready() -> void:
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--capturas="):
 			capturas = a.get_slice("=", 1)
+	# o teste usa um arquivo de salvamento só dele e começa sempre do zero
+	Fazendinha.arquivo = "user://teste_fazendinha.json"
+	if FileAccess.file_exists(Fazendinha.arquivo):
+		DirAccess.remove_absolute(Fazendinha.arquivo)
 	main = load("res://main.tscn").instantiate()
 	add_child(main)
 	await _espera(0.6)
@@ -409,6 +413,33 @@ func _fazendinha() -> void:
 	await _foto("39_plantacao_banca")
 	fz.passar(181.0)
 	_confere(pl.estado("macieira") == 1, "com o tempo as maçãs voltam")
+
+	# salvamento: guarda, estraga tudo de propósito e recupera
+	var agora := 1000000.0
+	fz.plots[1]["estagio"] = 2
+	fz.plots[1]["t"] = 0.0
+	fz.salvar(agora)
+	var macas: int = main._count("maca")
+	var cenouras: int = main._count("colheita_cenoura")
+	var onde: Vector2 = fz.regador.global_position
+	fz.ferraduras = 0
+	fz.estrelas = 0
+	fz.plots[1]["estado"] = "dura"
+	fz.plots[5]["aberto"] = false
+	fz.regador.global_position = Vector2(2000, 800)
+	main._find("colheita_cenoura").global_position = Vector2(2000, 850)
+	_confere(fz.carregar(agora), "a fazendinha guardada é recuperada")
+	await get_tree().process_frame
+	_confere(fz.ferraduras == 35 and fz.estrelas == 10, "ferradurinhas e estrelinhas voltam como estavam")
+	_confere(fz.plots[1]["cultura"] == "alface" and fz.plots[1]["estagio"] == 2 and fz.plots[5]["aberto"], "os quadradinhos voltam como estavam")
+	_confere(main._count("maca") == macas and main._count("colheita_cenoura") == cenouras, "a colheita solta no chão continua lá, sem duplicar")
+	_confere(fz.regador.global_position.distance_to(onde) < 2.0, "o regador volta para onde foi deixado")
+	fz.carregar(agora + 25.0)
+	await get_tree().process_frame
+	_confere(fz.plots[1]["estagio"] == 3, "25 s com o jogo fechado: a alface cresce um estágio")
+	fz.carregar(agora + 100000.0)
+	await get_tree().process_frame
+	_confere(fz.plots[1]["estagio"] == 4 and fz.plots[1]["estado"] == "planta", "muito tempo fechado: a alface fica pronta e espera, sem estragar")
 
 
 # ---------------------------------------------------------------- utilidades
