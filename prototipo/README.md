@@ -86,7 +86,10 @@ de um iPad Air deitado (1180 x 820).
 | Andar pela fazenda | Nos cenários de fora, **plaquinhas de caminho** (setas com desenho, sem letras): tocar leva a câmera, soltar alguém na plaquinha leva junto. Ligações conforme `docs/mapa_cenarios.png` |
 | Mapa da fazenda | O **botão da ferradura** (canto de cima, à esquerda) abre o mapa com uma figurinha de cada lugar; tocar numa figurinha leva a câmera para lá (os personagens ficam onde estão). O coração mostra onde você está |
 | Estábulo | Da Sede, plaquinha da ferradura: meia-porta, cocho, balde, ducha, lanterna, porteira, laguinho e moitas; pegar o pente, o feno e a margarida |
-| Plantação | Da Sede ou do Estábulo, plaquinha da cenoura: cada canteiro cresce um estágio a cada toque; nuvem, árvores de fruta, flores e cesta mudam ao toque (o jogo da fazendinha vem depois) |
+| Plantação: preparar e plantar | Arrastar a **enxadinha** até um quadradinho de terra dura (fica fofinha) e depois um **pacotinho de sementes** (cenoura e alface, 2 ferradurinhas; a cenoura sai de graça se faltar) |
+| Plantação: regar e crescer | Arrastar o **regador** até a planta: cresce um estágio na hora. O regador esvazia e enche na **bica**. O tempo também faz crescer (cenoura e alface em 1 min) e tocar na **nuvem** rega tudo. Planta pronta nunca estraga |
+| Plantação: colher e vender | Tocar na planta pronta: os legumes pulam para o chão e ela dá estrelinhas. Soltar a colheita na **banca** ou na **cesta** vende por ferradurinhas (contador no canto de cima) |
+| Plantação: pomar, morangos e terreno | Tocar numa árvore com frutas derruba as frutas (voltam com o tempo ou com uma rega); os canteiros de morango crescem e são colhidos do mesmo jeito; com 10 estrelinhas os quadradinhos com cadeado abrem e chega a semente de tomate |
 | Pet Care | Do Estábulo, plaquinha da pata: chuveirinho, banheira (vazia, com água, com espuma), tigelas; pegar xampu, toalha, brinquedos e petiscos (os bichos comem o biscoito) |
 | Casa na Árvore | Da Sede, plaquinha da árvore: cachos de frutinhas, escorregador, cesto; a porta roxa leva para dentro (baú, fogãozinho, passarinho, caminha, brinquedos) |
 | Cabana e Casinha (propostas) | Do pátio da Casa na Árvore, plaquinhas da cabana e da cesta: cabana, lanterna, fogueira, livro e saco de dormir; toldo, caixa registradora, maleta e potinhos |
@@ -116,6 +119,7 @@ Pensado para dedos no iPad:
 | `scripts/toy.gd` | Tudo que pode ser pego: pose, mão, cabeça, toque generoso, animação de respirar. |
 | `scripts/slot.gd` | Lugares de encaixe (cama, castelinho, escorregador, escada). |
 | `scripts/room.gd`, `castle_front.gd`, `item_art.gd` | Desenhos provisórios do quarto, do castelinho e dos objetos. |
+| `scripts/fazendinha.gd` + `dados/fazendinha.json` | Jogo da fazendinha na Plantação. **Preços, tempos e posições ficam no JSON**, para ajustar sem programar. |
 | `scripts/mapa.gd` + `assets/mapa/` | Botão da ferradura e mapa da fazenda. As figurinhas são geradas por `ferramentas/cenario2d/mapa.py`. |
 | `scripts/cenario.gd` + `dados/cenarios/<cena>.json` | Cenários montados por dados (todos menos o quarto da Catarina): peças, interativos (portas, abajur, fogo, geladeira...), objetos que dá para pegar, lugares e superfícies. |
 | `assets/cenario/<cena>/` | Peças 2D provisórias do cenário, com os mesmos nomes da entrega 3D: trocar a arte é só substituir o PNG. |
@@ -151,7 +155,8 @@ levando a Catarina, abajur, fogo, deitar no sofá, voltar ao quarto e ir de novo
 da panela, fogão, tigela, prato, segurar a xícara, comer a maçã e a geladeira repondo a comida), a Sede (porta da frente, lanterna,
 luzinhas, rede), a Entrada (caminho de pedras, correio, floreira, portão), o Quarto da Carol e uma volta
 pela fazenda inteira pelas plaquinhas (Estábulo, Pet Care, Plantação, Casa na Árvore por fora e por dentro,
-Cabana e Casinha), conferindo cada ligação do mapa. Foi rodado nos tamanhos de tela
+Cabana e Casinha), conferindo cada ligação do mapa, o mapa da ferradura e o ciclo da fazendinha (enxada, semente, regar,
+bica, nuvem, colher, vender na cesta e na banca, tempo, terreno novo e pomar). Foi rodado nos tamanhos de tela
 iPad 9,7"/mini (1024 x 768, 4:3) e iPad Air (1180 x 820), além da versão web num navegador emulando
 um iPad Pro 11" com toque.
 
@@ -179,6 +184,7 @@ de olhos fechados para dormir. Tiras grandes (personagem com 450 px ou mais) dev
 - Montada na Lumi, a Catarina aparece em pé na sela: a pose sentada depende da folha `catarina_sentada`.
 - Só a Nina tem animações desenhadas (folha de pet). Os outros personagens ainda são imagens únicas
   com respiração feita pelo jogo; ver `docs/padrao_geracao_personagens.md`.
-- Sem sons, sem salvamento e sem troca de ambiente.
+- Sem sons e sem salvamento: ao fechar o jogo, a fazendinha (ferradurinhas, estrelinhas e plantas) volta ao começo, e as plantas só crescem com o jogo aberto.
+- Fazendinha: ainda sem pedidos da família, lojinha de enfeites, níveis além do primeiro terreno, girassol, abóbora e flores plantáveis (documento de cenários, C11).
 - A versão web foi testada no Chromium emulando um iPad; ainda falta testar no Safari de um iPad de verdade.
 - Os textos que aparecem nas falas usam a fonte padrão do Godot; a fonte do jogo ainda será escolhida.

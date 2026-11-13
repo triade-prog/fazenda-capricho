@@ -33,7 +33,7 @@ soltos = mod.JOGO.get("objetos", [])
 pecas, usadas, objetos = [], set(), []
 vistos = set()
 for nome, x, y in list(mod.POS) + list(mod.JOGO.get("extras", [])):
-    if nome.startswith("@"):
+    if nome.startswith("@") or nome in mod.JOGO.get("omitir", []):
         continue
     w, h = _tamanho(P[nome])
     alvo = next((i for i, d in inter.items() if nome in d["estados"] and d["x"] == x and d["y"] == y), None)
@@ -48,6 +48,7 @@ for nome, x, y in list(mod.POS) + list(mod.JOGO.get("extras", [])):
     else:
         pecas.append([nome, x, y, w, h])
         usadas.add(nome)
+usadas.update(mod.JOGO.get("tambem", []))
 faltam = {i for i in inter if inter[i]["estados"]} - vistos
 assert not faltam, f"interativos sem posição na prévia: {faltam}"
 for d in inter.values():

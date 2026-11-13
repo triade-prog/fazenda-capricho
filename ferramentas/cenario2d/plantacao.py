@@ -576,16 +576,12 @@ def _c(nome, x, y, estados):
     return {"estados": estados, "x": x, "y": y}
 
 
-# Como o cenário entra no protótipo (ver para_jogo.py). Por enquanto cada canteiro cresce ao toque;
-# o jogo da fazendinha (plantar, regar, colher, vender) vem depois.
+# Como o cenário entra no protótipo (ver para_jogo.py). Os quadradinhos de terra, as ferramentas e as
+# sementes são do jogo da fazendinha (prototipo/scripts/fazendinha.gd + dados/fazendinha.json): por isso
+# saem da lista de peças ("omitir") e as imagens de todos os estágios vão junto ("tambem").
 JOGO = {
     "interativos": {
         "nuvem": _c("nuvem", 560, 150, ["nuvem_parada", "nuvem_chovendo"]),
-        "cenoura": _c("cenoura", 380, 500, ["cenoura_1", "cenoura_2", "cenoura_3", "cenoura_4"]),
-        "alface": _c("alface", 590, 500, ["alface_1", "alface_2", "alface_3", "alface_4"]),
-        "tomate": _c("tomate", 800, 460, ["tomate_1", "tomate_2", "tomate_3", "tomate_4"]),
-        "terra_1": _c("terra_1", 1010, 630, ["terra_dura", "terra_fofa"]),
-        "terra_2": _c("terra_2", 380, 740, ["terra_dura", "terra_fofa"]),
         "morango_1": _c("morango_1", 590, 740, ["morango_1", "morango_2", "morango_3", "morango_4"]),
         "morango_2": _c("morango_2", 1270, 790, ["morango_1", "morango_2", "morango_3", "morango_4"]),
         "cesta": _c("cesta", 680, 810, ["cesta_vazia", "cesta_cheia"]),
@@ -601,7 +597,15 @@ JOGO = {
         "seta_estabulo": {"estados": ["seta_ferradura_d"], "x": 1560, "y": 440, "leva": "estabulo", "chegada": 1620},
     },
     "extras": [("seta_casa_e", 1430, 440), ("seta_ferradura_d", 1560, 440)],
-    "objetos": ["regador_cheio", "enxada", "maca"],
+    "omitir": ["cenoura_4", "alface_3", "tomate_4", "terra_fofa", "terra_dura", "terra_fechada",
+                "sementes_cenoura", "sementes_tomate", "regador_cheio", "enxada"],
+    "tambem": ["terra_dura", "terra_fofa", "terra_fechada", "regador_vazio", "regador_cheio", "enxada",
+               "sementes_cenoura", "sementes_alface", "sementes_tomate",
+               "cenoura_1", "cenoura_2", "cenoura_3", "cenoura_4", "alface_1", "alface_2", "alface_3", "alface_4",
+               "tomate_1", "tomate_2", "tomate_3", "tomate_4",
+               "colheita_cenoura", "colheita_alface", "colheita_tomate", "morango", "maca", "laranja", "banana",
+               "ferradurinha", "estrelinha", "contador"],
+    "objetos": ["maca"],
     "lugares": [],
     "superficies": [],
 }

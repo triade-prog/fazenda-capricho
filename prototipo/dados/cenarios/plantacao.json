@@ -24,74 +24,11 @@
    190
   ],
   [
-   "sementes_cenoura",
-   170,
-   640,
-   60,
-   80
-  ],
-  [
-   "sementes_tomate",
-   235,
-   640,
-   60,
-   80
-  ],
-  [
-   "@cenoura",
-   380,
-   500,
-   200,
-   200
-  ],
-  [
-   "@alface",
-   590,
-   500,
-   200,
-   200
-  ],
-  [
-   "@tomate",
-   800,
-   460,
-   200,
-   240
-  ],
-  [
-   "@terra_1",
-   1010,
-   630,
-   200,
-   70
-  ],
-  [
-   "@terra_2",
-   380,
-   740,
-   200,
-   70
-  ],
-  [
    "@morango_1",
    590,
    740,
    160,
    110
-  ],
-  [
-   "terra_fechada",
-   800,
-   740,
-   200,
-   70
-  ],
-  [
-   "terra_fechada",
-   1010,
-   740,
-   200,
-   70
   ],
   [
    "espantalho",
@@ -281,67 +218,6 @@
    "w": 220,
    "h": 90
   },
-  "cenoura": {
-   "estados": [
-    "cenoura_1",
-    "cenoura_2",
-    "cenoura_3",
-    "cenoura_4"
-   ],
-   "x": 380,
-   "y": 500,
-   "estado": 3,
-   "w": 200,
-   "h": 200
-  },
-  "alface": {
-   "estados": [
-    "alface_1",
-    "alface_2",
-    "alface_3",
-    "alface_4"
-   ],
-   "x": 590,
-   "y": 500,
-   "estado": 2,
-   "w": 200,
-   "h": 200
-  },
-  "tomate": {
-   "estados": [
-    "tomate_1",
-    "tomate_2",
-    "tomate_3",
-    "tomate_4"
-   ],
-   "x": 800,
-   "y": 460,
-   "estado": 3,
-   "w": 200,
-   "h": 240
-  },
-  "terra_1": {
-   "estados": [
-    "terra_dura",
-    "terra_fofa"
-   ],
-   "x": 1010,
-   "y": 630,
-   "estado": 1,
-   "w": 200,
-   "h": 70
-  },
-  "terra_2": {
-   "estados": [
-    "terra_dura",
-    "terra_fofa"
-   ],
-   "x": 380,
-   "y": 740,
-   "estado": 0,
-   "w": 200,
-   "h": 70
-  },
   "morango_1": {
    "estados": [
     "morango_1",
@@ -495,20 +371,6 @@
   }
  },
  "objetos": [
-  {
-   "tipo": "regador_cheio",
-   "x": 210.0,
-   "y": 875,
-   "w": 80,
-   "h": 55
-  },
-  {
-   "tipo": "enxada",
-   "x": 292.5,
-   "y": 880,
-   "w": 45,
-   "h": 90
-  },
   {
    "tipo": "maca",
    "x": 2715.0,

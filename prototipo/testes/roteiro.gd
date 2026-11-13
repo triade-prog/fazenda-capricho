@@ -314,10 +314,8 @@ func _roteiro() -> void:
 	await _foto("33_pet_care")
 	await _vai("seta_estabulo", "estabulo", "34_pet_care_placa")
 	await _vai("seta_plantacao", "plantacao", "")
-	await _toca(main.cenarios["plantacao"].rect_de("terra_1").get_center())
-	_confere(main.cenarios["plantacao"].estado("terra_1") == 0, "tocar no canteiro da Plantação muda a terra")
-	await _foto("35_plantacao_canteiros")
-	await _vai("seta_estabulo", "estabulo", "36_plantacao_placas")
+	await _fazendinha()
+	await _vai("seta_estabulo", "estabulo", "39b_plantacao_placas")
 	await _vai("seta_sede", "sede", "")
 	await _vai("seta_arvore", "casa_arvore", "37_sede_placa_arvore")
 	await _foto("38_casa_arvore_chegada")
@@ -355,6 +353,62 @@ func _roteiro() -> void:
 	main.mapa.abrir()
 	main.mapa.fechar_mapa()
 	_confere(main.cena == "quarto" and not main.mapa.aberto(), "fechar o mapa deixa tudo como estava")
+
+
+# ---------------------------------------------------------------- fazendinha (Plantação)
+
+func _fazendinha() -> void:
+	var fz: Fazendinha = main.fazenda
+	var pl: Cenario = main.cenarios["plantacao"]
+	var q0: Vector2 = fz.rect_de(0).get_center()
+	await _toca(q0)
+	_confere(fz.plots[0]["estado"] == "dura", "tocar na terra dura só dá a dica (a enxadinha pula)")
+	await _foto("35_plantacao_inicio")
+	await _arrasta(fz.enxada.global_position + Vector2(0, -45), q0)
+	_confere(fz.plots[0]["estado"] == "fofa", "enxadinha no quadradinho deixa a terra fofinha")
+	_confere(fz.enxada.global_position.distance_to(Vector2(300, 880)) < 5.0, "a enxadinha volta para o lugar dela")
+	await _arrasta(fz.pacotes["cenoura"].global_position + Vector2(0, -40), q0)
+	_confere(fz.plots[0]["cultura"] == "cenoura" and fz.plots[0]["estagio"] == 1 and fz.ferraduras == 28, "pacotinho na terra fofinha planta a cenoura por 2 ferradurinhas")
+	await _arrasta(fz.regador.global_position + Vector2(0, -27), fz.rect_de(0).get_center())
+	_confere(fz.plots[0]["estagio"] == 2 and not fz.regador_cheio, "regar faz a planta crescer um estágio e esvazia o regador")
+	await _arrasta(fz.regador.global_position + Vector2(0, -27), fz.rect_de(0).get_center())
+	_confere(fz.plots[0]["estagio"] == 2, "regador vazio não rega")
+	await _arrasta(fz.regador.global_position + Vector2(0, -27), Vector2(85, 720))
+	_confere(fz.regador_cheio, "o regador enche na bica")
+	await _arrasta(fz.regador.global_position + Vector2(0, -27), fz.rect_de(0).get_center())
+	_confere(fz.plots[0]["estagio"] == 3, "regar de novo: mais um estágio")
+	await _foto("36_plantacao_crescendo")
+	await _toca(pl.rect_de("nuvem").get_center())
+	_confere(fz.plots[0]["estagio"] == 4 and pl.estado("nuvem") == 1, "a nuvem de chuva rega tudo: a cenoura fica pronta")
+	await _toca(fz.rect_de(0).end - Vector2(25, 25))  # no canto: o regador ficou no meio
+	await _espera(0.6)
+	_confere(fz.plots[0]["estado"] == "dura" and main._count("colheita_cenoura") == 3 and fz.estrelas == 1, "tocar na planta pronta colhe 3 cenouras e dá 1 estrelinha")
+	await _foto("37_plantacao_colheita")
+	var cen1: Toy = main._find("colheita_cenoura")
+	await _arrasta(cen1.global_position + Vector2(0, -30), pl.rect_de("cesta").get_center())
+	_confere(fz.ferraduras == 33 and main._count("colheita_cenoura") == 2, "soltar a cenoura na cesta vende por 5 ferradurinhas")
+	# o tempo também faz crescer
+	await _arrasta(fz.enxada.global_position + Vector2(0, -45), fz.rect_de(1).get_center())
+	await _arrasta(fz.pacotes["alface"].global_position + Vector2(0, -40), fz.rect_de(1).get_center())
+	fz.passar(21.0)
+	_confere(fz.plots[1]["cultura"] == "alface" and fz.plots[1]["estagio"] == 2, "com o tempo a alface cresce sozinha")
+	# quadradinho com cadeado e terreno novo
+	await _toca(fz.rect_de(5).get_center())
+	_confere(not fz.plots[5]["aberto"], "quadradinho com cadeado continua fechado (faltam estrelinhas)")
+	fz._ganhar_estrelas(9, fz.rect_de(5).get_center())
+	_confere(fz.plots[5]["aberto"] and fz.pacotes.has("tomate"), "com 10 estrelinhas o terreno abre e chega a semente de tomate")
+	await _foto("38_plantacao_terreno_novo")
+	# pomar e banca
+	var mac: Rect2 = pl.rect_de("macieira")
+	await _toca(Vector2(mac.get_center().x, mac.end.y - 120.0))
+	await _espera(0.6)
+	_confere(pl.estado("macieira") == 0 and main._count("maca") == 4, "tocar na macieira derruba 3 maçãs")
+	var maca: Toy = main._find("maca")
+	await _arrasta(maca.global_position + Vector2(0, -16), Vector2(2660, 850))
+	_confere(fz.ferraduras == 35 and main._count("maca") == 3, "soltar a maçã na banca vende por 4 ferradurinhas")
+	await _foto("39_plantacao_banca")
+	fz.passar(181.0)
+	_confere(pl.estado("macieira") == 1, "com o tempo as maçãs voltam")
 
 
 # ---------------------------------------------------------------- utilidades

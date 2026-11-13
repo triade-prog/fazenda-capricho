@@ -150,6 +150,42 @@
       "alvo": "carol",
       "reacao": "comer",
       "fala": "Glub glub!"
+    },
+    {
+      "item": "colheita_cenoura",
+      "alvo": "lumi",
+      "reacao": "comer",
+      "fala": "Nhac! Cenoura!"
+    },
+    {
+      "item": "maca",
+      "alvo": "lumi",
+      "reacao": "comer",
+      "fala": "Nhac! Maçã!"
+    },
+    {
+      "item": "morango",
+      "alvo": "catarina",
+      "reacao": "comer",
+      "fala": "Hum, moranguinho!"
+    },
+    {
+      "item": "morango",
+      "alvo": "carol",
+      "reacao": "comer",
+      "fala": "Hum, moranguinho!"
+    },
+    {
+      "item": "laranja",
+      "alvo": "catarina",
+      "reacao": "comer",
+      "fala": "Hum, laranja!"
+    },
+    {
+      "item": "laranja",
+      "alvo": "carol",
+      "reacao": "comer",
+      "fala": "Hum, laranja!"
     }
   ],
   "toques": [

@@ -1,0 +1,25 @@
+{
+  "_sobre": "Economia do jogo da fazendinha (Plantação). Valores iniciais do documento de cenários (C11), para ajustar vendo a criança brincar. 'semente' e 'vende' em ferradurinhas; 'tempo' em segundos do plantio até ficar pronta (dividido em 3 passagens de estágio; regar passa de estágio na hora).",
+  "inicio": {"ferraduras": 30, "estrelas": 0},
+  "abrir_terreno_estrelas": 10,
+  "culturas": {
+    "cenoura": {"semente": 2, "tempo": 60, "estrelas": 1, "colheita": "colheita_cenoura", "quantos": 3, "altura": 200},
+    "alface": {"semente": 2, "tempo": 60, "estrelas": 1, "colheita": "colheita_alface", "quantos": 3, "altura": 200},
+    "tomate": {"semente": 4, "tempo": 120, "estrelas": 2, "colheita": "colheita_tomate", "quantos": 3, "altura": 240, "libera_com_terreno": true}
+  },
+  "morango": {"tempo": 120, "estrelas": 2, "colheita": "morango", "quantos": 2},
+  "arvores": {
+    "macieira": {"fruta": "maca", "quantos": 3, "tempo": 180},
+    "laranjeira": {"fruta": "laranja", "quantos": 3, "tempo": 180},
+    "bananeira": {"fruta": "banana", "quantos": 2, "tempo": 240}
+  },
+  "vende": {"colheita_cenoura": 5, "colheita_alface": 5, "colheita_tomate": 10, "morango": 12, "maca": 4, "laranja": 5, "banana": 8},
+  "tamanhos": {"colheita_cenoura": [30, 60], "colheita_alface": [50, 45], "colheita_tomate": [30, 30], "morango": [22, 26],
+               "maca": [30, 32], "laranja": [32, 32], "banana": [50, 30]},
+  "quadradinhos": [[380, 700, true], [590, 700, true], [800, 700, true], [1010, 700, true], [380, 810, true], [800, 810, false], [1010, 810, false]],
+  "pacotes": {"cenoura": [200, 720], "alface": [265, 720], "tomate": [330, 720]},
+  "enxada": [300, 880],
+  "regador": [210, 875],
+  "bica": [30, 570, 110, 190],
+  "banca": [2530, 770, 260, 170]
+}

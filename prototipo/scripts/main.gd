@@ -41,6 +41,7 @@ var castle: CastleFront
 var cena := "quarto"              # cenário que está na tela
 var cenarios := {}                # id -> nó do cenário (room.gd ou Cenario)
 var porta_quarto_aberta: Sprite2D
+var fazenda: Fazendinha           # jogo de plantar, colher e vender (Plantação)
 var mapa: MapaFazenda             # botão da ferradura + mapa da fazenda
 var trocando := false             # durante a passagem de um cenário para outro
 var cam: Camera2D
@@ -89,6 +90,9 @@ func _ready() -> void:
 		_add_cenario(id)
 	_make_toys()
 	_setup_camera()
+	fazenda = Fazendinha.new()
+	add_child(fazenda)
+	fazenda.preparar(self)
 	mapa = MapaFazenda.new()
 	add_child(mapa)
 	mapa.escolheu.connect(_ir_pelo_mapa)
@@ -415,6 +419,8 @@ func _on_press(sp: Vector2) -> void:
 		var iid: String = (cenarios[cena] as Cenario).interativo_em(p)
 		if t:
 			press_toy = t
+		elif cena == Fazendinha.CENA and fazenda.alvo_em(p) != -1:
+			press_ui = "f:%d" % fazenda.alvo_em(p)
 		elif iid != "":
 			press_ui = "i:" + iid
 		else:
@@ -493,6 +499,8 @@ func _on_release(sp: Vector2) -> void:
 		_abrir_e_ir(null, "sala")
 	elif press_ui.begins_with("i:"):
 		_tocar_interativo(press_ui.substr(2))
+	elif press_ui.begins_with("f:"):
+		fazenda.toque(int(press_ui.substr(2)))
 	press_toy = null
 	press_ui = ""
 
@@ -612,6 +620,8 @@ func _drop(t: Toy, p: Vector2) -> void:
 		if dest != "":
 			_abrir_e_ir(t, dest)
 			return
+	if cena == Fazendinha.CENA and not t.is_character and fazenda.soltar(t, p):
+		return
 	var plan := _resolve(t, p)
 	match str(plan["tipo"]):
 		"combo":
@@ -1115,6 +1125,8 @@ func _porta_para(dest: String) -> String:
 func _tocar_interativo(iid: String) -> void:
 	var c := cenarios[cena] as Cenario
 	var r := c.rect_de(iid)
+	if cena == Fazendinha.CENA and fazenda.toque_cenario(iid):
+		return
 	if c.interativos[iid].has("leva"):
 		if c.destino(iid) != "":
 			_abrir_e_ir(null, c.destino(iid))
@@ -1222,6 +1234,8 @@ func _mostrar_cenario(dest: String) -> void:
 	cena = dest
 	if mapa:
 		mapa.cena_atual = dest
+	if fazenda:
+		fazenda.mostrar(dest == Fazendinha.CENA)
 	W = (cenarios[dest] as Cenario).largura if cenarios[dest] is Cenario else 2200.0
 	for id in cenarios:
 		(cenarios[id] as Node2D).visible = id == dest
@@ -1286,6 +1300,8 @@ func _update_looks() -> void:
 
 
 func _process(delta: float) -> void:
+	if fazenda:
+		fazenda.passar(delta)
 	_update_looks()
 	if dragging:
 		_edge_scroll(delta)
