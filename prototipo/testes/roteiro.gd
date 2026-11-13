@@ -200,6 +200,8 @@ func _roteiro() -> void:
 	await _foto("18_nina_olha")
 	_evento(main.world_to_screen(nina.head_global() + Vector2(-260, -60)), false)
 	await _espera(0.6)
+	pel.kill_move()
+	pel.global_position = Vector2(2050, 820)  # fora do caminho: o rolar do quarto varia de uma rodada para outra
 
 	# castelinho cheio: a Nina fica triste
 	var leo: Toy = main._find("leo")
@@ -212,9 +214,10 @@ func _roteiro() -> void:
 	await _foto("19_nina_triste")
 
 	# Sala: a porta do quarto leva à Sala, e de volta
-	if cat.slot:
-		await _arrasta(cat.to_global(Vector2(0, -150)), Vector2(900, 640))
-	await _arrasta(cat.to_global(Vector2(0, -150)), Vector2(1725, 560), 1.2)
+	if cat.slot or cat.mount:
+		await _arrasta(cat.to_global(Vector2(0, -235)), Vector2(1250, 640))  # pela cabeça: montada, o corpo fica atrás da Lumi
+	_confere(cat.mount == null and cat.slot == null, "Catarina está no chão, pronta para ir à porta")
+	await _arrasta(cat.to_global(Vector2(0, -235)), Vector2(1725, 560), 1.2)
 	_confere(main.cena == "sala" and cat.cena == "sala", "Catarina passa pela porta do quarto e chega na Sala")
 	_confere(not bob.visible, "na Sala, quem ficou no quarto não aparece")
 	await _foto("20_sala_chegada")
@@ -267,6 +270,34 @@ func _roteiro() -> void:
 	await _toca(k.rect_de("geladeira").get_center())
 	_confere(k.estado("geladeira") == 1 and main._find("maca") != null, "abrir a geladeira traz a maçã de volta")
 	await _foto("24_geladeira_aberta")
+
+	# Sede e Entrada: a porta da frente da Sala leva à Sede; o caminho de pedras leva à Entrada
+	var sd: Cenario = main.cenarios["sede"]
+	var en: Cenario = main.cenarios["entrada"]
+	await _arrasta(cat.to_global(Vector2(0, -235)), k.rect_de("porta_sala").get_center(), 1.2)
+	_confere(main.cena == "sala" and cat.cena == "sala" and xic.cena == "sala", "Catarina volta à Sala levando a xícara")
+	await _arrasta(cat.to_global(Vector2(0, -235)), c.rect_de("porta_frente").get_center(), 1.2)
+	_confere(main.cena == "sede" and cat.cena == "sede", "Catarina sai pela porta da frente e chega na Sede")
+	_confere(main.W == 3000.0, "a Sede é mais larga que os cômodos (3000)")
+	await _foto("25_sede_chegada")
+	await _toca(sd.rect_de("lanterna_esq").get_center())
+	_confere(sd.estado("lanterna_esq") == 1, "tocar na lanterna da varanda acende")
+	await _toca(sd.rect_de("luzinhas_2").get_center())
+	_confere(sd.estado("luzinhas_2") == 0, "tocar nas luzinhas do deck apaga")
+	await _arrasta(cat.to_global(Vector2(0, -235)), Vector2(2075, 430), 1.0)
+	_confere(cat.slot != null and cat.slot.id == "rede", "Catarina deita na rede")
+	await _foto("26_sede_rede")
+	await _toca(sd.rect_de("caminho").get_center())
+	await _espera(0.8)
+	_confere(main.cena == "entrada" and main.W == 2200.0, "tocar no caminho de pedras leva à Entrada")
+	await _toca(en.rect_de("correio").get_center())
+	_confere(en.estado("correio") == 0, "tocar no correio fecha a caixinha")
+	await _toca(en.rect_de("floreira_dir").get_center())
+	_confere(en.estado("floreira_dir") == 1, "tocar na floreira colhida faz as flores nascerem")
+	await _foto("27_entrada")
+	await _toca(en.rect_de("portao").get_center())
+	await _espera(0.8)
+	_confere(main.cena == "sede", "o portão da Entrada leva à Sede")
 
 
 # ---------------------------------------------------------------- utilidades

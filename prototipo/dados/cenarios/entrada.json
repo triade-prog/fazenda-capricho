@@ -1,0 +1,171 @@
+{
+ "id": "entrada",
+ "largura": 2200,
+ "pecas": [
+  [
+   "fundo",
+   0,
+   0,
+   2200,
+   900
+  ],
+  [
+   "moinho_torre",
+   420,
+   220,
+   200,
+   380
+  ],
+  [
+   "moinho_helice",
+   400,
+   120,
+   240,
+   240
+  ],
+  [
+   "@portao",
+   820,
+   330,
+   560,
+   280
+  ],
+  [
+   "arco_portal",
+   690,
+   140,
+   820,
+   220
+  ],
+  [
+   "@lanterna_esq",
+   750,
+   330,
+   60,
+   110
+  ],
+  [
+   "@lanterna_dir",
+   1390,
+   330,
+   60,
+   110
+  ],
+  [
+   "@floreira_esq",
+   520,
+   560,
+   220,
+   110
+  ],
+  [
+   "@floreira_dir",
+   1490,
+   560,
+   220,
+   110
+  ],
+  [
+   "@correio",
+   1660,
+   450,
+   122,
+   170
+  ],
+  [
+   "banco",
+   220,
+   540,
+   260,
+   110
+  ]
+ ],
+ "interativos": {
+  "portao": {
+   "estados": [
+    "portao_fechado",
+    "portao_aberto"
+   ],
+   "x": 820,
+   "y": 330,
+   "leva": "sede",
+   "chegada": 1100,
+   "estado": 0,
+   "w": 560,
+   "h": 280
+  },
+  "lanterna_esq": {
+   "estados": [
+    "lanterna_apagada",
+    "lanterna_acesa"
+   ],
+   "x": 750,
+   "y": 330,
+   "estado": 1,
+   "w": 60,
+   "h": 110
+  },
+  "lanterna_dir": {
+   "estados": [
+    "lanterna_apagada",
+    "lanterna_acesa"
+   ],
+   "x": 1390,
+   "y": 330,
+   "estado": 1,
+   "w": 60,
+   "h": 110
+  },
+  "floreira_esq": {
+   "estados": [
+    "floreira_colhida",
+    "floreira"
+   ],
+   "x": 520,
+   "y": 560,
+   "estado": 1,
+   "w": 220,
+   "h": 110
+  },
+  "floreira_dir": {
+   "estados": [
+    "floreira_colhida",
+    "floreira"
+   ],
+   "x": 1490,
+   "y": 560,
+   "estado": 0,
+   "w": 220,
+   "h": 110
+  },
+  "correio": {
+   "estados": [
+    "correio_fechado",
+    "correio_aberto"
+   ],
+   "x": 1660,
+   "y": 450,
+   "estado": 1,
+   "w": 122,
+   "h": 170
+  }
+ },
+ "objetos": [
+  {
+   "tipo": "cartinha",
+   "x": 1825.0,
+   "y": 596,
+   "w": 50,
+   "h": 36
+  },
+  {
+   "tipo": "flor",
+   "x": 1542.5,
+   "y": 815,
+   "w": 25,
+   "h": 55
+  }
+ ],
+ "lugares": [],
+ "superficies": []
+}

@@ -207,6 +207,25 @@ TABELA = [
     ("Bola", "60 × 60", None, "Bola com gomos coloridos; o Bob e a Nina brincam.", ["bola"]),
 ]
 
+# Como o cenário entra no protótipo (ver para_jogo.py). "caminho" é uma passagem sem imagem própria
+# (as pedras do fundo): leva à Entrada da Fazenda.
+JOGO = {
+    "interativos": {
+        "porta_sala": {"estados": ["porta_frente_fechada", "porta_frente_aberta"], "x": 965, "y": 240, "leva": "sala", "chegada": 1060, "estado": 0},
+        "lanterna_esq": {"estados": ["lanterna_apagada", "lanterna_acesa"], "x": 860, "y": 240},
+        "lanterna_dir": {"estados": ["lanterna_apagada", "lanterna_acesa"], "x": 1160, "y": 240},
+        "luzinhas_1": {"estados": ["luzinhas_apagadas", "luzinhas_acesas"], "x": 1830, "y": 190},
+        "luzinhas_2": {"estados": ["luzinhas_apagadas", "luzinhas_acesas"], "x": 2090, "y": 186},
+        "caminho": {"estados": [], "x": 890, "y": 620, "w": 260, "h": 270, "leva": "entrada", "chegada": 1020},
+    },
+    "objetos": ["bola", "regador_cheio"],
+    "lugares": [
+        {"id": "rede", "area": [1880, 330, 390, 200], "spots": [[2075, 522]], "pose": "deitar"},
+        {"id": "banco_varanda", "area": [630, 400, 340, 150], "spots": [[800, 524]], "pose": "deitar"},
+    ],
+    "superficies": [[2430, 2710, 445]],
+}
+
 if __name__ == "__main__":
     pr, le = textos("sede", "Sede da Fazenda", "C02",
                     "É a casa grande e ROSA da família, com varanda florida e um deck com rede para descansar ao ar livre.",

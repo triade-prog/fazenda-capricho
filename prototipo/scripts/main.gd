@@ -22,7 +22,7 @@ extends Node2D
 const DATA_PATH := "res://dados/interacoes.json"
 const RoomScript := preload("res://scripts/room.gd")
 
-const W := 2200.0
+var W := 2200.0                  # largura do cenário que está na tela
 const H := 900.0
 const FLOOR_Y := 600.0
 const DRAG_START := 10.0
@@ -81,6 +81,8 @@ func _ready() -> void:
 	_make_porta_quarto()
 	_add_cenario("sala")
 	_add_cenario("cozinha")
+	_add_cenario("sede")
+	_add_cenario("entrada")
 	_make_toys()
 	_setup_camera()
 	_show_intro()
@@ -1180,6 +1182,7 @@ func _abrir_e_ir(t: Toy, dest: String) -> void:
 
 func _mostrar_cenario(dest: String) -> void:
 	cena = dest
+	W = (cenarios[dest] as Cenario).largura if cenarios[dest] is Cenario else 2200.0
 	for id in cenarios:
 		(cenarios[id] as Node2D).visible = id == dest
 	castle.visible = dest == "quarto"

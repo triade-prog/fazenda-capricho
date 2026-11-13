@@ -79,6 +79,8 @@ func set_estado(iid: String, e: int) -> void:
 
 func alternar(iid: String) -> int:
 	var n: int = interativos[iid]["estados"].size()
+	if n == 0:
+		return 0
 	set_estado(iid, (estado(iid) + 1) % n)
 	return estado(iid)
 

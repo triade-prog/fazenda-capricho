@@ -41,9 +41,11 @@ for nome, x, y in mod.POS:
     else:
         pecas.append([nome, x, y, w, h])
         usadas.add(nome)
-faltam = set(inter) - vistos
+faltam = {i for i in inter if inter[i]["estados"]} - vistos
 assert not faltam, f"interativos sem posição na prévia: {faltam}"
 for d in inter.values():
+    if not d["estados"]:  # passagem sem imagem: x, y, w, h vêm do JOGO
+        continue
     d["w"], d["h"] = _tamanho(mod.P[d["estados"][0]])
 for nome in sorted(usadas):
     shutil.copyfile(os.path.join(origem, nome + ".png"), os.path.join(destino, nome + ".png"))

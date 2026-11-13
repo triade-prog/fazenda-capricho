@@ -199,6 +199,21 @@ TABELA = [
     ("Banco", "260 × 110", None, "Banco de madeira com coração no encosto; sentam 2.", ["banco"]),
 ]
 
+# Como o cenário entra no protótipo (ver para_jogo.py). O portão leva à Sede.
+JOGO = {
+    "interativos": {
+        "portao": {"estados": ["portao_fechado", "portao_aberto"], "x": 820, "y": 330, "leva": "sede", "chegada": 1100, "estado": 0},
+        "lanterna_esq": {"estados": ["lanterna_apagada", "lanterna_acesa"], "x": 750, "y": 330},
+        "lanterna_dir": {"estados": ["lanterna_apagada", "lanterna_acesa"], "x": 1390, "y": 330},
+        "floreira_esq": {"estados": ["floreira_colhida", "floreira"], "x": 520, "y": 560},
+        "floreira_dir": {"estados": ["floreira_colhida", "floreira"], "x": 1490, "y": 560},
+        "correio": {"estados": ["correio_fechado", "correio_aberto"], "x": 1660, "y": 450},
+    },
+    "objetos": ["cartinha", "flor"],
+    "lugares": [],
+    "superficies": [],
+}
+
 if __name__ == "__main__":
     pr, le = textos("entrada", "Entrada da Fazenda", "C01",
                     "É a chegada: portal de madeira com a placa da Fazenda Capricho, flores e lanternas; ao fundo, a fazenda.",
