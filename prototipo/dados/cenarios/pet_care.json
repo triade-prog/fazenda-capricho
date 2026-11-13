@@ -1,0 +1,245 @@
+{
+ "id": "pet_care",
+ "largura": 2600,
+ "pecas": [
+  [
+   "fundo",
+   0,
+   0,
+   2600,
+   900
+  ],
+  [
+   "placa_pata",
+   1060,
+   60,
+   90,
+   80
+  ],
+  [
+   "@chuveirinho",
+   760,
+   290,
+   140,
+   320
+  ],
+  [
+   "@banheira",
+   840,
+   440,
+   300,
+   170
+  ],
+  [
+   "bolha",
+   980,
+   380,
+   30,
+   30
+  ],
+  [
+   "bolha",
+   1030,
+   350,
+   30,
+   30
+  ],
+  [
+   "prateleira",
+   1230,
+   300,
+   220,
+   140
+  ],
+  [
+   "gancho_toalha",
+   1380,
+   250,
+   60,
+   40
+  ],
+  [
+   "@tigela_cao",
+   1560,
+   640,
+   80,
+   40
+  ],
+  [
+   "@tigela_gato",
+   1660,
+   640,
+   80,
+   40
+  ],
+  [
+   "@tigela_agua",
+   1760,
+   640,
+   80,
+   40
+  ],
+  [
+   "cercadinho",
+   1900,
+   520,
+   420,
+   180
+  ],
+  [
+   "vaso_flores",
+   620,
+   520,
+   70,
+   90
+  ],
+  [
+   "vaso_flores",
+   1530,
+   520,
+   70,
+   90
+  ],
+  [
+   "@seta_estabulo",
+   380,
+   470,
+   120,
+   160
+  ]
+ ],
+ "interativos": {
+  "chuveirinho": {
+   "estados": [
+    "chuveirinho_desligado",
+    "chuveirinho_ligado"
+   ],
+   "x": 760,
+   "y": 290,
+   "estado": 1,
+   "w": 140,
+   "h": 320
+  },
+  "banheira": {
+   "estados": [
+    "banheira_vazia",
+    "banheira_agua",
+    "banheira_espuma"
+   ],
+   "x": 840,
+   "y": 440,
+   "estado": 2,
+   "w": 300,
+   "h": 170
+  },
+  "tigela_cao": {
+   "estados": [
+    "tigela_cao_vazia",
+    "tigela_cao_cheia"
+   ],
+   "x": 1560,
+   "y": 640,
+   "estado": 1,
+   "w": 80,
+   "h": 40
+  },
+  "tigela_gato": {
+   "estados": [
+    "tigela_gato_vazia",
+    "tigela_gato_cheia"
+   ],
+   "x": 1660,
+   "y": 640,
+   "estado": 1,
+   "w": 80,
+   "h": 40
+  },
+  "tigela_agua": {
+   "estados": [
+    "tigela_agua_vazia",
+    "tigela_agua_cheia"
+   ],
+   "x": 1760,
+   "y": 640,
+   "estado": 1,
+   "w": 80,
+   "h": 40
+  },
+  "seta_estabulo": {
+   "estados": [
+    "seta_ferradura_e"
+   ],
+   "x": 380,
+   "y": 470,
+   "leva": "estabulo",
+   "chegada": 440,
+   "estado": 0,
+   "w": 120,
+   "h": 160
+  }
+ },
+ "objetos": [
+  {
+   "tipo": "xampu",
+   "x": 1270.0,
+   "y": 380,
+   "w": 40,
+   "h": 60
+  },
+  {
+   "tipo": "toalha",
+   "x": 1350.0,
+   "y": 384,
+   "w": 100,
+   "h": 60
+  },
+  {
+   "tipo": "osso",
+   "x": 1278.0,
+   "y": 421,
+   "w": 56,
+   "h": 26
+  },
+  {
+   "tipo": "bolinha",
+   "x": 1345.0,
+   "y": 416,
+   "w": 30,
+   "h": 30
+  },
+  {
+   "tipo": "varinha_pena",
+   "x": 1420.0,
+   "y": 420,
+   "w": 40,
+   "h": 120
+  },
+  {
+   "tipo": "biscoito",
+   "x": 1620.0,
+   "y": 636,
+   "w": 40,
+   "h": 36
+  },
+  {
+   "tipo": "peixinho",
+   "x": 1722.0,
+   "y": 632,
+   "w": 44,
+   "h": 26
+  }
+ ],
+ "lugares": [],
+ "superficies": [
+  [
+   1235,
+   1445,
+   382
+  ],
+  [
+   1235,
+   1445,
+   421
+  ]
+ ]
+}

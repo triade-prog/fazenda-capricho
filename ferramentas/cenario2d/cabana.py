@@ -148,6 +148,21 @@ TABELA = [
     ("Passarinho", "40 × 35", None, "Passarinho azul-claro para olhar de binóculo.", ["passarinho"]),
 ]
 
+# Como o cenário entra no protótipo (ver para_jogo.py).
+JOGO = {
+    "interativos": {
+        "cabana": {"estados": ["cabana_fechada", "cabana_aberta"], "x": 820, "y": 230},
+        "lanterna": {"estados": ["lanterna_desligada", "lanterna_ligada"], "x": 1020, "y": 420},
+        "fogueira": {"estados": ["fogueira", "fogueira_brilho"], "x": 1400, "y": 560},
+        "livro": {"estados": ["livro_fechado", "livro_aberto"], "x": 640, "y": 690},
+        "seta_arvore": {"estados": ["seta_arvore_e"], "x": 200, "y": 470, "leva": "casa_arvore", "chegada": 260},
+    },
+    "extras": [("seta_arvore_e", 200, 470)],
+    "objetos": ["binoculo"],
+    "lugares": [{"id": "saco_dormir", "area": [900, 440, 300, 160], "spots": [[1050, 578]], "pose": "deitar"}],
+    "superficies": [],
+}
+
 if __name__ == "__main__":
     pr, le = textos("cabana", "Cabana externa", "C12",
                     "É uma cabana de faz de conta no quintal, de madeira e tecido, para acampar e contar histórias, com almofadas, lanterna e bandeirinhas.",

@@ -353,6 +353,37 @@ P["moita_colhida"] = moita(False)
 P["margarida"] = svg(30, 60, path("M15,30 Q12,45 15,58", extra=f'stroke="{C["verde_esc"]}" stroke-width="3"') +
                      ell(9, 46, 5, 2.5, C["verde"], 'stroke-width="1.5" transform="rotate(-30 9 46)"') + margarida(15, 16, 9))
 
+# Posição das peças na prévia e no jogo (canto de cima à esquerda, em pixels do jogo).
+W, H, CHAO = 3300, 900, 600
+POS = [("fundo", 0, 0), ("suporte_manta", 840, 300), ("ferradura", 1000, 290), ("toalha_gancho", 1100, 270), ("ducha_ligada", 1180, 190),
+       ("lanterna_acesa", 1330, 200), ("piso_banho", 1200, 780), ("meia_porta_fechada", 380, 530), ("cocho_cenouras", 820, 600), ("balde_agua", 1060, 610),
+       ("fardo", 850, 770), ("fardo", 1040, 770), ("feno", 700, 720), ("pente", 40, 830), ("arvore", 1950, 100),
+       ("porteira_fechada", 1560, 500), ("laguinho_ondas", 2500, 750), ("banco_tronco", 2600, 620), ("moita_flores", 2850, 690), ("moita_colhida", 3060, 690),
+       ("moita_flores", 2250, 820), ("margarida", 2200, 850), ("@catarina", 2180, 880), ("@catarina", 640, 860)]
+
+# Como o cenário entra no protótipo (ver para_jogo.py).
+JOGO = {
+    "interativos": {
+        "meia_porta": {"estados": ["meia_porta_fechada", "meia_porta_aberta"], "x": 380, "y": 530},
+        "cocho": {"estados": ["cocho_vazio", "cocho_feno", "cocho_cenouras"], "x": 820, "y": 600},
+        "balde": {"estados": ["balde_vazio", "balde_agua"], "x": 1060, "y": 610},
+        "ducha": {"estados": ["ducha_desligada", "ducha_ligada"], "x": 1180, "y": 190},
+        "lanterna": {"estados": ["lanterna_apagada", "lanterna_acesa"], "x": 1330, "y": 200},
+        "porteira": {"estados": ["porteira_fechada", "porteira_aberta"], "x": 1560, "y": 500},
+        "laguinho": {"estados": ["laguinho_parado", "laguinho_ondas"], "x": 2500, "y": 750},
+        "moita_1": {"estados": ["moita_colhida", "moita_flores"], "x": 2850, "y": 690},
+        "moita_2": {"estados": ["moita_colhida", "moita_flores"], "x": 3060, "y": 690},
+        "moita_3": {"estados": ["moita_colhida", "moita_flores"], "x": 2250, "y": 820},
+        "seta_sede": {"estados": ["seta_casa_e"], "x": 1880, "y": 470, "leva": "sede", "chegada": 1960},
+        "seta_plantacao": {"estados": ["seta_cenoura_d"], "x": 2380, "y": 470, "leva": "plantacao", "chegada": 2440},
+        "seta_pet_care": {"estados": ["seta_pata_d"], "x": 3160, "y": 470, "leva": "pet_care", "chegada": 3180},
+    },
+    "extras": [("seta_casa_e", 1880, 470), ("seta_cenoura_d", 2380, 470), ("seta_pata_d", 3160, 470)],
+    "objetos": ["pente", "feno", "margarida"],
+    "lugares": [],
+    "superficies": [[860, 1010, 775], [1050, 1200, 775]],
+}
+
 if __name__ == "__main__":
     raiz = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     destino = os.path.join(raiz, "arte/cenario/estabulo/2d")

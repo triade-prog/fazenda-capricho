@@ -81,7 +81,14 @@ de um iPad Air deitado (1180 x 820).
 | Levar alguém para o outro lado do quarto | Arrastar o personagem até a borda da tela: o quarto rola junto |
 | Ir para a Sala | Tocar na porta do quarto (vai só a "câmera") **ou** soltar alguém na porta (vai junto, com o que estiver segurando e com quem estiver montado) |
 | Voltar ao quarto | Na Sala, a porta com a placa de coração leva de volta ao quarto (da mesma forma: tocar ou soltar alguém nela) |
-| Brincar na Sala | Tocar no abajur (acende/apaga) e no fogo da lareira (alto/baixo); deitar no sofá; a porta do quarto da Carol só abre e fecha (cômodo ainda não montado) |
+| Brincar na Sala | Tocar no abajur (acende/apaga) e no fogo da lareira (alto/baixo); deitar no sofá |
+| Quarto da Carol (proposta) | Na Sala, a porta com a placa de flor; lá dentro: guarda-roupa, abajures, penteadeira, cobertor, deitar na cama, pegar a escova |
+| Andar pela fazenda | Nos cenários de fora, **plaquinhas de caminho** (setas com desenho, sem letras): tocar leva a câmera, soltar alguém na plaquinha leva junto. Ligações conforme `docs/mapa_cenarios.png` |
+| Estábulo | Da Sede, plaquinha da ferradura: meia-porta, cocho, balde, ducha, lanterna, porteira, laguinho e moitas; pegar o pente, o feno e a margarida |
+| Plantação | Da Sede ou do Estábulo, plaquinha da cenoura: cada canteiro cresce um estágio a cada toque; nuvem, árvores de fruta, flores e cesta mudam ao toque (o jogo da fazendinha vem depois) |
+| Pet Care | Do Estábulo, plaquinha da pata: chuveirinho, banheira (vazia, com água, com espuma), tigelas; pegar xampu, toalha, brinquedos e petiscos (os bichos comem o biscoito) |
+| Casa na Árvore | Da Sede, plaquinha da árvore: cachos de frutinhas, escorregador, cesto; a porta roxa leva para dentro (baú, fogãozinho, passarinho, caminha, brinquedos) |
+| Cabana e Casinha (propostas) | Do pátio da Casa na Árvore, plaquinhas da cabana e da cesta: cabana, lanterna, fogueira, livro e saco de dormir; toldo, caixa registradora, maleta e potinhos |
 | Sair para a Sede | Na Sala, a porta da frente (placa da casinha) leva ao lado de fora da casa; a porta roxa da Sede volta para a Sala |
 | Brincar na Sede | Acender as lanternas da varanda e as luzinhas do deck, deitar na rede ou no banco da varanda, pegar a bola e o regador |
 | Ir para a Entrada da Fazenda | Na Sede, tocar no caminho de pedras (ou soltar alguém nele); na Entrada, o portão volta para a Sede |
@@ -108,7 +115,7 @@ Pensado para dedos no iPad:
 | `scripts/toy.gd` | Tudo que pode ser pego: pose, mão, cabeça, toque generoso, animação de respirar. |
 | `scripts/slot.gd` | Lugares de encaixe (cama, castelinho, escorregador, escada). |
 | `scripts/room.gd`, `castle_front.gd`, `item_art.gd` | Desenhos provisórios do quarto, do castelinho e dos objetos. |
-| `scripts/cenario.gd` + `dados/cenarios/<cena>.json` | Cenários montados por dados (Sala, Cozinha, Sede e Entrada): peças, interativos (portas, abajur, fogo, geladeira...), objetos que dá para pegar, lugares e superfícies. |
+| `scripts/cenario.gd` + `dados/cenarios/<cena>.json` | Cenários montados por dados (todos menos o quarto da Catarina): peças, interativos (portas, abajur, fogo, geladeira...), objetos que dá para pegar, lugares e superfícies. |
 | `assets/cenario/<cena>/` | Peças 2D provisórias do cenário, com os mesmos nomes da entrega 3D: trocar a arte é só substituir o PNG. |
 
 Para montar um cenário novo a partir das peças 2D de `arte/cenario/<cena>/2d/`, defina o dicionário
@@ -140,7 +147,9 @@ comendo, montar na Lumi, passear montada, Lumi girando, Lumi barrada no castelin
 olhar para o objeto arrastado, ficar triste com o castelinho cheio) e a Sala (passar pela porta
 levando a Catarina, abajur, fogo, deitar no sofá, voltar ao quarto e ir de novo) e a Cozinha (porta
 da panela, fogão, tigela, prato, segurar a xícara, comer a maçã e a geladeira repondo a comida), a Sede (porta da frente, lanterna,
-luzinhas, rede) e a Entrada (caminho de pedras, correio, floreira, portão). Foi rodado nos tamanhos de tela
+luzinhas, rede), a Entrada (caminho de pedras, correio, floreira, portão), o Quarto da Carol e uma volta
+pela fazenda inteira pelas plaquinhas (Estábulo, Pet Care, Plantação, Casa na Árvore por fora e por dentro,
+Cabana e Casinha), conferindo cada ligação do mapa. Foi rodado nos tamanhos de tela
 iPad 9,7"/mini (1024 x 768, 4:3) e iPad Air (1180 x 820), além da versão web num navegador emulando
 um iPad Pro 11" com toque.
 

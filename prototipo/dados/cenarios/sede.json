@@ -99,6 +99,34 @@
    590,
    110,
    160
+  ],
+  [
+   "@seta_entrada",
+   1150,
+   640,
+   120,
+   160
+  ],
+  [
+   "@seta_arvore",
+   30,
+   640,
+   120,
+   160
+  ],
+  [
+   "@seta_estabulo",
+   2700,
+   640,
+   120,
+   160
+  ],
+  [
+   "@seta_plantacao",
+   2850,
+   640,
+   120,
+   160
   ]
  ],
  "interativos": {
@@ -167,6 +195,54 @@
    "h": 270,
    "leva": "entrada",
    "chegada": 1020
+  },
+  "seta_entrada": {
+   "estados": [
+    "seta_portao_e"
+   ],
+   "x": 1150,
+   "y": 640,
+   "leva": "entrada",
+   "chegada": 1020,
+   "estado": 0,
+   "w": 120,
+   "h": 160
+  },
+  "seta_arvore": {
+   "estados": [
+    "seta_arvore_e"
+   ],
+   "x": 30,
+   "y": 640,
+   "leva": "casa_arvore",
+   "chegada": 110,
+   "estado": 0,
+   "w": 120,
+   "h": 160
+  },
+  "seta_estabulo": {
+   "estados": [
+    "seta_ferradura_d"
+   ],
+   "x": 2700,
+   "y": 640,
+   "leva": "estabulo",
+   "chegada": 2760,
+   "estado": 0,
+   "w": 120,
+   "h": 160
+  },
+  "seta_plantacao": {
+   "estados": [
+    "seta_cenoura_d"
+   ],
+   "x": 2850,
+   "y": 640,
+   "leva": "plantacao",
+   "chegada": 2900,
+   "estado": 0,
+   "w": 120,
+   "h": 160
   }
  },
  "objetos": [

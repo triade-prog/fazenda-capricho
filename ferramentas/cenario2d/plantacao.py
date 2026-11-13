@@ -560,6 +560,52 @@ def fundo():
 
 P["fundo"] = fundo()
 
+# Posição das peças na prévia e no jogo (canto de cima à esquerda, em pixels do jogo).
+W, H, CHAO = 3300, 900, 600
+POS = [("fundo", 0, 0), ("nuvem_chovendo", 560, 150), ("bica", 30, 570), ("regador_cheio", 170, 820), ("enxada", 270, 790),
+       ("sementes_cenoura", 170, 640), ("sementes_tomate", 235, 640), ("cenoura_4", 380, 500), ("alface_3", 590, 500), ("tomate_4", 800, 460),
+       ("terra_fofa", 1010, 630), ("terra_dura", 380, 740), ("morango_2", 590, 740), ("terra_fechada", 800, 740), ("terra_fechada", 1010, 740),
+       ("espantalho", 1150, 390), ("carrinho", 420, 790), ("cesta_cheia", 680, 810), ("abobora_gigante", 1270, 630), ("morango_4", 1270, 790),
+       ("@catarina", 1550, 860), ("girassol_caule", 1690, 280), ("girassol_cabeca", 1690, 250), ("girassol_caule", 1790, 300), ("girassol_cabeca", 1790, 270),
+       ("canteiro_flores", 1890, 700), ("borboleta_aberta", 1960, 560), ("abelha_aberta", 2050, 600), ("flor_arco_iris_rosa", 2180, 640), ("frutinhas_magicas_com", 2350, 530),
+       ("arbusto_coracoes", 2160, 450), ("macieira_com_macas", 2540, 140), ("laranjeira_com", 2800, 170), ("bananeira_com", 3040, 140), ("escadinha", 2740, 610),
+       ("banca", 2530, 770), ("maca", 2700, 860), ("minhoca", 3000, 860), ("matinho", 3150, 850), ("quadro_pedidos", 3130, 620)]
+
+
+def _c(nome, x, y, estados):
+    return {"estados": estados, "x": x, "y": y}
+
+
+# Como o cenário entra no protótipo (ver para_jogo.py). Por enquanto cada canteiro cresce ao toque;
+# o jogo da fazendinha (plantar, regar, colher, vender) vem depois.
+JOGO = {
+    "interativos": {
+        "nuvem": _c("nuvem", 560, 150, ["nuvem_parada", "nuvem_chovendo"]),
+        "cenoura": _c("cenoura", 380, 500, ["cenoura_1", "cenoura_2", "cenoura_3", "cenoura_4"]),
+        "alface": _c("alface", 590, 500, ["alface_1", "alface_2", "alface_3", "alface_4"]),
+        "tomate": _c("tomate", 800, 460, ["tomate_1", "tomate_2", "tomate_3", "tomate_4"]),
+        "terra_1": _c("terra_1", 1010, 630, ["terra_dura", "terra_fofa"]),
+        "terra_2": _c("terra_2", 380, 740, ["terra_dura", "terra_fofa"]),
+        "morango_1": _c("morango_1", 590, 740, ["morango_1", "morango_2", "morango_3", "morango_4"]),
+        "morango_2": _c("morango_2", 1270, 790, ["morango_1", "morango_2", "morango_3", "morango_4"]),
+        "cesta": _c("cesta", 680, 810, ["cesta_vazia", "cesta_cheia"]),
+        "canteiro_flores": _c("canteiro_flores", 1890, 700, ["canteiro_colhido", "canteiro_flores"]),
+        "borboleta": _c("borboleta", 1960, 560, ["borboleta_fechada", "borboleta_aberta"]),
+        "abelha": _c("abelha", 2050, 600, ["abelha_fechada", "abelha_aberta"]),
+        "flor_arco_iris": _c("flor_arco_iris", 2180, 640, ["flor_arco_iris_rosa", "flor_arco_iris_lilas", "flor_arco_iris_azul", "flor_arco_iris_amarela"]),
+        "frutinhas_magicas": _c("frutinhas_magicas", 2350, 530, ["frutinhas_magicas_sem", "frutinhas_magicas_com"]),
+        "macieira": _c("macieira", 2540, 140, ["macieira_sem_macas", "macieira_com_macas"]),
+        "laranjeira": _c("laranjeira", 2800, 170, ["laranjeira_sem", "laranjeira_com"]),
+        "bananeira": _c("bananeira", 3040, 140, ["bananeira_sem", "bananeira_com"]),
+        "seta_sede": {"estados": ["seta_casa_e"], "x": 1430, "y": 440, "leva": "sede", "chegada": 1490},
+        "seta_estabulo": {"estados": ["seta_ferradura_d"], "x": 1560, "y": 440, "leva": "estabulo", "chegada": 1620},
+    },
+    "extras": [("seta_casa_e", 1430, 440), ("seta_ferradura_d", 1560, 440)],
+    "objetos": ["regador_cheio", "enxada", "maca"],
+    "lugares": [],
+    "superficies": [],
+}
+
 if __name__ == "__main__":
     raiz = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     destino = os.path.join(raiz, "arte/cenario/plantacao/2d")

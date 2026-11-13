@@ -1,0 +1,345 @@
+{
+ "id": "estabulo",
+ "largura": 3300,
+ "pecas": [
+  [
+   "fundo",
+   0,
+   0,
+   3300,
+   900
+  ],
+  [
+   "suporte_manta",
+   840,
+   300,
+   140,
+   120
+  ],
+  [
+   "ferradura",
+   1000,
+   290,
+   120,
+   110
+  ],
+  [
+   "toalha_gancho",
+   1100,
+   270,
+   90,
+   60
+  ],
+  [
+   "@ducha",
+   1180,
+   190,
+   300,
+   430
+  ],
+  [
+   "@lanterna",
+   1330,
+   200,
+   60,
+   100
+  ],
+  [
+   "piso_banho",
+   1200,
+   780,
+   260,
+   60
+  ],
+  [
+   "@meia_porta",
+   380,
+   530,
+   300,
+   170
+  ],
+  [
+   "@cocho",
+   820,
+   600,
+   220,
+   100
+  ],
+  [
+   "@balde",
+   1060,
+   610,
+   90,
+   90
+  ],
+  [
+   "fardo",
+   850,
+   770,
+   170,
+   110
+  ],
+  [
+   "fardo",
+   1040,
+   770,
+   170,
+   110
+  ],
+  [
+   "arvore",
+   1950,
+   100,
+   480,
+   540
+  ],
+  [
+   "@porteira",
+   1560,
+   500,
+   300,
+   200
+  ],
+  [
+   "@laguinho",
+   2500,
+   750,
+   300,
+   110
+  ],
+  [
+   "banco_tronco",
+   2600,
+   620,
+   200,
+   80
+  ],
+  [
+   "@moita_1",
+   2850,
+   690,
+   200,
+   90
+  ],
+  [
+   "@moita_2",
+   3060,
+   690,
+   200,
+   90
+  ],
+  [
+   "@moita_3",
+   2250,
+   820,
+   200,
+   90
+  ],
+  [
+   "@seta_sede",
+   1880,
+   470,
+   120,
+   160
+  ],
+  [
+   "@seta_plantacao",
+   2380,
+   470,
+   120,
+   160
+  ],
+  [
+   "@seta_pet_care",
+   3160,
+   470,
+   120,
+   160
+  ]
+ ],
+ "interativos": {
+  "meia_porta": {
+   "estados": [
+    "meia_porta_fechada",
+    "meia_porta_aberta"
+   ],
+   "x": 380,
+   "y": 530,
+   "estado": 0,
+   "w": 300,
+   "h": 170
+  },
+  "cocho": {
+   "estados": [
+    "cocho_vazio",
+    "cocho_feno",
+    "cocho_cenouras"
+   ],
+   "x": 820,
+   "y": 600,
+   "estado": 2,
+   "w": 220,
+   "h": 100
+  },
+  "balde": {
+   "estados": [
+    "balde_vazio",
+    "balde_agua"
+   ],
+   "x": 1060,
+   "y": 610,
+   "estado": 1,
+   "w": 90,
+   "h": 90
+  },
+  "ducha": {
+   "estados": [
+    "ducha_desligada",
+    "ducha_ligada"
+   ],
+   "x": 1180,
+   "y": 190,
+   "estado": 1,
+   "w": 300,
+   "h": 430
+  },
+  "lanterna": {
+   "estados": [
+    "lanterna_apagada",
+    "lanterna_acesa"
+   ],
+   "x": 1330,
+   "y": 200,
+   "estado": 1,
+   "w": 60,
+   "h": 100
+  },
+  "porteira": {
+   "estados": [
+    "porteira_fechada",
+    "porteira_aberta"
+   ],
+   "x": 1560,
+   "y": 500,
+   "estado": 0,
+   "w": 300,
+   "h": 200
+  },
+  "laguinho": {
+   "estados": [
+    "laguinho_parado",
+    "laguinho_ondas"
+   ],
+   "x": 2500,
+   "y": 750,
+   "estado": 1,
+   "w": 300,
+   "h": 110
+  },
+  "moita_1": {
+   "estados": [
+    "moita_colhida",
+    "moita_flores"
+   ],
+   "x": 2850,
+   "y": 690,
+   "estado": 1,
+   "w": 200,
+   "h": 90
+  },
+  "moita_2": {
+   "estados": [
+    "moita_colhida",
+    "moita_flores"
+   ],
+   "x": 3060,
+   "y": 690,
+   "estado": 0,
+   "w": 200,
+   "h": 90
+  },
+  "moita_3": {
+   "estados": [
+    "moita_colhida",
+    "moita_flores"
+   ],
+   "x": 2250,
+   "y": 820,
+   "estado": 1,
+   "w": 200,
+   "h": 90
+  },
+  "seta_sede": {
+   "estados": [
+    "seta_casa_e"
+   ],
+   "x": 1880,
+   "y": 470,
+   "leva": "sede",
+   "chegada": 1960,
+   "estado": 0,
+   "w": 120,
+   "h": 160
+  },
+  "seta_plantacao": {
+   "estados": [
+    "seta_cenoura_d"
+   ],
+   "x": 2380,
+   "y": 470,
+   "leva": "plantacao",
+   "chegada": 2440,
+   "estado": 0,
+   "w": 120,
+   "h": 160
+  },
+  "seta_pet_care": {
+   "estados": [
+    "seta_pata_d"
+   ],
+   "x": 3160,
+   "y": 470,
+   "leva": "pet_care",
+   "chegada": 3180,
+   "estado": 0,
+   "w": 120,
+   "h": 160
+  }
+ },
+ "objetos": [
+  {
+   "tipo": "feno",
+   "x": 730.0,
+   "y": 760,
+   "w": 60,
+   "h": 40
+  },
+  {
+   "tipo": "pente",
+   "x": 75.0,
+   "y": 875,
+   "w": 70,
+   "h": 45
+  },
+  {
+   "tipo": "margarida",
+   "x": 2215.0,
+   "y": 910,
+   "w": 30,
+   "h": 60
+  }
+ ],
+ "lugares": [],
+ "superficies": [
+  [
+   860,
+   1010,
+   775
+  ],
+  [
+   1050,
+   1200,
+   775
+  ]
+ ]
+}

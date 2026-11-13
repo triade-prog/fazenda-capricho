@@ -162,6 +162,20 @@ TABELA = [
     ("Plaquinhas", "90 × 80", "consultório · lojinha", "Placa com patinha (consultório de bichos) ou com cestinha (lojinha), sem letras.", ["placa_pata", "placa_cesta"]),
 ]
 
+# Como o cenário entra no protótipo (ver para_jogo.py).
+JOGO = {
+    "interativos": {
+        "toldo": {"estados": ["toldo_fechado", "toldo_aberto"], "x": 840, "y": 222},
+        "caixa": {"estados": ["caixa_registradora", "caixa_registradora_plim"], "x": 920, "y": 410},
+        "maleta": {"estados": ["maleta_fechada", "maleta_aberta"], "x": 1120, "y": 268},
+        "seta_arvore": {"estados": ["seta_arvore_e"], "x": 200, "y": 470, "leva": "casa_arvore", "chegada": 260},
+    },
+    "extras": [("seta_arvore_e", 200, 470)],
+    "objetos": ["estetoscopio", "potinho_rosa", "potinho_lilas", "potinho_amarelo"],
+    "lugares": [],
+    "superficies": [[880, 1240, 490], [915, 1205, 350]],
+}
+
 if __name__ == "__main__":
     pr, le = textos("casinha", "Casinha de madeira", "C13",
                     "É uma casinha de brincar no chão, com janela-balcão, que vira lojinha ou consultório de bichinhos de faz de conta.",

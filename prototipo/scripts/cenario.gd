@@ -54,6 +54,11 @@ func _draw() -> void:
 			draw_texture_rect(t, Rect2(p[1], p[2], p[3], p[4]), false)
 
 
+## Solta as imagens da memória (ao sair do cenário); voltam a ser carregadas quando ele aparece.
+func soltar() -> void:
+	_tex.clear()
+
+
 func rect_de(iid: String) -> Rect2:
 	var d: Dictionary = interativos[iid]
 	return Rect2(d["x"], d["y"], d["w"], d["h"])
@@ -73,7 +78,8 @@ func estado(iid: String) -> int:
 
 
 func set_estado(iid: String, e: int) -> void:
-	interativos[iid]["estado"] = e
+	var n: int = interativos[iid]["estados"].size()
+	interativos[iid]["estado"] = clampi(e, 0, maxi(n - 1, 0))
 	queue_redraw()
 
 

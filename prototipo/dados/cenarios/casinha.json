@@ -1,0 +1,173 @@
+{
+ "id": "casinha",
+ "largura": 2200,
+ "pecas": [
+  [
+   "fundo",
+   0,
+   0,
+   2200,
+   900
+  ],
+  [
+   "casinha_interior",
+   780,
+   130,
+   560,
+   480
+  ],
+  [
+   "prateleira",
+   910,
+   300,
+   300,
+   130
+  ],
+  [
+   "@maleta",
+   1120,
+   268,
+   110,
+   90
+  ],
+  [
+   "casinha",
+   780,
+   130,
+   560,
+   480
+  ],
+  [
+   "@toldo",
+   840,
+   222,
+   440,
+   130
+  ],
+  [
+   "balcao",
+   870,
+   480,
+   380,
+   60
+  ],
+  [
+   "@caixa",
+   920,
+   410,
+   90,
+   80
+  ],
+  [
+   "placa_pata",
+   1015,
+   150,
+   90,
+   80
+  ],
+  [
+   "cadeirinha",
+   1400,
+   480,
+   80,
+   120
+  ],
+  [
+   "@seta_arvore",
+   200,
+   470,
+   120,
+   160
+  ]
+ ],
+ "interativos": {
+  "toldo": {
+   "estados": [
+    "toldo_fechado",
+    "toldo_aberto"
+   ],
+   "x": 840,
+   "y": 222,
+   "estado": 1,
+   "w": 440,
+   "h": 130
+  },
+  "caixa": {
+   "estados": [
+    "caixa_registradora",
+    "caixa_registradora_plim"
+   ],
+   "x": 920,
+   "y": 410,
+   "estado": 1,
+   "w": 90,
+   "h": 80
+  },
+  "maleta": {
+   "estados": [
+    "maleta_fechada",
+    "maleta_aberta"
+   ],
+   "x": 1120,
+   "y": 268,
+   "estado": 1,
+   "w": 110,
+   "h": 90
+  },
+  "seta_arvore": {
+   "estados": [
+    "seta_arvore_e"
+   ],
+   "x": 200,
+   "y": 470,
+   "leva": "casa_arvore",
+   "chegada": 260,
+   "estado": 0,
+   "w": 120,
+   "h": 160
+  }
+ },
+ "objetos": [
+  {
+   "tipo": "potinho_rosa",
+   "x": 955.0,
+   "y": 350,
+   "w": 30,
+   "h": 40
+  },
+  {
+   "tipo": "potinho_lilas",
+   "x": 1005.0,
+   "y": 350,
+   "w": 30,
+   "h": 40
+  },
+  {
+   "tipo": "potinho_amarelo",
+   "x": 1055.0,
+   "y": 350,
+   "w": 30,
+   "h": 40
+  },
+  {
+   "tipo": "estetoscopio",
+   "x": 1095.0,
+   "y": 490,
+   "w": 70,
+   "h": 60
+  }
+ ],
+ "lugares": [],
+ "superficies": [
+  [
+   880,
+   1240,
+   490
+  ],
+  [
+   915,
+   1205,
+   350
+  ]
+ ]
+}

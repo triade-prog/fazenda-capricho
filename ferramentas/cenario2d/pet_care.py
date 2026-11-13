@@ -183,6 +183,22 @@ TABELA = [
     ("Placa e vaso", "placa 90 × 80 · vaso 70 × 90", None, "Plaquinha de madeira com patinha (sem letras) e vaso de flores rosa.", ["placa_pata", "vaso_flores"]),
 ]
 
+# Como o cenário entra no protótipo (ver para_jogo.py).
+JOGO = {
+    "interativos": {
+        "chuveirinho": {"estados": ["chuveirinho_desligado", "chuveirinho_ligado"], "x": 760, "y": 290},
+        "banheira": {"estados": ["banheira_vazia", "banheira_agua", "banheira_espuma"], "x": 840, "y": 440},
+        "tigela_cao": {"estados": ["tigela_cao_vazia", "tigela_cao_cheia"], "x": 1560, "y": 640},
+        "tigela_gato": {"estados": ["tigela_gato_vazia", "tigela_gato_cheia"], "x": 1660, "y": 640},
+        "tigela_agua": {"estados": ["tigela_agua_vazia", "tigela_agua_cheia"], "x": 1760, "y": 640},
+        "seta_estabulo": {"estados": ["seta_ferradura_e"], "x": 380, "y": 470, "leva": "estabulo", "chegada": 440},
+    },
+    "extras": [("seta_ferradura_e", 380, 470)],
+    "objetos": ["xampu", "toalha", "osso", "bolinha", "varinha_pena", "biscoito", "peixinho"],
+    "lugares": [],
+    "superficies": [[1235, 1445, 382], [1235, 1445, 421]],
+}
+
 if __name__ == "__main__":
     pr, le = textos("pet_care", "Pet Care", "C10",
                     "É o cantinho ao ar livre para cuidar dos bichos: banho de espuma, toalha, comidinha, brinquedos e um cercadinho para acalmar.",

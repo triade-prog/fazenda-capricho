@@ -217,7 +217,12 @@ JOGO = {
         "luzinhas_1": {"estados": ["luzinhas_apagadas", "luzinhas_acesas"], "x": 1830, "y": 190},
         "luzinhas_2": {"estados": ["luzinhas_apagadas", "luzinhas_acesas"], "x": 2090, "y": 186},
         "caminho": {"estados": [], "x": 890, "y": 620, "w": 260, "h": 270, "leva": "entrada", "chegada": 1020},
+        "seta_entrada": {"estados": ["seta_portao_e"], "x": 1150, "y": 640, "leva": "entrada", "chegada": 1020},
+        "seta_arvore": {"estados": ["seta_arvore_e"], "x": 30, "y": 640, "leva": "casa_arvore", "chegada": 110},
+        "seta_estabulo": {"estados": ["seta_ferradura_d"], "x": 2700, "y": 640, "leva": "estabulo", "chegada": 2760},
+        "seta_plantacao": {"estados": ["seta_cenoura_d"], "x": 2850, "y": 640, "leva": "plantacao", "chegada": 2900},
     },
+    "extras": [("seta_portao_e", 1150, 640), ("seta_arvore_e", 30, 640), ("seta_ferradura_d", 2700, 640), ("seta_cenoura_d", 2850, 640)],
     "objetos": ["bola", "regador_cheio"],
     "lugares": [
         {"id": "rede", "area": [1880, 330, 390, 200], "spots": [[2075, 522]], "pose": "deitar"},

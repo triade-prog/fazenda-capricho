@@ -201,6 +201,21 @@ TABELA = [
     ("Porta e plaquinha", "porta 170 × 350 · placa 70 × 60", "fechada · aberta", "A mesma porta das outras salas, num tom de madeira mais rosado; plaquinha com a casinha (volta para a sala).", ["porta_fechada", "porta_aberta", "placa_casa"]),
 ]
 
+# Como o cenário entra no protótipo (ver para_jogo.py).
+JOGO = {
+    "interativos": {
+        "porta_sala": {"estados": ["porta_fechada", "porta_aberta"], "x": 50, "y": 250, "leva": "sala", "chegada": 135},
+        "guarda_roupa": {"estados": ["guarda_roupa_fechado", "guarda_roupa_aberto"], "x": 260, "y": 200},
+        "abajur_esq": {"estados": ["abajur_apagado", "abajur_aceso"], "x": 745, "y": 372},
+        "abajur_dir": {"estados": ["abajur_apagado", "abajur_aceso"], "x": 1515, "y": 372},
+        "penteadeira": {"estados": ["penteadeira", "penteadeira_brilho"], "x": 1790, "y": 260},
+        "cobertor": {"estados": ["cobertor_dobrado", "cobertor_coberto"], "x": 890, "y": 505},
+    },
+    "objetos": ["escova_cabelo"],
+    "lugares": [{"id": "cama_carol", "area": [880, 330, 580, 170], "spots": [[1170, 520], [1050, 524]], "pose": "deitar"}],
+    "superficies": [[1800, 2040, 470]],
+}
+
 if __name__ == "__main__":
     pr, le = textos("quarto_carol", "Quarto da Carol", "C06",
                     "É o quarto da mãe, a Carol: calmo, rosa-claro e lilás com madeira, com cama de casal de cabeceira de coração, onde a Catarina dorme com a mãe quando quiser.",

@@ -227,8 +227,12 @@ func _roteiro() -> void:
 	_confere(c.estado("abajur") != abajur, "tocar no abajur acende/apaga")
 	await _toca(c.rect_de("fogo").get_center())
 	_confere(c.estado("fogo") == 0, "tocar no fogo da lareira deixa o fogo baixo")
-	await _toca(c.rect_de("porta_carol").get_center())
-	_confere(c.estado("porta_carol") == 1, "porta do quarto da Carol abre (cômodo ainda não montado)")
+	# Quarto da Carol: a porta da flor
+	await _vai("porta_carol", "quarto_carol", "28_quarto_carol")
+	var qc: Cenario = main.cenarios["quarto_carol"]
+	await _toca(qc.rect_de("guarda_roupa").get_center())
+	_confere(qc.estado("guarda_roupa") == 1, "tocar no guarda-roupa da Carol abre as portas")
+	await _vai("porta_sala", "sala", "")
 
 	# Cozinha: a porta da panela leva à Cozinha
 	var k: Cenario = main.cenarios["cozinha"]
@@ -299,10 +303,57 @@ func _roteiro() -> void:
 	await _espera(0.8)
 	_confere(main.cena == "sede", "o portão da Entrada leva à Sede")
 
+	# Volta pela fazenda: as plaquinhas de caminho ligam os cenários de fora (mapa em docs/mapa_cenarios.png)
+	await _vai("seta_estabulo", "estabulo", "30_sede_placas")
+	await _toca(main.cenarios["estabulo"].rect_de("balde").get_center())
+	_confere(main.cenarios["estabulo"].estado("balde") == 0, "tocar no balde do estábulo esvazia a água")
+	await _foto("31_estabulo_baia")
+	await _vai("seta_pet_care", "pet_care", "32_estabulo_pasto")
+	await _toca(main.cenarios["pet_care"].rect_de("banheira").get_center())
+	_confere(main.cenarios["pet_care"].estado("banheira") == 0, "tocar na banheira do Pet Care tira a espuma")
+	await _foto("33_pet_care")
+	await _vai("seta_estabulo", "estabulo", "34_pet_care_placa")
+	await _vai("seta_plantacao", "plantacao", "")
+	await _toca(main.cenarios["plantacao"].rect_de("terra_1").get_center())
+	_confere(main.cenarios["plantacao"].estado("terra_1") == 0, "tocar no canteiro da Plantação muda a terra")
+	await _foto("35_plantacao_canteiros")
+	await _vai("seta_estabulo", "estabulo", "36_plantacao_placas")
+	await _vai("seta_sede", "sede", "")
+	await _vai("seta_arvore", "casa_arvore", "37_sede_placa_arvore")
+	await _foto("38_casa_arvore_chegada")
+	await _vai("porta", "casa_arvore_dentro", "39_casa_arvore_porta")
+	await _toca(main.cenarios["casa_arvore_dentro"].rect_de("bau").get_center())
+	_confere(main.cenarios["casa_arvore_dentro"].estado("bau") == 0, "tocar no baú da casa na árvore fecha a tampa")
+	await _foto("40_dentro")
+	await _vai("porta", "casa_arvore", "41_dentro_porta")
+	await _vai("seta_cabana", "cabana", "42_casa_arvore_placas")
+	await _toca(main.cenarios["cabana"].rect_de("fogueira").get_center())
+	_confere(main.cenarios["cabana"].estado("fogueira") == 0, "tocar na fogueira da Cabana apaga o brilho")
+	await _foto("43_cabana")
+	await _vai("seta_arvore", "casa_arvore", "44_cabana_placa")
+	await _vai("seta_casinha", "casinha", "")
+	await _toca(main.cenarios["casinha"].rect_de("toldo").position + Vector2(40, 30))  # longe dos potinhos
+	_confere(main.cenarios["casinha"].estado("toldo") == 0, "tocar no toldo da Casinha fecha o toldo")
+	await _foto("45_casinha")
+	await _vai("seta_arvore", "casa_arvore", "46_casinha_placa")
+	await _vai("seta_sede", "sede", "")
+
 
 # ---------------------------------------------------------------- utilidades
 # Todos os toques são enviados em coordenadas de TELA, como um dedo de verdade no iPad.
 # Se o destino está fora da tela, o dedo vai até a borda e espera o quarto rolar.
+
+## Toca na porta ou plaquinha `iid` do cenário atual e confere que chegou em `dest`.
+func _vai(iid: String, dest: String, foto: String) -> void:
+	var de: String = main.cena
+	var r: Rect2 = main.cenarios[de].rect_de(iid)
+	if foto != "":
+		await _mostra(r.get_center().x)
+		await _foto(foto)
+	await _toca(r.get_center())
+	await _espera(0.8)
+	_confere(main.cena == dest, "%s: %s leva a %s" % [de, iid, dest])
+
 
 func _confere(ok: bool, o_que: String) -> void:
 	print(("  ok    " if ok else "  FALHA ") + o_que)

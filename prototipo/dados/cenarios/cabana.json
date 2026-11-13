@@ -1,0 +1,169 @@
+{
+ "id": "cabana",
+ "largura": 2200,
+ "pecas": [
+  [
+   "fundo",
+   0,
+   0,
+   2200,
+   900
+  ],
+  [
+   "@cabana",
+   820,
+   230,
+   460,
+   380
+  ],
+  [
+   "saco_dormir",
+   890,
+   500,
+   320,
+   90
+  ],
+  [
+   "@lanterna",
+   1020,
+   420,
+   60,
+   100
+  ],
+  [
+   "@fogueira",
+   1400,
+   560,
+   170,
+   120
+  ],
+  [
+   "tronco_banco",
+   1560,
+   600,
+   200,
+   80
+  ],
+  [
+   "tronco_banco",
+   1180,
+   690,
+   200,
+   80
+  ],
+  [
+   "@livro",
+   640,
+   690,
+   70,
+   50
+  ],
+  [
+   "livro_fechado",
+   560,
+   700,
+   70,
+   50
+  ],
+  [
+   "passarinho",
+   1880,
+   300,
+   40,
+   35
+  ],
+  [
+   "@seta_arvore",
+   200,
+   470,
+   120,
+   160
+  ]
+ ],
+ "interativos": {
+  "cabana": {
+   "estados": [
+    "cabana_fechada",
+    "cabana_aberta"
+   ],
+   "x": 820,
+   "y": 230,
+   "estado": 1,
+   "w": 460,
+   "h": 380
+  },
+  "lanterna": {
+   "estados": [
+    "lanterna_desligada",
+    "lanterna_ligada"
+   ],
+   "x": 1020,
+   "y": 420,
+   "estado": 1,
+   "w": 60,
+   "h": 100
+  },
+  "fogueira": {
+   "estados": [
+    "fogueira",
+    "fogueira_brilho"
+   ],
+   "x": 1400,
+   "y": 560,
+   "estado": 1,
+   "w": 170,
+   "h": 120
+  },
+  "livro": {
+   "estados": [
+    "livro_fechado",
+    "livro_aberto"
+   ],
+   "x": 640,
+   "y": 690,
+   "estado": 1,
+   "w": 70,
+   "h": 50
+  },
+  "seta_arvore": {
+   "estados": [
+    "seta_arvore_e"
+   ],
+   "x": 200,
+   "y": 470,
+   "leva": "casa_arvore",
+   "chegada": 260,
+   "estado": 0,
+   "w": 120,
+   "h": 160
+  }
+ },
+ "objetos": [
+  {
+   "tipo": "binoculo",
+   "x": 1732.0,
+   "y": 604,
+   "w": 64,
+   "h": 44
+  }
+ ],
+ "lugares": [
+  {
+   "id": "saco_dormir",
+   "area": [
+    900,
+    440,
+    300,
+    160
+   ],
+   "spots": [
+    [
+     1050,
+     578
+    ]
+   ],
+   "pose": "deitar"
+  }
+ ],
+ "superficies": []
+}

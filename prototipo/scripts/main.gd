@@ -81,8 +81,9 @@ func _ready() -> void:
 	_make_porta_quarto()
 	_add_cenario("sala")
 	_add_cenario("cozinha")
-	_add_cenario("sede")
-	_add_cenario("entrada")
+	for id in ["sede", "entrada", "quarto_carol", "estabulo", "plantacao", "pet_care",
+			"casa_arvore", "casa_arvore_dentro", "cabana", "casinha"]:
+		_add_cenario(id)
 	_make_toys()
 	_setup_camera()
 	_show_intro()
@@ -152,6 +153,7 @@ func _add_objeto(id: String, o: Dictionary) -> Toy:
 	t.grab_offset = Vector2(0, -float(o["h"]) / 2.0)
 	t.position = Vector2(o["x"], o["y"])
 	t.cena = id
+	t.set_meta("origem", id)
 	t.visible = id == cena
 	add_child(t)
 	toys.append(t)
@@ -164,7 +166,7 @@ func _repor_objetos() -> int:
 	for o in (cenarios[cena] as Cenario).objetos:
 		var existe := false
 		for x in toys:
-			existe = existe or x.kind == str(o["tipo"])
+			existe = existe or (x.kind == str(o["tipo"]) and str(x.get_meta("origem", "")) == cena)
 		if not existe:
 			var t := _add_objeto(cena, o)
 			t.squash = Vector2(0.2, 0.2)
@@ -1185,6 +1187,8 @@ func _mostrar_cenario(dest: String) -> void:
 	W = (cenarios[dest] as Cenario).largura if cenarios[dest] is Cenario else 2200.0
 	for id in cenarios:
 		(cenarios[id] as Node2D).visible = id == dest
+		if id != dest and cenarios[id] is Cenario:
+			(cenarios[id] as Cenario).soltar()
 	castle.visible = dest == "quarto"
 	for t in toys:
 		t.visible = t.cena == dest

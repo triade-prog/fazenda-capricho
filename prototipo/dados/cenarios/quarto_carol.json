@@ -1,0 +1,240 @@
+{
+ "id": "quarto_carol",
+ "largura": 2200,
+ "pecas": [
+  [
+   "fundo",
+   0,
+   0,
+   2200,
+   900
+  ],
+  [
+   "@porta_sala",
+   50,
+   250,
+   170,
+   350
+  ],
+  [
+   "placa_casa",
+   100,
+   180,
+   70,
+   60
+  ],
+  [
+   "@guarda_roupa",
+   260,
+   200,
+   300,
+   420
+  ],
+  [
+   "planta",
+   600,
+   490,
+   90,
+   130
+  ],
+  [
+   "criado_mudo",
+   720,
+   470,
+   130,
+   150
+  ],
+  [
+   "@abajur_esq",
+   745,
+   372,
+   80,
+   110
+  ],
+  [
+   "porta_retrato_coracao",
+   830,
+   410,
+   60,
+   66
+  ],
+  [
+   "cama",
+   860,
+   290,
+   620,
+   330
+  ],
+  [
+   "travesseiro",
+   920,
+   455,
+   130,
+   60
+  ],
+  [
+   "travesseiro",
+   1290,
+   455,
+   130,
+   60
+  ],
+  [
+   "@cobertor",
+   890,
+   505,
+   560,
+   110
+  ],
+  [
+   "criado_mudo",
+   1490,
+   470,
+   130,
+   150
+  ],
+  [
+   "@abajur_dir",
+   1515,
+   372,
+   80,
+   110
+  ],
+  [
+   "porta_retrato_paisagem",
+   1590,
+   410,
+   60,
+   66
+  ],
+  [
+   "@penteadeira",
+   1790,
+   260,
+   260,
+   360
+  ],
+  [
+   "banquinho",
+   1870,
+   560,
+   100,
+   100
+  ],
+  [
+   "tapete",
+   900,
+   720,
+   520,
+   120
+  ]
+ ],
+ "interativos": {
+  "porta_sala": {
+   "estados": [
+    "porta_fechada",
+    "porta_aberta"
+   ],
+   "x": 50,
+   "y": 250,
+   "leva": "sala",
+   "chegada": 135,
+   "estado": 0,
+   "w": 170,
+   "h": 350
+  },
+  "guarda_roupa": {
+   "estados": [
+    "guarda_roupa_fechado",
+    "guarda_roupa_aberto"
+   ],
+   "x": 260,
+   "y": 200,
+   "estado": 0,
+   "w": 300,
+   "h": 420
+  },
+  "abajur_esq": {
+   "estados": [
+    "abajur_apagado",
+    "abajur_aceso"
+   ],
+   "x": 745,
+   "y": 372,
+   "estado": 1,
+   "w": 80,
+   "h": 110
+  },
+  "abajur_dir": {
+   "estados": [
+    "abajur_apagado",
+    "abajur_aceso"
+   ],
+   "x": 1515,
+   "y": 372,
+   "estado": 0,
+   "w": 80,
+   "h": 110
+  },
+  "penteadeira": {
+   "estados": [
+    "penteadeira",
+    "penteadeira_brilho"
+   ],
+   "x": 1790,
+   "y": 260,
+   "estado": 0,
+   "w": 260,
+   "h": 360
+  },
+  "cobertor": {
+   "estados": [
+    "cobertor_dobrado",
+    "cobertor_coberto"
+   ],
+   "x": 890,
+   "y": 505,
+   "estado": 0,
+   "w": 560,
+   "h": 110
+  }
+ },
+ "objetos": [
+  {
+   "tipo": "escova_cabelo",
+   "x": 1870.0,
+   "y": 470,
+   "w": 80,
+   "h": 40
+  }
+ ],
+ "lugares": [
+  {
+   "id": "cama_carol",
+   "area": [
+    880,
+    330,
+    580,
+    170
+   ],
+   "spots": [
+    [
+     1170,
+     520
+    ],
+    [
+     1050,
+     524
+    ]
+   ],
+   "pose": "deitar"
+  }
+ ],
+ "superficies": [
+  [
+   1800,
+   2040,
+   470
+  ]
+ ]
+}

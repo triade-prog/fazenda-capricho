@@ -531,6 +531,36 @@ P["passarinho_pousado"] = passarinho(False)
 P["passarinho_voando"] = passarinho(True)
 
 
+# Posição das peças do pátio (C07) na prévia e no jogo. O interior (C08) está em casa_arvore_dentro.py.
+W, H, CHAO = 2600, 900, 600
+POS = [("fundo_patio", 0, 0), ("arvore_casinha", 450, 0), ("cacho_com", 540, 150), ("cacho_colhido", 1320, 180), ("cacho_com", 900, 40),
+       ("porta_fechada", 750, 80), ("escada_madeira", 520, 380), ("escada_corda", 1140, 380), ("escorregador_rosa", 1272, 378), ("@catarina", 1010, 380),
+       ("grade_varanda", 625, 330), ("balanco_estrutura", 1860, 250), ("balanco_assento", 1945, 262), ("mesa_piquenique", 2190, 640), ("cesto_cheio", 2290, 770),
+       ("bola", 1700, 790), ("placa_casa", 40, 520), ("placa_cabana", 2460, 470), ("@catarina", 1550, 860), ("frutinha", 1600, 820)]
+POS_DENTRO = [("fundo_dentro", 0, 0), ("passarinho_pousado", 830, 100), ("porta_dentro_aberta", 1440, 340), ("cama", 60, 550), ("cozinha_desligada", 470, 460),
+       ("panelinha", 480, 425), ("bule", 560, 415), ("xicara_cha", 640, 435), ("tapete", 520, 790), ("cadeirinha", 840, 620),
+       ("mesinha_cha", 780, 680), ("cadeirinha", 720, 720), ("cadeirinha", 960, 720), ("bau_aberto", 1040, 500), ("unicornio", 1210, 580),
+       ("ursinho_heroi", 1100, 740), ("@catarina", 1330, 880)]
+
+# Como o pátio entra no protótipo (ver para_jogo.py).
+JOGO = {
+    "interativos": {
+        "porta": {"estados": ["porta_fechada", "porta_aberta"], "x": 750, "y": 80, "leva": "casa_arvore_dentro", "chegada": 815},
+        "cacho_1": {"estados": ["cacho_colhido", "cacho_com"], "x": 540, "y": 150},
+        "cacho_2": {"estados": ["cacho_colhido", "cacho_com"], "x": 1320, "y": 180},
+        "cacho_3": {"estados": ["cacho_colhido", "cacho_com"], "x": 900, "y": 40},
+        "escorregador": {"estados": ["escorregador_rosa", "escorregador_arco_iris"], "x": 1272, "y": 378},
+        "cesto": {"estados": ["cesto_vazio", "cesto_cheio"], "x": 2290, "y": 770},
+        "seta_sede": {"estados": ["placa_casa"], "x": 40, "y": 520, "leva": "sede", "chegada": 110},
+        "seta_cabana": {"estados": ["placa_cabana"], "x": 2460, "y": 470, "leva": "cabana", "chegada": 2520},
+        "seta_casinha": {"estados": ["seta_cesta_d"], "x": 2040, "y": 640, "leva": "casinha", "chegada": 2100},
+    },
+    "extras": [("seta_cesta_d", 2040, 640)],
+    "objetos": ["bola", "frutinha"],
+    "lugares": [],
+    "superficies": [[2200, 2500, 650]],
+}
+
 if __name__ == "__main__":
     raiz = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     destino = os.path.join(raiz, "arte/cenario/casa_arvore/2d")

@@ -219,7 +219,7 @@ JOGO = {
         "porta_frente": {"estados": ["porta_fechada", "porta_aberta"], "x": 40, "y": 250, "leva": "sede", "chegada": 125, "estado": 0},
         "porta_cozinha": {"estados": ["porta_fechada", "porta_aberta"], "x": 600, "y": 250, "leva": "cozinha", "chegada": 685},
         "porta_catarina": {"estados": ["porta_fechada", "porta_aberta"], "x": 1820, "y": 250, "leva": "quarto", "chegada": 1905},
-        "porta_carol": {"estados": ["porta_fechada", "porta_aberta"], "x": 2010, "y": 250, "leva": "", "chegada": 2095},
+        "porta_carol": {"estados": ["porta_fechada", "porta_aberta"], "x": 2010, "y": 250, "leva": "quarto_carol", "chegada": 2095},
         "abajur": {"estados": ["abajur_apagado", "abajur_aceso"], "x": 1715, "y": 412},
         "fogo": {"estados": ["fogo_baixo", "fogo_alto"], "x": 940, "y": 508},
     },

@@ -1,0 +1,198 @@
+{
+ "id": "casa_arvore_dentro",
+ "largura": 1600,
+ "pecas": [
+  [
+   "fundo_dentro",
+   0,
+   0,
+   1600,
+   900
+  ],
+  [
+   "@passarinho",
+   830,
+   100,
+   40,
+   35
+  ],
+  [
+   "@porta",
+   1440,
+   340,
+   130,
+   300
+  ],
+  [
+   "cama",
+   60,
+   550,
+   360,
+   150
+  ],
+  [
+   "@fogaozinho",
+   470,
+   460,
+   220,
+   200
+  ],
+  [
+   "tapete",
+   520,
+   790,
+   300,
+   80
+  ],
+  [
+   "cadeirinha",
+   840,
+   620,
+   60,
+   80
+  ],
+  [
+   "mesinha_cha",
+   780,
+   680,
+   180,
+   80
+  ],
+  [
+   "cadeirinha",
+   720,
+   720,
+   60,
+   80
+  ],
+  [
+   "cadeirinha",
+   960,
+   720,
+   60,
+   80
+  ],
+  [
+   "@bau",
+   1040,
+   500,
+   160,
+   160
+  ]
+ ],
+ "interativos": {
+  "porta": {
+   "estados": [
+    "porta_dentro_fechada",
+    "porta_dentro_aberta"
+   ],
+   "x": 1440,
+   "y": 340,
+   "leva": "casa_arvore",
+   "chegada": 1400,
+   "estado": 0,
+   "w": 130,
+   "h": 300
+  },
+  "bau": {
+   "estados": [
+    "bau_fechado",
+    "bau_aberto"
+   ],
+   "x": 1040,
+   "y": 500,
+   "estado": 1,
+   "w": 160,
+   "h": 160
+  },
+  "fogaozinho": {
+   "estados": [
+    "cozinha_desligada",
+    "cozinha_ligada"
+   ],
+   "x": 470,
+   "y": 460,
+   "estado": 0,
+   "w": 220,
+   "h": 200
+  },
+  "passarinho": {
+   "estados": [
+    "passarinho_pousado",
+    "passarinho_voando"
+   ],
+   "x": 830,
+   "y": 100,
+   "estado": 0,
+   "w": 40,
+   "h": 35
+  }
+ },
+ "objetos": [
+  {
+   "tipo": "panelinha",
+   "x": 505.0,
+   "y": 460,
+   "w": 50,
+   "h": 35
+  },
+  {
+   "tipo": "bule",
+   "x": 585.0,
+   "y": 460,
+   "w": 50,
+   "h": 45
+  },
+  {
+   "tipo": "xicara_cha",
+   "x": 652.5,
+   "y": 460,
+   "w": 25,
+   "h": 25
+  },
+  {
+   "tipo": "unicornio",
+   "x": 1255.0,
+   "y": 670,
+   "w": 90,
+   "h": 90
+  },
+  {
+   "tipo": "ursinho_heroi",
+   "x": 1140.0,
+   "y": 840,
+   "w": 80,
+   "h": 100
+  }
+ ],
+ "lugares": [
+  {
+   "id": "cama_arvore",
+   "area": [
+    70,
+    520,
+    340,
+    170
+   ],
+   "spots": [
+    [
+     240,
+     640
+    ]
+   ],
+   "pose": "deitar"
+  }
+ ],
+ "superficies": [
+  [
+   475,
+   685,
+   460
+  ],
+  [
+   790,
+   950,
+   690
+  ]
+ ]
+}

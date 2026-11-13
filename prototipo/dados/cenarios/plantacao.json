@@ -1,0 +1,522 @@
+{
+ "id": "plantacao",
+ "largura": 3300,
+ "pecas": [
+  [
+   "fundo",
+   0,
+   0,
+   3300,
+   900
+  ],
+  [
+   "@nuvem",
+   560,
+   150,
+   220,
+   90
+  ],
+  [
+   "bica",
+   30,
+   570,
+   110,
+   190
+  ],
+  [
+   "sementes_cenoura",
+   170,
+   640,
+   60,
+   80
+  ],
+  [
+   "sementes_tomate",
+   235,
+   640,
+   60,
+   80
+  ],
+  [
+   "@cenoura",
+   380,
+   500,
+   200,
+   200
+  ],
+  [
+   "@alface",
+   590,
+   500,
+   200,
+   200
+  ],
+  [
+   "@tomate",
+   800,
+   460,
+   200,
+   240
+  ],
+  [
+   "@terra_1",
+   1010,
+   630,
+   200,
+   70
+  ],
+  [
+   "@terra_2",
+   380,
+   740,
+   200,
+   70
+  ],
+  [
+   "@morango_1",
+   590,
+   740,
+   160,
+   110
+  ],
+  [
+   "terra_fechada",
+   800,
+   740,
+   200,
+   70
+  ],
+  [
+   "terra_fechada",
+   1010,
+   740,
+   200,
+   70
+  ],
+  [
+   "espantalho",
+   1150,
+   390,
+   100,
+   250
+  ],
+  [
+   "carrinho",
+   420,
+   790,
+   190,
+   110
+  ],
+  [
+   "@cesta",
+   680,
+   810,
+   120,
+   80
+  ],
+  [
+   "abobora_gigante",
+   1270,
+   630,
+   160,
+   150
+  ],
+  [
+   "@morango_2",
+   1270,
+   790,
+   160,
+   110
+  ],
+  [
+   "girassol_caule",
+   1690,
+   280,
+   90,
+   360
+  ],
+  [
+   "girassol_cabeca",
+   1690,
+   250,
+   90,
+   90
+  ],
+  [
+   "girassol_caule",
+   1790,
+   300,
+   90,
+   360
+  ],
+  [
+   "girassol_cabeca",
+   1790,
+   270,
+   90,
+   90
+  ],
+  [
+   "@canteiro_flores",
+   1890,
+   700,
+   250,
+   90
+  ],
+  [
+   "@borboleta",
+   1960,
+   560,
+   35,
+   30
+  ],
+  [
+   "@abelha",
+   2050,
+   600,
+   30,
+   25
+  ],
+  [
+   "@flor_arco_iris",
+   2180,
+   640,
+   150,
+   180
+  ],
+  [
+   "@frutinhas_magicas",
+   2350,
+   530,
+   160,
+   260
+  ],
+  [
+   "arbusto_coracoes",
+   2160,
+   450,
+   150,
+   150
+  ],
+  [
+   "@macieira",
+   2540,
+   140,
+   230,
+   500
+  ],
+  [
+   "@laranjeira",
+   2800,
+   170,
+   220,
+   470
+  ],
+  [
+   "@bananeira",
+   3040,
+   140,
+   230,
+   480
+  ],
+  [
+   "escadinha",
+   2740,
+   610,
+   70,
+   200
+  ],
+  [
+   "banca",
+   2530,
+   770,
+   260,
+   170
+  ],
+  [
+   "minhoca",
+   3000,
+   860,
+   40,
+   20
+  ],
+  [
+   "matinho",
+   3150,
+   850,
+   40,
+   30
+  ],
+  [
+   "quadro_pedidos",
+   3130,
+   620,
+   140,
+   160
+  ],
+  [
+   "@seta_sede",
+   1430,
+   440,
+   120,
+   160
+  ],
+  [
+   "@seta_estabulo",
+   1560,
+   440,
+   120,
+   160
+  ]
+ ],
+ "interativos": {
+  "nuvem": {
+   "estados": [
+    "nuvem_parada",
+    "nuvem_chovendo"
+   ],
+   "x": 560,
+   "y": 150,
+   "estado": 1,
+   "w": 220,
+   "h": 90
+  },
+  "cenoura": {
+   "estados": [
+    "cenoura_1",
+    "cenoura_2",
+    "cenoura_3",
+    "cenoura_4"
+   ],
+   "x": 380,
+   "y": 500,
+   "estado": 3,
+   "w": 200,
+   "h": 200
+  },
+  "alface": {
+   "estados": [
+    "alface_1",
+    "alface_2",
+    "alface_3",
+    "alface_4"
+   ],
+   "x": 590,
+   "y": 500,
+   "estado": 2,
+   "w": 200,
+   "h": 200
+  },
+  "tomate": {
+   "estados": [
+    "tomate_1",
+    "tomate_2",
+    "tomate_3",
+    "tomate_4"
+   ],
+   "x": 800,
+   "y": 460,
+   "estado": 3,
+   "w": 200,
+   "h": 240
+  },
+  "terra_1": {
+   "estados": [
+    "terra_dura",
+    "terra_fofa"
+   ],
+   "x": 1010,
+   "y": 630,
+   "estado": 1,
+   "w": 200,
+   "h": 70
+  },
+  "terra_2": {
+   "estados": [
+    "terra_dura",
+    "terra_fofa"
+   ],
+   "x": 380,
+   "y": 740,
+   "estado": 0,
+   "w": 200,
+   "h": 70
+  },
+  "morango_1": {
+   "estados": [
+    "morango_1",
+    "morango_2",
+    "morango_3",
+    "morango_4"
+   ],
+   "x": 590,
+   "y": 740,
+   "estado": 1,
+   "w": 160,
+   "h": 110
+  },
+  "morango_2": {
+   "estados": [
+    "morango_1",
+    "morango_2",
+    "morango_3",
+    "morango_4"
+   ],
+   "x": 1270,
+   "y": 790,
+   "estado": 3,
+   "w": 160,
+   "h": 110
+  },
+  "cesta": {
+   "estados": [
+    "cesta_vazia",
+    "cesta_cheia"
+   ],
+   "x": 680,
+   "y": 810,
+   "estado": 1,
+   "w": 120,
+   "h": 80
+  },
+  "canteiro_flores": {
+   "estados": [
+    "canteiro_colhido",
+    "canteiro_flores"
+   ],
+   "x": 1890,
+   "y": 700,
+   "estado": 1,
+   "w": 250,
+   "h": 90
+  },
+  "borboleta": {
+   "estados": [
+    "borboleta_fechada",
+    "borboleta_aberta"
+   ],
+   "x": 1960,
+   "y": 560,
+   "estado": 1,
+   "w": 35,
+   "h": 30
+  },
+  "abelha": {
+   "estados": [
+    "abelha_fechada",
+    "abelha_aberta"
+   ],
+   "x": 2050,
+   "y": 600,
+   "estado": 1,
+   "w": 30,
+   "h": 25
+  },
+  "flor_arco_iris": {
+   "estados": [
+    "flor_arco_iris_rosa",
+    "flor_arco_iris_lilas",
+    "flor_arco_iris_azul",
+    "flor_arco_iris_amarela"
+   ],
+   "x": 2180,
+   "y": 640,
+   "estado": 0,
+   "w": 150,
+   "h": 180
+  },
+  "frutinhas_magicas": {
+   "estados": [
+    "frutinhas_magicas_sem",
+    "frutinhas_magicas_com"
+   ],
+   "x": 2350,
+   "y": 530,
+   "estado": 1,
+   "w": 160,
+   "h": 260
+  },
+  "macieira": {
+   "estados": [
+    "macieira_sem_macas",
+    "macieira_com_macas"
+   ],
+   "x": 2540,
+   "y": 140,
+   "estado": 1,
+   "w": 230,
+   "h": 500
+  },
+  "laranjeira": {
+   "estados": [
+    "laranjeira_sem",
+    "laranjeira_com"
+   ],
+   "x": 2800,
+   "y": 170,
+   "estado": 1,
+   "w": 220,
+   "h": 470
+  },
+  "bananeira": {
+   "estados": [
+    "bananeira_sem",
+    "bananeira_com"
+   ],
+   "x": 3040,
+   "y": 140,
+   "estado": 1,
+   "w": 230,
+   "h": 480
+  },
+  "seta_sede": {
+   "estados": [
+    "seta_casa_e"
+   ],
+   "x": 1430,
+   "y": 440,
+   "leva": "sede",
+   "chegada": 1490,
+   "estado": 0,
+   "w": 120,
+   "h": 160
+  },
+  "seta_estabulo": {
+   "estados": [
+    "seta_ferradura_d"
+   ],
+   "x": 1560,
+   "y": 440,
+   "leva": "estabulo",
+   "chegada": 1620,
+   "estado": 0,
+   "w": 120,
+   "h": 160
+  }
+ },
+ "objetos": [
+  {
+   "tipo": "regador_cheio",
+   "x": 210.0,
+   "y": 875,
+   "w": 80,
+   "h": 55
+  },
+  {
+   "tipo": "enxada",
+   "x": 292.5,
+   "y": 880,
+   "w": 45,
+   "h": 90
+  },
+  {
+   "tipo": "maca",
+   "x": 2715.0,
+   "y": 892,
+   "w": 30,
+   "h": 32
+  }
+ ],
+ "lugares": [],
+ "superficies": []
+}
