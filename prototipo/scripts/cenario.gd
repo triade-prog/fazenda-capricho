@@ -14,6 +14,7 @@ var id := ""
 var largura := 2200.0
 var pecas: Array = []
 var interativos := {}
+var objetos: Array = []           # peças que dá para pegar: {tipo, x, y (base), w, h}
 var lugares: Array = []
 var superficies: Array[Vector3] = []
 var _tex := {}
@@ -29,6 +30,7 @@ func carregar(cena: String) -> Cenario:
 	pecas = data["pecas"]
 	interativos = data.get("interativos", {})
 	lugares = data.get("lugares", [])
+	objetos = data.get("objetos", [])
 	for s in data.get("superficies", []):
 		superficies.append(Vector3(s[0], s[1], s[2]))
 	return self

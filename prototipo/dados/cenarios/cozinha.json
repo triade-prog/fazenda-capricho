@@ -1,0 +1,250 @@
+{
+ "id": "cozinha",
+ "largura": 2200,
+ "pecas": [
+  [
+   "fundo",
+   0,
+   0,
+   2200,
+   900
+  ],
+  [
+   "@porta_sala",
+   60,
+   250,
+   170,
+   350
+  ],
+  [
+   "placa_casa",
+   110,
+   180,
+   70,
+   60
+  ],
+  [
+   "@geladeira",
+   300,
+   170,
+   238,
+   430
+  ],
+  [
+   "@fogao",
+   600,
+   340,
+   240,
+   260
+  ],
+  [
+   "pia",
+   1200,
+   400,
+   260,
+   200
+  ],
+  [
+   "@prato_pia",
+   1240,
+   420,
+   60,
+   30
+  ],
+  [
+   "vaso_flores",
+   1000,
+   350,
+   70,
+   90
+  ],
+  [
+   "cadeira",
+   1480,
+   470,
+   110,
+   230
+  ],
+  [
+   "mesa",
+   1560,
+   500,
+   420,
+   200
+  ],
+  [
+   "cadeira",
+   1990,
+   470,
+   110,
+   230
+  ],
+  [
+   "prato_limpo",
+   1640,
+   528,
+   60,
+   30
+  ],
+  [
+   "vaso_flores",
+   1910,
+   468,
+   70,
+   90
+  ],
+  [
+   "@tigela_cao",
+   700,
+   760,
+   80,
+   40
+  ],
+  [
+   "@tigela_gato",
+   800,
+   760,
+   80,
+   40
+  ],
+  [
+   "@tigela_lumi",
+   900,
+   760,
+   80,
+   40
+  ]
+ ],
+ "interativos": {
+  "porta_sala": {
+   "estados": [
+    "porta_fechada",
+    "porta_aberta"
+   ],
+   "x": 60,
+   "y": 250,
+   "leva": "sala",
+   "chegada": 145,
+   "estado": 0,
+   "w": 170,
+   "h": 350
+  },
+  "geladeira": {
+   "estados": [
+    "geladeira_fechada",
+    "geladeira_aberta"
+   ],
+   "x": 300,
+   "y": 170,
+   "repoe": true,
+   "estado": 0,
+   "w": 238,
+   "h": 430
+  },
+  "fogao": {
+   "estados": [
+    "fogao",
+    "fogao_vapor"
+   ],
+   "x": 600,
+   "y": 340,
+   "estado": 1,
+   "w": 240,
+   "h": 260
+  },
+  "prato_pia": {
+   "estados": [
+    "prato_sujo",
+    "prato_limpo"
+   ],
+   "x": 1240,
+   "y": 420,
+   "estado": 0,
+   "w": 60,
+   "h": 30
+  },
+  "tigela_cao": {
+   "estados": [
+    "tigela_cao_vazia",
+    "tigela_cao_cheia"
+   ],
+   "x": 700,
+   "y": 760,
+   "estado": 1,
+   "w": 80,
+   "h": 40
+  },
+  "tigela_gato": {
+   "estados": [
+    "tigela_gato_vazia",
+    "tigela_gato_cheia"
+   ],
+   "x": 800,
+   "y": 760,
+   "estado": 1,
+   "w": 80,
+   "h": 40
+  },
+  "tigela_lumi": {
+   "estados": [
+    "tigela_lumi_vazia",
+    "tigela_lumi_cheia"
+   ],
+   "x": 900,
+   "y": 760,
+   "estado": 1,
+   "w": 80,
+   "h": 40
+  }
+ },
+ "objetos": [
+  {
+   "tipo": "xicara",
+   "x": 960.0,
+   "y": 436,
+   "w": 40,
+   "h": 36
+  },
+  {
+   "tipo": "sanduiche",
+   "x": 1725.0,
+   "y": 554,
+   "w": 50,
+   "h": 34
+  },
+  {
+   "tipo": "maca",
+   "x": 1815.0,
+   "y": 554,
+   "w": 30,
+   "h": 32
+  },
+  {
+   "tipo": "banana",
+   "x": 1885.0,
+   "y": 556,
+   "w": 50,
+   "h": 30
+  },
+  {
+   "tipo": "copo_leite",
+   "x": 1775.0,
+   "y": 554,
+   "w": 30,
+   "h": 44
+  }
+ ],
+ "lugares": [],
+ "superficies": [
+  [
+   850,
+   1190,
+   438
+  ],
+  [
+   1590,
+   1960,
+   556
+  ]
+ ]
+}

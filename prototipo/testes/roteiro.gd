@@ -224,8 +224,24 @@ func _roteiro() -> void:
 	_confere(c.estado("abajur") != abajur, "tocar no abajur acende/apaga")
 	await _toca(c.rect_de("fogo").get_center())
 	_confere(c.estado("fogo") == 0, "tocar no fogo da lareira deixa o fogo baixo")
+	await _toca(c.rect_de("porta_carol").get_center())
+	_confere(c.estado("porta_carol") == 1, "porta do quarto da Carol abre (cômodo ainda não montado)")
+
+	# Cozinha: a porta da panela leva à Cozinha
+	var k: Cenario = main.cenarios["cozinha"]
 	await _toca(c.rect_de("porta_cozinha").get_center())
-	_confere(c.estado("porta_cozinha") == 1, "porta da cozinha abre (cômodo ainda não montado)")
+	await _espera(0.8)
+	_confere(main.cena == "cozinha", "tocar na porta da panela leva à Cozinha")
+	await _toca(k.rect_de("fogao").get_center())
+	_confere(k.estado("fogao") == 0, "tocar no fogão tira o vapor da panela")
+	await _toca(k.rect_de("tigela_cao").get_center())
+	_confere(k.estado("tigela_cao") == 0, "tocar na tigela do cão esvazia a tigela")
+	await _toca(k.rect_de("prato_pia").get_center())
+	_confere(k.estado("prato_pia") == 1, "tocar no prato sujo da pia deixa o prato limpo")
+	await _foto("20b_cozinha")
+	await _toca(k.rect_de("porta_sala").get_center())
+	await _espera(0.8)
+	_confere(main.cena == "sala", "a porta da casinha volta para a Sala")
 	await _arrasta(cat.to_global(Vector2(0, -150)), Vector2(1500, 470), 1.0)
 	_confere(cat.slot != null and cat.slot.id == "sofa", "Catarina deita no sofá da Sala")
 	await _foto("21_sala_sofa")
@@ -237,6 +253,20 @@ func _roteiro() -> void:
 	await _toca(Vector2(1725, 450))
 	await _espera(0.8)
 	_confere(main.cena == "sala" and cat.visible, "a porta do quarto leva de novo à Sala")
+
+	# Catarina vai à Cozinha e come
+	await _arrasta(cat.to_global(Vector2(0, -150)), c.rect_de("porta_cozinha").get_center(), 1.2)
+	_confere(main.cena == "cozinha" and cat.cena == "cozinha", "Catarina passa pela porta da panela e chega na Cozinha")
+	var xic: Toy = main._find("xicara")
+	await _arrasta(xic.global_position + Vector2(0, -18), cat.to_global(Vector2(0, -150)))
+	_confere(cat.held_item == xic, "Catarina segura a xícara")
+	var maca: Toy = main._find("maca")
+	await _arrasta(maca.global_position + Vector2(0, -16), cat.to_global(Vector2(0, -150)), 1.0)
+	_confere(main._find("maca") == null, "Catarina come a maçã")
+	await _foto("23_cozinha_catarina")
+	await _toca(k.rect_de("geladeira").get_center())
+	_confere(k.estado("geladeira") == 1 and main._find("maca") != null, "abrir a geladeira traz a maçã de volta")
+	await _foto("24_geladeira_aberta")
 
 
 # ---------------------------------------------------------------- utilidades

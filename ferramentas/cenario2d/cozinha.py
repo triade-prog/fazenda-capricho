@@ -194,6 +194,22 @@ TABELA = [
     ("Porta e plaquinha", "porta 170 × 350 · placa 70 × 60", "fechada · aberta", "A mesma porta da sala; plaquinha com a casinha (volta para a sala).", ["porta_fechada", "porta_aberta", "placa_casa"]),
 ]
 
+# Como o cenário entra no protótipo (ver para_jogo.py). "objetos" são peças que dá para pegar.
+JOGO = {
+    "interativos": {
+        "porta_sala": {"estados": ["porta_fechada", "porta_aberta"], "x": 60, "y": 250, "leva": "sala", "chegada": 145, "estado": 0},
+        "geladeira": {"estados": ["geladeira_fechada", "geladeira_aberta"], "x": 300, "y": 170, "repoe": True},
+        "fogao": {"estados": ["fogao", "fogao_vapor"], "x": 600, "y": 340},
+        "prato_pia": {"estados": ["prato_sujo", "prato_limpo"], "x": 1240, "y": 420},
+        "tigela_cao": {"estados": ["tigela_cao_vazia", "tigela_cao_cheia"], "x": 700, "y": 760},
+        "tigela_gato": {"estados": ["tigela_gato_vazia", "tigela_gato_cheia"], "x": 800, "y": 760},
+        "tigela_lumi": {"estados": ["tigela_lumi_vazia", "tigela_lumi_cheia"], "x": 900, "y": 760},
+    },
+    "objetos": ["xicara", "sanduiche", "maca", "banana", "copo_leite"],
+    "lugares": [],
+    "superficies": [[850, 1190, 438], [1590, 1960, 556]],
+}
+
 if __name__ == "__main__":
     pr, le = textos("cozinha", "Cozinha da Fazenda", "C04",
                     "É uma cozinha rústica e rosa: geladeira lilás, mesa com toalha xadrez e cadeiras de coração, panelas penduradas.",

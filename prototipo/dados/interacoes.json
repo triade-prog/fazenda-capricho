@@ -102,6 +102,54 @@
       "alvo": "lumi",
       "reacao": "escovar",
       "fala": "Ehêhêhê!"
+    },
+    {
+      "item": "sanduiche",
+      "alvo": "catarina",
+      "reacao": "comer",
+      "fala": "Hum, que delícia!"
+    },
+    {
+      "item": "sanduiche",
+      "alvo": "carol",
+      "reacao": "comer",
+      "fala": "Hum, que delícia!"
+    },
+    {
+      "item": "maca",
+      "alvo": "catarina",
+      "reacao": "comer",
+      "fala": "Nham! Maçã!"
+    },
+    {
+      "item": "maca",
+      "alvo": "carol",
+      "reacao": "comer",
+      "fala": "Nham! Maçã!"
+    },
+    {
+      "item": "banana",
+      "alvo": "catarina",
+      "reacao": "comer",
+      "fala": "Nham! Banana!"
+    },
+    {
+      "item": "banana",
+      "alvo": "carol",
+      "reacao": "comer",
+      "fala": "Nham! Banana!"
+    },
+    {
+      "item": "copo_leite",
+      "alvo": "catarina",
+      "reacao": "comer",
+      "fala": "Glub glub!"
+    },
+    {
+      "item": "copo_leite",
+      "alvo": "carol",
+      "reacao": "comer",
+      "fala": "Glub glub!"
     }
   ],
   "toques": [

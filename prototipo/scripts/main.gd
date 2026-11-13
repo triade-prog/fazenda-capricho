@@ -80,6 +80,7 @@ func _ready() -> void:
 	_make_slots()
 	_make_porta_quarto()
 	_add_cenario("sala")
+	_add_cenario("cozinha")
 	_make_toys()
 	_setup_camera()
 	_show_intro()
@@ -128,7 +129,47 @@ func _add_cenario(id: String) -> Cenario:
 			Toy.depth_for(float(spots[0].y)) if spots.size() > 0 else 0)
 		s.cena = id
 		s.visible = false
+	for o in c.objetos:
+		_add_objeto(id, o)
 	return c
+
+
+## Objeto solto de um cenário (comidinha, xícara...), com a imagem da própria peça.
+func _add_objeto(id: String, o: Dictionary) -> Toy:
+	var spr := Sprite2D.new()
+	var tex := load("res://assets/cenario/%s/%s.png" % [id, o["tipo"]]) as Texture2D
+	spr.texture = tex
+	spr.centered = false
+	spr.scale = Vector2(float(o["w"]) / tex.get_width(), float(o["h"]) / tex.get_height())
+	spr.position = Vector2(-float(o["w"]) / 2.0, -float(o["h"]))
+	var t := Toy.new()
+	t.kind = str(o["tipo"])
+	var arte := Node2D.new()  # o Toy mexe na escala da arte (squash): o sprite fica um nível abaixo
+	arte.add_child(spr)
+	t.setup_art(arte, maxf(26.0, maxf(float(o["w"]), float(o["h"])) / 2.0))
+	t.grab_offset = Vector2(0, -float(o["h"]) / 2.0)
+	t.position = Vector2(o["x"], o["y"])
+	t.cena = id
+	t.visible = id == cena
+	add_child(t)
+	toys.append(t)
+	return t
+
+
+## Repõe os objetos do cenário que foram comidos (abrir a geladeira traz as comidinhas de volta).
+func _repor_objetos() -> int:
+	var n := 0
+	for o in (cenarios[cena] as Cenario).objetos:
+		var existe := false
+		for x in toys:
+			existe = existe or x.kind == str(o["tipo"])
+		if not existe:
+			var t := _add_objeto(cena, o)
+			t.squash = Vector2(0.2, 0.2)
+			t.play_anim().tween_property(t, "squash", Vector2.ONE, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			_sparkle(t.global_position + Vector2(0, -20), 3)
+			n += 1
+	return n
 
 
 ## A porta do quarto aberta usa a mesma arte da porta da Sala, por cima do desenho do quarto.
@@ -1072,6 +1113,8 @@ func _tocar_interativo(iid: String) -> void:
 		return
 	var e := c.alternar(iid)
 	_sparkle(r.get_center(), 5 if e == 1 else 2)
+	if e == 1 and c.interativos[iid].get("repoe", false) and _repor_objetos() > 0:
+		_log("%s repôs as comidinhas" % iid)
 	_log("%s -> %s" % [iid, c.interativos[iid]["estados"][e]])
 
 

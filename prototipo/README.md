@@ -81,7 +81,10 @@ de um iPad Air deitado (1180 x 820).
 | Levar alguém para o outro lado do quarto | Arrastar o personagem até a borda da tela: o quarto rola junto |
 | Ir para a Sala | Tocar na porta do quarto (vai só a "câmera") **ou** soltar alguém na porta (vai junto, com o que estiver segurando e com quem estiver montado) |
 | Voltar ao quarto | Na Sala, a porta com a placa de coração leva de volta ao quarto (da mesma forma: tocar ou soltar alguém nela) |
-| Brincar na Sala | Tocar no abajur (acende/apaga) e no fogo da lareira (alto/baixo); deitar no sofá; as outras portas abrem e fecham (cômodos ainda não montados) |
+| Brincar na Sala | Tocar no abajur (acende/apaga) e no fogo da lareira (alto/baixo); deitar no sofá; as portas da frente e do quarto da Carol só abrem e fecham (cômodos ainda não montados) |
+| Ir para a Cozinha | Na Sala, a porta com a placa de panela (tocar ou soltar alguém nela); na Cozinha, a porta da casinha volta para a Sala |
+| Brincar na Cozinha | Tocar na geladeira (abre/fecha), no fogão (vapor), no prato da pia (sujo/limpo) e nas tigelas dos bichos (cheia/vazia) |
+| Comidinhas | Sanduíche, maçã, banana e leite: soltar na Catarina ou na Carol para comer; a xícara elas seguram. **Abrir a geladeira** traz de volta o que foi comido |
 
 Pensado para dedos no iPad:
 
@@ -101,7 +104,7 @@ Pensado para dedos no iPad:
 | `scripts/toy.gd` | Tudo que pode ser pego: pose, mão, cabeça, toque generoso, animação de respirar. |
 | `scripts/slot.gd` | Lugares de encaixe (cama, castelinho, escorregador, escada). |
 | `scripts/room.gd`, `castle_front.gd`, `item_art.gd` | Desenhos provisórios do quarto, do castelinho e dos objetos. |
-| `scripts/cenario.gd` + `dados/cenarios/<cena>.json` | Cenários montados por dados (por enquanto, a Sala): peças, interativos (portas, abajur, fogo), lugares e superfícies. |
+| `scripts/cenario.gd` + `dados/cenarios/<cena>.json` | Cenários montados por dados (Sala e Cozinha): peças, interativos (portas, abajur, fogo, geladeira...), objetos que dá para pegar, lugares e superfícies. |
 | `assets/cenario/<cena>/` | Peças 2D provisórias do cenário, com os mesmos nomes da entrega 3D: trocar a arte é só substituir o PNG. |
 
 Para montar um cenário novo a partir das peças 2D de `arte/cenario/<cena>/2d/`, defina o dicionário
@@ -131,7 +134,8 @@ segurar, trocar, dar biscoito, pote, rolar o quarto com gesto, rolar levando um 
 borda, cama, castelinho, porta, escorregador, escada, cochilo, personagens novos no quarto, Nina
 comendo, montar na Lumi, passear montada, Lumi girando, Lumi barrada no castelinho, Carol na cama e as ações da Nina (acenar, correr para os dois lados, parar,
 olhar para o objeto arrastado, ficar triste com o castelinho cheio) e a Sala (passar pela porta
-levando a Catarina, abajur, fogo, porta da cozinha, deitar no sofá, voltar ao quarto e ir de novo). Foi rodado nos tamanhos de tela
+levando a Catarina, abajur, fogo, deitar no sofá, voltar ao quarto e ir de novo) e a Cozinha (porta
+da panela, fogão, tigela, prato, segurar a xícara, comer a maçã e a geladeira repondo a comida). Foi rodado nos tamanhos de tela
 iPad 9,7"/mini (1024 x 768, 4:3) e iPad Air (1180 x 820), além da versão web num navegador emulando
 um iPad Pro 11" com toque.
 
