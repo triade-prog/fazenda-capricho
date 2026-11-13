@@ -338,6 +338,24 @@ func _roteiro() -> void:
 	await _vai("seta_arvore", "casa_arvore", "46_casinha_placa")
 	await _vai("seta_sede", "sede", "")
 
+	# Mapa da fazenda: o botão da ferradura abre o mapa; tocar numa figurinha leva a câmera
+	main.mapa.botao.pressed.emit()
+	await _espera(0.3)
+	_confere(main.mapa.aberto() and main.mapa.cena_atual == "sede", "o botão da ferradura abre o mapa, com o coração na Sede")
+	await _foto("50_mapa")
+	main.mapa.figurinhas["pet_care"].pressed.emit()
+	await _espera(0.8)
+	_confere(not main.mapa.aberto() and main.cena == "pet_care", "tocar na figurinha do Pet Care leva para lá e fecha o mapa")
+	_confere(cat.cena == "sede", "pelo mapa só a câmera viaja (a Catarina fica na Sede)")
+	main.mapa.abrir()
+	main.mapa.figurinhas["quarto"].pressed.emit()
+	await _espera(0.8)
+	_confere(main.cena == "quarto" and main.castle.visible, "pelo mapa dá para voltar ao quarto da Catarina")
+	await _foto("51_botao_no_quarto")
+	main.mapa.abrir()
+	main.mapa.fechar_mapa()
+	_confere(main.cena == "quarto" and not main.mapa.aberto(), "fechar o mapa deixa tudo como estava")
+
 
 # ---------------------------------------------------------------- utilidades
 # Todos os toques são enviados em coordenadas de TELA, como um dedo de verdade no iPad.

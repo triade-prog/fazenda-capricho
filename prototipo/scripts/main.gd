@@ -33,12 +33,15 @@ const DROP_SLACK := 40.0    # folga ao soltar algo sobre um personagem
 const LIFT := 40.0          # quanto o personagem sobe acima do dedo ao ser pego
 const EDGE := 110.0         # faixa da borda da tela que faz o quarto rolar
 const EDGE_SPEED := 650.0
+## Onde a câmera para ao chegar pelo mapa (x no cenário); sem valor, o meio do cenário.
+const MAPA_CHEGADA := {"quarto": 720.0, "sede": 1060.0, "estabulo": 1000.0, "plantacao": 800.0, "casa_arvore": 950.0}
 const QUARTO_PORTA := Rect2(1640, 250, 170, 350)   # porta do quarto: leva à Sala
 
 var castle: CastleFront
 var cena := "quarto"              # cenário que está na tela
 var cenarios := {}                # id -> nó do cenário (room.gd ou Cenario)
 var porta_quarto_aberta: Sprite2D
+var mapa: MapaFazenda             # botão da ferradura + mapa da fazenda
 var trocando := false             # durante a passagem de um cenário para outro
 var cam: Camera2D
 var toys: Array[Toy] = []
@@ -86,6 +89,9 @@ func _ready() -> void:
 		_add_cenario(id)
 	_make_toys()
 	_setup_camera()
+	mapa = MapaFazenda.new()
+	add_child(mapa)
+	mapa.escolheu.connect(_ir_pelo_mapa)
 	_show_intro()
 
 
@@ -380,6 +386,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		var st := event as InputEventScreenTouch
 		if st.pressed:
+			if mapa and (mapa.aberto() or mapa.botao.get_global_rect().has_point(st.position)):
+				return  # o toque é do botão da ferradura ou do mapa
 			if touch_index == -1:
 				touch_index = st.index
 				_on_press(st.position)
@@ -1122,6 +1130,34 @@ func _tocar_interativo(iid: String) -> void:
 	_log("%s -> %s" % [iid, c.interativos[iid]["estados"][e]])
 
 
+## Viagem pelo mapa da fazenda: só a câmera vai (os personagens ficam onde estão).
+func _ir_pelo_mapa(dest: String) -> void:
+	if trocando or dest == cena or not cenarios.has(dest):
+		return
+	trocando = true
+	_log("mapa: a câmera vai para %s" % dest)
+	var x: float = MAPA_CHEGADA.get(dest, -1.0)
+	var veu := ColorRect.new()
+	veu.color = Color(1, 0.88, 0.94, 0.0)
+	veu.set_anchors_preset(Control.PRESET_FULL_RECT)
+	veu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var camada := CanvasLayer.new()
+	camada.layer = 5
+	camada.add_child(veu)
+	add_child(camada)
+	var tw := create_tween()
+	tw.tween_property(veu, "color:a", 1.0, 0.2)
+	tw.tween_callback(func() -> void:
+		var origem := cena
+		_fechar_portas(origem)
+		_mostrar_cenario(dest)
+		camera_to(x if x >= 0.0 else W / 2.0))
+	tw.tween_property(veu, "color:a", 0.0, 0.25)
+	tw.tween_callback(func() -> void:
+		camada.queue_free()
+		trocando = false)
+
+
 ## Abre a porta e passa para o outro cenário; com `t`, o personagem (e quem vai com ele) vai junto.
 func _abrir_e_ir(t: Toy, dest: String) -> void:
 	if trocando:
@@ -1184,6 +1220,8 @@ func _abrir_e_ir(t: Toy, dest: String) -> void:
 
 func _mostrar_cenario(dest: String) -> void:
 	cena = dest
+	if mapa:
+		mapa.cena_atual = dest
 	W = (cenarios[dest] as Cenario).largura if cenarios[dest] is Cenario else 2200.0
 	for id in cenarios:
 		(cenarios[id] as Node2D).visible = id == dest

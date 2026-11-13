@@ -84,6 +84,7 @@ de um iPad Air deitado (1180 x 820).
 | Brincar na Sala | Tocar no abajur (acende/apaga) e no fogo da lareira (alto/baixo); deitar no sofá |
 | Quarto da Carol (proposta) | Na Sala, a porta com a placa de flor; lá dentro: guarda-roupa, abajures, penteadeira, cobertor, deitar na cama, pegar a escova |
 | Andar pela fazenda | Nos cenários de fora, **plaquinhas de caminho** (setas com desenho, sem letras): tocar leva a câmera, soltar alguém na plaquinha leva junto. Ligações conforme `docs/mapa_cenarios.png` |
+| Mapa da fazenda | O **botão da ferradura** (canto de cima, à esquerda) abre o mapa com uma figurinha de cada lugar; tocar numa figurinha leva a câmera para lá (os personagens ficam onde estão). O coração mostra onde você está |
 | Estábulo | Da Sede, plaquinha da ferradura: meia-porta, cocho, balde, ducha, lanterna, porteira, laguinho e moitas; pegar o pente, o feno e a margarida |
 | Plantação | Da Sede ou do Estábulo, plaquinha da cenoura: cada canteiro cresce um estágio a cada toque; nuvem, árvores de fruta, flores e cesta mudam ao toque (o jogo da fazendinha vem depois) |
 | Pet Care | Do Estábulo, plaquinha da pata: chuveirinho, banheira (vazia, com água, com espuma), tigelas; pegar xampu, toalha, brinquedos e petiscos (os bichos comem o biscoito) |
@@ -115,6 +116,7 @@ Pensado para dedos no iPad:
 | `scripts/toy.gd` | Tudo que pode ser pego: pose, mão, cabeça, toque generoso, animação de respirar. |
 | `scripts/slot.gd` | Lugares de encaixe (cama, castelinho, escorregador, escada). |
 | `scripts/room.gd`, `castle_front.gd`, `item_art.gd` | Desenhos provisórios do quarto, do castelinho e dos objetos. |
+| `scripts/mapa.gd` + `assets/mapa/` | Botão da ferradura e mapa da fazenda. As figurinhas são geradas por `ferramentas/cenario2d/mapa.py`. |
 | `scripts/cenario.gd` + `dados/cenarios/<cena>.json` | Cenários montados por dados (todos menos o quarto da Catarina): peças, interativos (portas, abajur, fogo, geladeira...), objetos que dá para pegar, lugares e superfícies. |
 | `assets/cenario/<cena>/` | Peças 2D provisórias do cenário, com os mesmos nomes da entrega 3D: trocar a arte é só substituir o PNG. |
 
