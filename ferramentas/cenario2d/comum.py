@@ -84,3 +84,146 @@ def salvar(pecas, pasta_svg, pasta_png):
             f.write(s)
     raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     subprocess.run(["node", os.path.join(raiz, "svg_para_png.js"), pasta_svg, pasta_png], check=True)
+
+
+# ---------------------------------------------------------------- cenário completo
+
+def _tamanho(svgtxt):
+    import re
+    return tuple(map(int, re.search(r'width="(\d+)" height="(\d+)"', svgtxt).groups()))
+
+
+def montar(pasta, pecas, W, H, pos, saida, rotulos=False, legenda=""):
+    """Monta a prévia do cenário. pos: lista de (nome, x, y); '@catarina' com os pés em (x, y)."""
+    from PIL import Image, ImageDraw, ImageFont
+    raiz = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    cat = Image.open(os.path.join(raiz, "arte/personagens/catarina.png")).convert("RGBA")
+    cat = cat.crop(cat.getbbox())
+    cat = cat.resize((round(cat.width * 300 / cat.height), 300), Image.LANCZOS)
+    tela = Image.new("RGBA", (W, H), (255, 255, 255, 255))
+    caixas = []
+    for nome, x, y in pos:
+        if nome == "@catarina":
+            tela.alpha_composite(cat, (round(x - cat.width / 2), round(y - 300)))
+            continue
+        w, h = _tamanho(pecas[nome])
+        im = Image.open(os.path.join(pasta, nome + ".png")).convert("RGBA").resize((w, h), Image.LANCZOS)
+        tela.alpha_composite(im, (round(x), round(y)))
+        if not nome.startswith("fundo"):
+            caixas.append((nome, x, y, w, h))
+    if rotulos:
+        d = ImageDraw.Draw(tela)
+        try:
+            f = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 17)
+            fl = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 22)
+        except OSError:
+            f = fl = ImageFont.load_default()
+        for nome, x, y, w, h in caixas:
+            d.rectangle((x, y, x + w, y + h), outline=(200, 40, 140), width=2)
+        for nome, x, y, w, h in caixas:
+            t = f"{nome} {w}×{h}"
+            tw = d.textlength(t, font=f)
+            tx, ty = x + 3, y + 3
+            d.rectangle((tx - 2, ty - 1, tx + tw + 3, ty + 20), fill=(255, 255, 255, 215))
+            d.text((tx, ty), t, fill=(150, 20, 100), font=f)
+        if legenda:
+            d.rectangle((0, H - 34, W, H), fill=(255, 255, 255, 225))
+            d.text((12, H - 30), legenda, fill=(60, 30, 60), font=fl)
+    tela.convert("RGB").save(saida)
+
+
+def gerar_cenario(nome_pasta, pecas, W, H, pos, legenda, prompts_md, leia_me):
+    raiz = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    base = os.path.join(raiz, "arte/cenario", nome_pasta)
+    d2 = os.path.join(base, "2d")
+    salvar(pecas, os.path.join(d2, "svg"), d2)
+    montar(d2, pecas, W, H, pos, os.path.join(d2, "previa.png"))
+    montar(d2, pecas, W, H, pos, os.path.join(base, f"{nome_pasta}_layout.png"), True, legenda)
+    with open(os.path.join(base, "PROMPTS.md"), "w", encoding="utf-8") as f:
+        f.write(prompts_md)
+    with open(os.path.join(d2, "LEIA-ME.md"), "w", encoding="utf-8") as f:
+        f.write(leia_me)
+    print(len(pecas), "peças em", d2)
+
+
+REGRAS = """REGRAS PARA TODAS AS PEÇAS:
+1. Uma peça por imagem, inteira, centralizada, sem cortar bordas.
+2. Vista de frente, sem girar para o lado; luz suave de cima e um pouco da esquerda.
+3. Fundo totalmente transparente (PNG). Se não der, magenta puro #FF00FF liso, sem magenta na peça.
+4. Sem sombra no chão, sem texto, sem letras, sem números, sem moldura, sem personagens.
+5. PEÇAS COM ESTADOS (ex.: fechada e aberta): todas as imagens do mesmo tamanho e com a base na MESMA
+   posição, para o jogo trocar uma pela outra sem a peça "pular".
+6. Proporção indicada em cada pedido (largura × altura, em pixels do jogo), no máximo 10% de diferença,
+   e resolução de pelo menos o DOBRO desse tamanho.
+7. Nada de personagens de filmes, desenhos ou marcas: tudo inventado."""
+
+
+def textos(pasta, titulo, secao, fantasia, conceito, tela, tabela, aviso="", ordem=""):
+    """tabela: lista de (peça, tamanho, estados, pedido, arquivos)."""
+    linhas = "\n".join(f"| {i} | {p} | {t} | {e or '—'} | {d} |" for i, (p, t, e, d, _) in enumerate(tabela, 1))
+    arquivos = "\n".join(f"- {p}: " + ", ".join(f"`{a}.png`" for a in arqs) for p, _, _, _, arqs in tabela)
+    prompts = f"""# {titulo}: prompts para gerar as peças 3D (copiar e colar)
+
+Desenvolvimento do cenário: `docs/Fazenda_Capricho_Cenarios.docx`, seção {secao}.
+{aviso}
+Layout na escala do jogo, nesta pasta: `{pasta}_layout.png` ({tela}). As peças 2D provisórias,
+com os mesmos nomes e tamanhos, estão em `2d/` e já servem de rascunho de forma para cada pedido.
+
+Mesmo processo do quarto, do estábulo e da casa na árvore: **uma conversa só**. Envie primeiro a mensagem
+de contexto e depois um pedido por peça (os estados da mesma peça juntos, numa mensagem só).
+
+---
+
+## Mensagem 1: contexto (enviar uma vez)
+
+**Anexar:** `{pasta}_layout.png`, duas peças 3D do quarto para o estilo (`arte/cenario/3d/beliche.png` e
+`arte/cenario/3d/mesinha.png`){conceito} e a imagem oficial da Catarina (`arte/personagens/catarina.png`).
+
+```
+Vou gerar, uma peça por vez, o cenário {titulo.upper()} do jogo infantil "Fazenda Capricho" (iPad, faz de
+conta no estilo Avatar World). {fantasia}
+
+ESTILO: igual às peças 3D anexadas do quarto: brinquedo 3D estilizado, formas arredondadas e macias,
+materiais foscos e simples, madeira clara cor de mel, cores pastel da fazenda (rosa, lilás, roxo, verde);
+fofo, sem realismo fotográfico.
+
+REFERÊNCIAS: o layout anexado mostra posição e tamanho de cada peça; os desenhos dele são RASCUNHOS, não
+copie o estilo. A Catarina tem 300 px de altura no jogo: use-a como régua.
+
+{REGRAS}
+
+Responda só "Entendido" e espere o primeiro pedido.
+```
+
+---
+
+## Peças
+
+Tamanhos em pixels do jogo. Para cada pedido, anexe também o PNG da peça em `2d/` como rascunho de forma.
+
+| # | Peça | Tamanho | Estados | Pedido |
+|---|---|---|---|---|
+{linhas}
+{ordem}
+---
+
+## Entrega
+
+Suba os arquivos em `arte/cenario/{pasta}/3d/` com estes nomes (os mesmos da pasta `2d/`):
+
+{arquivos}
+
+Avise quando subir: eu troco as peças 2D pelas 3D no jogo e confiro o encaixe com os personagens.
+"""
+    leia = f"""# {titulo} — peças 2D provisórias
+
+Desenhos 2D chapados, no estilo das peças provisórias do quarto, para montar o cenário no jogo agora.
+Depois serão trocados pelas peças 3D (pasta `../3d/`), **com os mesmos nomes e tamanhos**: a troca é só
+substituir o arquivo.
+
+- Tamanhos da tabela do `../PROMPTS.md`, em 2x (peças de até 100 px em 4x).
+- `previa.png`: as peças montadas com a Catarina (300 px). `../{pasta}_layout.png`: a mesma montagem com o
+  nome e o tamanho de cada peça.
+- `svg/`: o desenho vetorial de cada peça. Para refazer: `python3 ferramentas/cenario2d/{pasta}.py`.
+"""
+    return prompts, leia
