@@ -186,6 +186,24 @@
       "alvo": "carol",
       "reacao": "comer",
       "fala": "Hum, laranja!"
+    },
+    {
+      "item": "queijo",
+      "alvo": "catarina",
+      "reacao": "comer",
+      "fala": "Hum, queijinho!"
+    },
+    {
+      "item": "queijo",
+      "alvo": "carol",
+      "reacao": "comer",
+      "fala": "Hum, queijinho!"
+    },
+    {
+      "item": "cenoura",
+      "alvo": "lumi",
+      "reacao": "comer",
+      "fala": "Nhac, nhac!"
     }
   ],
   "toques": [

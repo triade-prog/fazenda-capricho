@@ -86,6 +86,10 @@ de um iPad Air deitado (1180 x 820).
 | Andar pela fazenda | Nos cenários de fora, **plaquinhas de caminho** (setas com desenho, sem letras): tocar leva a câmera, soltar alguém na plaquinha leva junto. Ligações conforme `docs/mapa_cenarios.png` |
 | Mapa da fazenda | O **botão da ferradura** (canto de cima, à esquerda) abre o mapa com uma figurinha de cada lugar; tocar numa figurinha leva a câmera para lá (os personagens ficam onde estão). O coração mostra onde você está |
 | Estábulo | Da Sede, plaquinha da ferradura: meia-porta, cocho, balde, ducha, lanterna, porteira, laguinho e moitas; pegar o pente, o feno e a margarida |
+| Cenários com vida | O **fogo da lareira** crepita com faíscas; o moinho gira, a rede e o balanço balançam, as bolhas da banheira sobem, o espantalho, a borboleta e os passarinhos se mexem. Tocar num enfeite pequeno (vaso, quadro, plantinha) dá uma balançadinha |
+| Geladeira por dentro | Tocar na geladeira abre e mostra as comidinhas nas prateleiras (maçã, banana, leite, queijo, cenoura da Lumi). Dá para tirar, dar de comer e guardar de volta: o que fica nas prateleiras some quando a porta fecha e reaparece ao abrir. Abrir também repõe o que foi comido |
+| Móveis de puxar | Arrastar uma **cadeira** (cozinha, deck da Sede, casinha da árvore, Casinha), o banquinho da penteadeira, os fardos de feno, o tronco da Cabana ou o carrinho da Plantação puxa o móvel de lado. Soltar um personagem em cima faz ele ficar ali, e ele vai junto quando o móvel é puxado |
+| Sala: almofadas e livros | As almofadas do sofá e os livros da estante agora são de pegar |
 | Plantação: preparar e plantar | Arrastar a **enxadinha** até um quadradinho de terra dura (fica fofinha) e depois um **pacotinho de sementes** (cenoura e alface, 2 ferradurinhas; a cenoura sai de graça se faltar) |
 | Plantação: regar e crescer | Arrastar o **regador** até a planta: cresce um estágio na hora. O regador esvazia e enche na **bica**. O tempo também faz crescer (cenoura e alface em 1 min) e tocar na **nuvem** rega tudo. Planta pronta nunca estraga |
 | Plantação: colher e vender | Tocar na planta pronta: os legumes pulam para o chão e ela dá estrelinhas. Soltar a colheita na **banca** ou na **cesta** vende por ferradurinhas (contador no canto de cima) |
@@ -188,6 +192,7 @@ de olhos fechados para dormir. Tiras grandes (personagem com 450 px ou mais) dev
 - Só a Nina tem animações desenhadas (folha de pet). Os outros personagens ainda são imagens únicas
   com respiração feita pelo jogo; ver `docs/padrao_geracao_personagens.md`.
 - Sem sons. O salvamento por enquanto guarda só a fazendinha: os outros cenários (onde ficou cada personagem e objeto, portas, luzes) voltam ao começo quando o jogo fecha.
+- Os personagens ainda não têm pose sentada: na cadeira eles ficam em pé junto dela. Os móveis puxados voltam ao lugar quando o jogo fecha. A vida dos cenários é configurada em `ferramentas/cenario2d/vida.py` (animações, móveis e objetos por cenário).
 - Fazendinha: ainda sem pedidos da família, lojinha de enfeites, os bichos dos níveis 5 e 7 (galinheiro e curral) e os 4 quadradinhos extras do nível 6. As flores nascem sozinhas no canteiro (sem semente) e ainda não viram buquê (documento de cenários, C11).
 - A versão web foi testada no Chromium emulando um iPad; ainda falta testar no Safari de um iPad de verdade.
 - Os textos que aparecem nas falas usam a fonte padrão do Godot; a fonte do jogo ainda será escolhida.

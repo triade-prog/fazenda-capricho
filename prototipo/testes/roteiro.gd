@@ -272,11 +272,50 @@ func _roteiro() -> void:
 	await _arrasta(xic.global_position + Vector2(0, -18), cat.to_global(Vector2(0, -150)))
 	_confere(cat.held_item == xic, "Catarina segura a xícara")
 	var maca: Toy = main._find("maca")
+	_confere(maca != null and not maca.visible, "com a geladeira fechada a maçã fica guardada lá dentro")
+	var gel := k.rect_de("geladeira").position + Vector2(40, 30)
+	await _toca(gel)
+	_confere(k.estado("geladeira") == 1 and maca.visible, "abrir a geladeira mostra as comidinhas nas prateleiras")
+	await _foto("23_geladeira_por_dentro")
 	await _arrasta(maca.global_position + Vector2(0, -16), cat.to_global(Vector2(0, -150)), 1.0)
-	_confere(main._find("maca") == null, "Catarina come a maçã")
-	await _foto("23_cozinha_catarina")
-	await _toca(k.rect_de("geladeira").get_center())
-	_confere(k.estado("geladeira") == 1 and main._find("maca") != null, "abrir a geladeira traz a maçã de volta")
+	_confere(main._find("maca") == null, "Catarina come a maçã tirada da geladeira")
+	var queijo: Toy = main._find("queijo")
+	await _arrasta(queijo.global_position + Vector2(0, -14), Vector2(700, 560), 0.9)
+	var banana: Toy = main._find("banana")
+	await _toca(gel)
+	_confere(k.estado("geladeira") == 0 and not banana.visible and queijo.visible,
+		"fechar a geladeira esconde o que ficou dentro, e o queijo tirado continua fora")
+	await _arrasta(queijo.global_position + Vector2(0, -14), Vector2(420, 380), 0.9)
+	_confere(queijo.global_position.y > 590.0, "com a geladeira fechada o queijo não entra: cai no chão")
+	await _toca(gel)
+	_confere(main._find("maca") != null and main._find("maca").visible, "abrir a geladeira de novo traz a maçã de volta")
+	await _arrasta(queijo.global_position + Vector2(0, -14), Vector2(420, 380), 0.9)
+	_confere(absf(queijo.global_position.y - 400.0) < 3.0, "o queijo volta para a prateleira da geladeira aberta")
+	await _toca(gel)
+	_confere(not queijo.visible, "e some junto quando a geladeira fecha")
+	await _toca(gel)
+	# cadeiras de puxar, enfeites que balançam
+	var ic := -1
+	for i in k.pecas.size():
+		if str(k.pecas[i][0]) == "cadeira" and ic < 0:
+			ic = i
+	var rc: Rect2 = k._rect_peca(ic)
+	await _arrasta(rc.position + Vector2(55, 190), rc.position + Vector2(55 - 180, 190), 0.4)
+	_confere(absf(float(k.desloc.get(ic, 0.0)) + 180.0) < 30.0, "a cadeira da cozinha é puxada de lado")
+	rc = k._rect_peca(ic)
+	await _arrasta(cat.to_global(Vector2(0, -235)), rc.position + Vector2(55, 60), 0.9)
+	_confere(cat.slot != null and cat.slot.id.begins_with("movel"), "Catarina senta na cadeira puxada")
+	var xcat := cat.global_position.x
+	await _arrasta(rc.position + Vector2(12, 215), rc.position + Vector2(12 - 100, 215), 0.4)
+	_confere(xcat - cat.global_position.x > 60.0, "puxar a cadeira leva junto quem está sentado")
+	await _foto("24b_cadeira_puxada")
+	var iv := -1
+	for i in k.pecas.size():
+		if str(k.pecas[i][0]) == "vaso_flores" and iv < 0:
+			iv = i
+	await _toca(k._rect_peca(iv).get_center())
+	_confere(k._sac.has(iv), "tocar num enfeite parado dá uma balançadinha")
+	_confere(c.animacoes.has("@fogo"), "o fogo da lareira tem animação de crepitar")
 	await _foto("24_geladeira_aberta")
 
 	# Sede e Entrada: a porta da frente da Sala leva à Sede; o caminho de pedras leva à Entrada

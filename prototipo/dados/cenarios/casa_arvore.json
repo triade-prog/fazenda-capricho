@@ -251,5 +251,13 @@
    2500,
    650
   ]
- ]
+ ],
+ "animacoes": {
+  "balanco_assento": {
+   "tipo": "balanca",
+   "amp": 0.09,
+   "vel": 1.8
+  }
+ },
+ "moveis": []
 }

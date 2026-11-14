@@ -305,5 +305,34 @@
   }
  ],
  "lugares": [],
- "superficies": []
+ "superficies": [],
+ "animacoes": {
+  "espantalho": {
+   "tipo": "balanca",
+   "pivo": "base",
+   "amp": 0.03,
+   "vel": 1.4
+  },
+  "@borboleta": {
+   "tipo": "flutua",
+   "amp": 10,
+   "vel": 2.4,
+   "lado": 14
+  },
+  "@abelha": {
+   "tipo": "flutua",
+   "amp": 6,
+   "vel": 4.0,
+   "lado": 10
+  },
+  "minhoca": {
+   "tipo": "flutua",
+   "amp": 0,
+   "vel": 3.0,
+   "lado": 5
+  }
+ },
+ "moveis": [
+  "carrinho"
+ ]
 }

@@ -194,5 +194,15 @@
    950,
    690
   ]
+ ],
+ "animacoes": {
+  "@passarinho": {
+   "tipo": "flutua",
+   "amp": 5,
+   "vel": 3.0
+  }
+ },
+ "moveis": [
+  "cadeirinha"
  ]
 }

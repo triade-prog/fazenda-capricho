@@ -224,6 +224,7 @@ JOGO = {
         "fogo": {"estados": ["fogo_baixo", "fogo_alto"], "x": 940, "y": 508},
     },
     # sofá: deitam até 3 (pose "deitar", como no beliche)
+    "animacoes": {"@fogo": {"tipo": "fogo"}},
     "lugares": [{"id": "sofa", "area": [1250, 330, 440, 220], "spots": [[1520, 528], [1600, 530], [1360, 530]], "pose": "deitar"}],
     # superfícies onde os objetos se apoiam: [x inicial, x final, altura]
     "superficies": [[1076, 1324, 682], [266, 534, 382], [266, 534, 482], [266, 534, 572]],

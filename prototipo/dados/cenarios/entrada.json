@@ -167,5 +167,12 @@
   }
  ],
  "lugares": [],
- "superficies": []
+ "superficies": [],
+ "animacoes": {
+  "moinho_helice": {
+   "tipo": "gira",
+   "vel": 0.9
+  }
+ },
+ "moveis": []
 }

@@ -14,6 +14,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from comum import _tamanho  # noqa: E402
 import placas  # noqa: E402
+import vida  # noqa: E402
 from PIL import Image  # noqa: E402
 
 LIMITE = 4096
@@ -28,6 +29,7 @@ P.update(mod.P)
 destino = os.path.join(raiz, "prototipo/assets/cenario", cena)
 os.makedirs(destino, exist_ok=True)
 
+vida.juntar(cena, mod.JOGO)
 inter = mod.JOGO["interativos"]
 soltos = mod.JOGO.get("objetos", [])
 pecas, usadas, objetos = [], set(), []
@@ -48,6 +50,12 @@ for nome, x, y in list(mod.POS) + list(mod.JOGO.get("extras", [])):
     else:
         pecas.append([nome, x, y, w, h])
         usadas.add(nome)
+# objetos guardados dentro de um móvel que abre (geladeira): {id do interativo: [[peça, x, y], ...]}
+for onde, lista in mod.JOGO.get("dentro", {}).items():
+    for nome, x, y in lista:
+        w, h = _tamanho(P[nome])
+        objetos.append({"tipo": nome, "x": x, "y": y, "w": w, "h": h, "dentro": onde})
+        usadas.add(nome)
 usadas.update(mod.JOGO.get("tambem", []))
 faltam = {i for i in inter if inter[i]["estados"]} - vistos
 assert not faltam, f"interativos sem posição na prévia: {faltam}"
@@ -65,7 +73,8 @@ for nome in sorted(usadas):
         shutil.copyfile(de, para)
 inter = {k: {a: b for a, b in d.items()} for k, d in inter.items()}
 dados = {"id": cena, "largura": mod.W, "pecas": pecas, "interativos": inter, "objetos": objetos,
-         "lugares": mod.JOGO["lugares"], "superficies": mod.JOGO["superficies"]}
+         "lugares": mod.JOGO["lugares"], "superficies": mod.JOGO["superficies"],
+         "animacoes": mod.JOGO.get("animacoes", {}), "moveis": mod.JOGO.get("moveis", [])}
 os.makedirs(os.path.join(raiz, "prototipo/dados/cenarios"), exist_ok=True)
 with open(os.path.join(raiz, "prototipo/dados/cenarios", cena + ".json"), "w", encoding="utf-8") as f:
     json.dump(dados, f, ensure_ascii=False, indent=1)

@@ -241,5 +241,14 @@
    1445,
    421
   ]
- ]
+ ],
+ "animacoes": {
+  "bolha": {
+   "tipo": "flutua",
+   "amp": 9,
+   "vel": 1.8,
+   "lado": 4
+  }
+ },
+ "moveis": []
 }

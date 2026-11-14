@@ -60,6 +60,7 @@ var press_pos := Vector2.ZERO
 var press_screen := Vector2.ZERO
 var last_screen := Vector2.ZERO
 var panning := false
+var puxando := false            # puxando um móvel (cadeira) de lado
 var pan_velocity := 0.0
 var last_move_time := 0
 var press_toy: Toy = null
@@ -144,6 +145,15 @@ func _add_cenario(id: String) -> Cenario:
 		s.visible = false
 	for o in c.objetos:
 		_add_objeto(id, o)
+	# móveis de puxar (cadeiras, banquinhos): cada um é também um lugar de sentar que anda junto
+	for i in c.pecas.size():
+		if c.eh_movel(i):
+			var r := c._rect_peca(i)
+			var sm := _add_slot("movel_%d" % i, Rect2(r.position.x, r.position.y, r.size.x, r.size.y * 0.8),
+				[Vector2(r.get_center().x, r.end.y - 8.0)], "sentar", "", Toy.depth_for(r.end.y - 8.0))
+			sm.cena = id
+			sm.visible = false
+			sm.set_meta("movel", i)
 	return c
 
 
@@ -164,10 +174,47 @@ func _add_objeto(id: String, o: Dictionary) -> Toy:
 	t.position = Vector2(o["x"], o["y"])
 	t.cena = id
 	t.set_meta("origem", id)
-	t.visible = id == cena
+	if o.has("dentro"):
+		t.set_meta("guardado", str(o["dentro"]))
+	t.visible = id == cena and _a_vista(t)
 	add_child(t)
 	toys.append(t)
 	return t
+
+
+## Objeto guardado num móvel que abre (geladeira) só aparece com o móvel aberto.
+func _a_vista(t: Toy) -> bool:
+	var onde := str(t.get_meta("guardado", ""))
+	if onde == "" or not cenarios.has(t.cena) or not cenarios[t.cena] is Cenario:
+		return true
+	return (cenarios[t.cena] as Cenario).estado(onde) == 1
+
+
+## Ao abrir ou fechar um móvel com prateleiras: o que está lá dentro aparece ou some com a porta.
+func _guardar_ou_mostrar(iid: String) -> void:
+	var c := cenarios[cena] as Cenario
+	if not c.interativos[iid].has("prateleiras"):
+		return
+	var r := c.rect_de(iid)
+	for t in _toys_aqui():
+		if t.is_character or t.holder or t.lifted:
+			continue
+		if c.estado(iid) == 0 and r.has_point(t.global_position + Vector2(0, -6)) and t.global_position.y < FLOOR_Y:
+			t.set_meta("guardado", iid)
+		t.visible = _a_vista(t)
+
+
+## Puxa um móvel de lado; quem está sentado nele vai junto.
+func _mover_movel(i: int, dx: float) -> void:
+	var c := cenarios[cena] as Cenario
+	var andou := c.mover(i, dx)
+	for sl in _slots_aqui():
+		if int(sl.get_meta("movel", -1)) == i:
+			sl.area.position.x += andou
+			for k in sl.spots.size():
+				sl.spots[k].x += andou
+				if sl.occupants[k]:
+					(sl.occupants[k] as Toy).global_position.x += andou
 
 
 ## Repõe os objetos do cenário que foram comidos (abrir a geladeira traz as comidinhas de volta).
@@ -413,6 +460,7 @@ func _on_press(sp: Vector2) -> void:
 	press_ui = ""
 	dragging = false
 	panning = false
+	puxando = false
 	pan_velocity = 0.0
 	var t := _toy_at(p, [])
 	if cena != "quarto":
@@ -424,7 +472,8 @@ func _on_press(sp: Vector2) -> void:
 		elif iid != "":
 			press_ui = "i:" + iid
 		else:
-			press_ui = "rolar"
+			var pi: int = (cenarios[cena] as Cenario).peca_em(p)
+			press_ui = "p:%d" % pi if pi >= 0 else "rolar"
 	elif t and t.z_index > castle.z_index:
 		press_toy = t
 	elif castle.door_hit(p):
@@ -443,8 +492,16 @@ func _on_move(sp: Vector2) -> void:
 	var moved := sp.distance_to(press_screen) > DRAG_START
 	if press_toy and not dragging and moved:
 		_start_drag(press_toy, screen_to_world(sp))
+	elif press_ui.begins_with("p:") and moved and not panning and not puxando:
+		# enfeite: móvel de puxar anda com o dedo; nos outros, arrastar rola o cenário
+		if (cenarios[cena] as Cenario).eh_movel(int(press_ui.substr(2))):
+			puxando = true
+		else:
+			panning = true
 	elif press_ui == "rolar" and moved:
 		panning = true
+	if puxando:
+		_mover_movel(int(press_ui.substr(2)), (sp.x - last_screen.x) / cam.zoom.x)
 	if panning:
 		var dx := (sp.x - last_screen.x) / cam.zoom.x
 		camera_to(cam.position.x - dx)
@@ -485,6 +542,9 @@ func _on_release(sp: Vector2) -> void:
 		t.lifted = false
 		var fp := p.clamp(Vector2(10, 10), Vector2(W - 10, H - 10))
 		_drop(t, _drop_point(fp))
+	elif puxando:
+		puxando = false
+		_log("puxou o móvel %s" % press_ui.substr(2))
 	elif panning:
 		panning = false  # continua rolando um pouco (inércia), em _process
 	elif press_toy:
@@ -501,6 +561,8 @@ func _on_release(sp: Vector2) -> void:
 		_tocar_interativo(press_ui.substr(2))
 	elif press_ui.begins_with("f:"):
 		fazenda.toque(int(press_ui.substr(2)))
+	elif press_ui.begins_with("p:"):
+		(cenarios[cena] as Cenario).sacudir(int(press_ui.substr(2)))  # enfeite tocado dá uma balançadinha
 	press_toy = null
 	press_ui = ""
 
@@ -554,6 +616,8 @@ func _start_drag(t: Toy, p: Vector2) -> void:
 	t.pose = "em_pe"
 	t.play_state("idle")  # acorda (folha de pet)
 	t.lifted = true
+	if t.has_meta("guardado"):
+		t.remove_meta("guardado")
 	t.z_index = 450
 	drag_offset = -t.grab_offset + Vector2(0, -LIFT)
 	last_x = p.x
@@ -774,6 +838,8 @@ func _enter_slot(t: Toy, s: Slot) -> void:
 			sc = Vector2(0.9, 0.9)
 		if t.kind == "catarina":
 			_bubble(t, "Boa noite!")
+	elif s.pose == "sentar":
+		t.pose = "sentado"
 	elif s.pose == "dentro":
 		t.pose = "dentro"
 		sc = Vector2(0.85, 0.85)
@@ -1090,7 +1156,14 @@ func _slots_aqui() -> Array[Slot]:
 func _superficies() -> Array[Vector3]:
 	if cena == "quarto":
 		return surfaces
-	return (cenarios[cena] as Cenario).superficies
+	var c := cenarios[cena] as Cenario
+	var r: Array[Vector3] = []
+	r.assign(c.superficies)
+	for iid in c.interativos:  # prateleiras de um móvel aberto (geladeira) também seguram objetos
+		if c.interativos[iid].has("prateleiras") and c.estado(iid) == 1:
+			for pr in c.interativos[iid]["prateleiras"]:
+				r.append(Vector3(pr[0], pr[1], pr[2]))
+	return r
 
 
 ## Para onde leva a porta que está no ponto p ("" se não há porta que leve a algum lugar).
@@ -1136,6 +1209,7 @@ func _tocar_interativo(iid: String) -> void:
 			_log("%s %s" % [iid, "aberta" if c.estado(iid) == 1 else "fechada"])
 		return
 	var e := c.alternar(iid)
+	_guardar_ou_mostrar(iid)
 	_sparkle(r.get_center(), 5 if e == 1 else 2)
 	if e == 1 and c.interativos[iid].get("repoe", false) and _repor_objetos() > 0:
 		_log("%s repôs as comidinhas" % iid)
@@ -1243,7 +1317,7 @@ func _mostrar_cenario(dest: String) -> void:
 			(cenarios[id] as Cenario).soltar()
 	castle.visible = dest == "quarto"
 	for t in toys:
-		t.visible = t.cena == dest
+		t.visible = t.cena == dest and _a_vista(t)
 	for s in slots:
 		s.visible = s.cena == dest
 

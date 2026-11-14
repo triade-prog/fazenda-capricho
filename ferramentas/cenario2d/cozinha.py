@@ -60,12 +60,7 @@ def geladeira(aberta):
         s += rr(24, 24, 182, 382, 22, "#f2f7ff", 'stroke-width="3"')
         for y in (130, 230, 320):
             s += rr(30, y, 170, 8, 3, "#cfe3f5", 'stroke-width="2"')
-        # frutas, leite, cenoura e maçã, peixinho, biscoito
-        s += circ(60, 110, 16, "#ef4d4d", 'stroke-width="2"') + circ(98, 112, 14, C["laranja"], 'stroke-width="2"') + circ(134, 110, 16, C["amarelo"], 'stroke-width="2"')
-        s += rr(48, 170, 34, 60, 6, C["branco"], 'stroke-width="2.5"') + rr(48, 162, 34, 14, 3, C["azul"], 'stroke-width="2"') + coracao(65, 205, 6, C["rosa_forte"], 'stroke-width="1.5"')
-        s += path("M110,226 L160,206 L116,214 Z", C["laranja"], 'stroke-width="2"') + circ(176, 210, 13, "#ef4d4d", 'stroke-width="2"')
-        s += ell(80, 304, 26, 12, C["azul"], 'stroke-width="2"') + path("M104,304 L118,292 L118,316 Z", C["azul"], 'stroke-width="2"')
-        s += coracao(160, 304, 14, "#e6b47e", 'stroke-width="2"')
+        # prateleiras vazias: as comidinhas são objetos soltos do jogo (JOGO["dentro"])
         s += path("M206,20 L236,6 L236,426 L206,412 Z", C["lilas"], 'stroke-width="3"')
     s += rr(30, 412, 30, 16, 4, C["roxo"]) + rr(170, 412, 30, 16, 4, C["roxo"])
     return svg(w + 8, h, s)
@@ -144,6 +139,10 @@ P["maca"] = svg(30, 32, path("M15,8 Q4,2 3,16 Q4,30 15,29 Q26,30 27,16 Q26,2 15,
                 circ(9, 13, 2.5, C["branco"], 'stroke="none"'))
 P["banana"] = svg(50, 30, path("M4,8 Q10,26 30,26 Q44,24 47,14 Q40,18 30,18 Q14,18 8,6 Z", C["amarelo"], 'stroke-width="2"') + rr(2, 4, 7, 6, 2, "#8a6a3a", 'stroke-width="1.5"'))
 P["copo_leite"] = svg(30, 44, path("M5,4 L25,4 L22,42 L8,42 Z", C["branco"], 'stroke-width="2.2"') + path("M6,14 L24,14", extra='stroke-width="1.5" opacity="0.5"'))
+P["queijo"] = svg(44, 32, path("M4,28 L40,28 L40,14 L4,22 Z", "#ffd45c", 'stroke-width="2.2"') + path("M4,22 L40,14 L30,6 Z", "#ffe08a", 'stroke-width="2.2"') +
+                  circ(16, 24, 3, "#f0b93a", 'stroke="none"') + circ(30, 22, 2.5, "#f0b93a", 'stroke="none"'))
+P["cenoura"] = svg(52, 26, path("M14,6 Q40,6 49,13 Q40,21 14,20 Q8,13 14,6 Z", C["laranja"], 'stroke-width="2.2"') + path("M14,9 L4,3 M13,13 L2,13 M14,17 L4,23", extra=f'stroke="{C["verde"]}" stroke-width="3.5"') +
+                   path("M24,8 L24,12 M33,9 L33,12", extra='stroke-width="1.4" opacity="0.5"'))
 P["sanduiche"] = svg(50, 34, path("M4,22 Q25,4 46,22 Z", "#f3c98f", 'stroke-width="2.2"') + rr(4, 20, 42, 5, 2, C["verde"], 'stroke-width="1.5"') +
                      rr(4, 24, 42, 4, 2, "#ef7a7a", 'stroke-width="1.5"') + rr(4, 27, 42, 6, 3, "#f3c98f", 'stroke-width="2"'))
 
@@ -176,7 +175,7 @@ POS = [("fundo", 0, 0), ("porta_aberta", 60, 250), ("placa_casa", 110, 180),
        ("fogao_vapor", 600, 340), ("pia", 1200, 400), ("prato_sujo", 1240, 420),
        ("xicara", 940, 400), ("vaso_flores", 1000, 350),
        ("cadeira", 1480, 470), ("mesa", 1560, 500), ("cadeira", 1990, 470),
-       ("prato_limpo", 1640, 528), ("sanduiche", 1700, 520), ("maca", 1800, 522), ("banana", 1860, 526), ("copo_leite", 1760, 510), ("vaso_flores", 1910, 468),
+       ("prato_limpo", 1640, 528), ("sanduiche", 1700, 520), ("vaso_flores", 1910, 468),
        ("tigela_cao_cheia", 700, 760), ("tigela_gato_cheia", 800, 760), ("tigela_lumi_cheia", 900, 760),
        ("@catarina", 1100, 860), ("@catarina", 1650, 790)]
 
@@ -198,14 +197,18 @@ TABELA = [
 JOGO = {
     "interativos": {
         "porta_sala": {"estados": ["porta_fechada", "porta_aberta"], "x": 60, "y": 250, "leva": "sala", "chegada": 145, "estado": 0},
-        "geladeira": {"estados": ["geladeira_fechada", "geladeira_aberta"], "x": 300, "y": 170, "repoe": True},
+        "geladeira": {"estados": ["geladeira_fechada", "geladeira_aberta"], "x": 300, "y": 170, "repoe": True,
+                      "prateleiras": [[334, 498, 300], [334, 498, 400], [334, 498, 490], [334, 498, 574]]},
         "fogao": {"estados": ["fogao", "fogao_vapor"], "x": 600, "y": 340},
         "prato_pia": {"estados": ["prato_sujo", "prato_limpo"], "x": 1240, "y": 420},
         "tigela_cao": {"estados": ["tigela_cao_vazia", "tigela_cao_cheia"], "x": 700, "y": 760},
         "tigela_gato": {"estados": ["tigela_gato_vazia", "tigela_gato_cheia"], "x": 800, "y": 760},
         "tigela_lumi": {"estados": ["tigela_lumi_vazia", "tigela_lumi_cheia"], "x": 900, "y": 760},
     },
-    "objetos": ["xicara", "sanduiche", "maca", "banana", "copo_leite"],
+    "objetos": ["xicara", "sanduiche"],
+    # comidinhas guardadas na geladeira (aparecem quando ela abre): [peça, x do meio, y da base]
+    "dentro": {"geladeira": [["maca", 365, 300], ["banana", 445, 300], ["copo_leite", 365, 400], ["queijo", 450, 400], ["cenoura", 410, 490]]},
+    "moveis": ["cadeira"],
     "lugares": [],
     "superficies": [[850, 1190, 438], [1590, 1960, 556]],
 }
