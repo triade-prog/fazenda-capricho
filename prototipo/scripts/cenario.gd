@@ -21,6 +21,7 @@ var lugares: Array = []
 var superficies: Array[Vector3] = []
 var animacoes := {}
 var moveis: Array = []
+var so_se := {}                   # peça -> [interativo, estado]: só aparece nesse estado
 var desloc := {}                  # índice da peça -> quanto o móvel foi puxado (x)
 var _sac := {}                    # índice da peça -> tempo que falta da balançadinha
 var _t := 0.0
@@ -42,6 +43,7 @@ func carregar(cena: String) -> Cenario:
 	objetos = data.get("objetos", [])
 	animacoes = data.get("animacoes", {})
 	moveis = data.get("moveis", [])
+	so_se = data.get("so_se", {})
 	set_process(false)
 	for s in data.get("superficies", []):
 		superficies.append(Vector3(s[0], s[1], s[2]))
@@ -65,6 +67,8 @@ func _draw() -> void:
 			var d: Dictionary = interativos[nome.substr(1)]
 			est = int(d.get("estado", 0))
 			nome = str(d["estados"][est])
+		if not _aparece(chave):
+			continue
 		var t := _textura(nome)
 		if t == null:
 			continue
@@ -83,6 +87,12 @@ func _draw() -> void:
 			"fogo":  # chama crepitando: estica e encolhe a partir da base
 				esc = Vector2(1.0 + 0.05 * sin(_t * 9.0 + fase), 1.0 + 0.09 * sin(_t * 13.0 + fase) + 0.04 * sin(_t * 23.0))
 				rot = 0.035 * sin(_t * 7.0 + fase)
+			"agua":  # filete de água: treme a partir de cima
+				pivo = Vector2(r.get_center().x, r.position.y)
+				esc = Vector2(1.0 + 0.10 * sin(_t * 17.0), 1.0 + 0.05 * sin(_t * 11.0))
+			"ondula":  # água parada com ondinhas: respira a partir do meio
+				pivo = r.get_center()
+				esc = Vector2(1.0 + 0.015 * sin(_t * 2.6), 1.0 + 0.05 * sin(_t * 3.4))
 			"gira":
 				pivo = r.get_center()
 				rot = _t * float(a.get("vel", 1.2))
@@ -96,8 +106,10 @@ func _draw() -> void:
 		if _sac.has(i):
 			rot += 0.07 * sin(_t * 26.0) * float(_sac[i]) / SACUDIDA
 		var base := Vector2(r.get_center().x, r.end.y)
-		if str(a.get("tipo", "")) == "gira":
+		if str(a.get("tipo", "")) in ["gira", "ondula"]:
 			base = r.get_center()
+		elif str(a.get("tipo", "")) == "agua":
+			base = Vector2(r.get_center().x, r.position.y)
 		elif str(a.get("tipo", "")) == "balanca" and str(a.get("pivo", "topo")) == "topo":
 			base = Vector2(r.get_center().x, r.position.y)
 		draw_set_transform(pivo, rot, esc)
@@ -132,6 +144,13 @@ func _notification(what: int) -> void:
 		set_process(is_visible_in_tree() and not (animacoes.is_empty() and _sac.is_empty()))
 
 
+func _aparece(chave: String) -> bool:
+	if not so_se.has(chave):
+		return true
+	var c: Array = so_se[chave]
+	return estado(str(c[0])) == int(c[1])
+
+
 func _rect_peca(i: int) -> Rect2:
 	var p: Array = pecas[i]
 	return Rect2(p[1] + float(desloc.get(i, 0.0)), p[2], p[3], p[4])
@@ -141,7 +160,7 @@ func _rect_peca(i: int) -> Rect2:
 func peca_em(p: Vector2) -> int:
 	var achou := -1
 	for i in range(1, pecas.size()):
-		if str(pecas[i][0]).begins_with("@") or not _rect_peca(i).has_point(p):
+		if str(pecas[i][0]).begins_with("@") or not _rect_peca(i).has_point(p) or not _aparece(str(pecas[i][0])):
 			continue
 		# só enfeites pequenos balançam (um móvel grande balançando deixaria para trás o que está em cima dele)
 		if eh_movel(i) or (float(pecas[i][3]) <= 330.0 and float(pecas[i][4]) <= 300.0):

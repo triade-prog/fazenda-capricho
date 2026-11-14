@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://onhvn0mlim3"
-path="res://.godot/imported/fogao_vapor.png-5484eec51c27271e6c432b55f911bd7b.ctex"
+uid="uid://dmba0y01jgq81"
+path="res://.godot/imported/laco.png-6ac5be979a71440cbe36e7cc26c0d7fa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cenario/cozinha/fogao_vapor.png"
-dest_files=["res://.godot/imported/fogao_vapor.png-5484eec51c27271e6c432b55f911bd7b.ctex"]
+source_file="res://assets/cenario/quarto_carol/laco.png"
+dest_files=["res://.godot/imported/laco.png-6ac5be979a71440cbe36e7cc26c0d7fa.ctex"]
 
 [params]
 

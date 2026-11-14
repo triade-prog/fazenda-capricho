@@ -80,7 +80,7 @@
    40
   ],
   [
-   "cercadinho",
+   "@cercadinho",
    1900,
    520,
    420,
@@ -109,6 +109,17 @@
   ]
  ],
  "interativos": {
+  "cercadinho": {
+   "estados": [
+    "cercadinho",
+    "cercadinho_aberto"
+   ],
+   "x": 1900,
+   "y": 520,
+   "estado": 0,
+   "w": 420,
+   "h": 180
+  },
   "chuveirinho": {
    "estados": [
     "chuveirinho_desligado",
@@ -250,5 +261,6 @@
    "lado": 4
   }
  },
- "moveis": []
+ "moveis": [],
+ "so_se": {}
 }

@@ -150,7 +150,7 @@
    70
   ],
   [
-   "cesto_brinquedos",
+   "@cesto",
    520,
    690,
    140,
@@ -221,6 +221,18 @@
    "w": 90,
    "h": 200
   },
+  "cesto": {
+   "estados": [
+    "cesto_brinquedos",
+    "cesto_vazio"
+   ],
+   "x": 520,
+   "y": 690,
+   "repoe": true,
+   "estado": 0,
+   "w": 140,
+   "h": 110
+  },
   "fogo": {
    "estados": [
     "fogo_baixo",
@@ -268,6 +280,30 @@
    "y": 510,
    "w": 70,
    "h": 60
+  },
+  {
+   "tipo": "bola_estrela",
+   "x": 480,
+   "y": 850,
+   "w": 44,
+   "h": 44,
+   "dentro": "cesto"
+  },
+  {
+   "tipo": "bloco",
+   "x": 600,
+   "y": 866,
+   "w": 40,
+   "h": 40,
+   "dentro": "cesto"
+  },
+  {
+   "tipo": "ursinho",
+   "x": 700,
+   "y": 846,
+   "w": 48,
+   "h": 58,
+   "dentro": "cesto"
   }
  ],
  "lugares": [
@@ -328,5 +364,6 @@
    "tipo": "fogo"
   }
  },
- "moveis": []
+ "moveis": [],
+ "so_se": {}
 }

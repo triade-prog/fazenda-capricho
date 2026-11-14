@@ -71,7 +71,7 @@ Suba os arquivos em `arte/cenario/cozinha/3d/` com estes nomes (os mesmos da pas
 
 - Fundo da cozinha: `fundo.png`
 - Geladeira lilás: `geladeira_fechada.png`, `geladeira_aberta.png`
-- Fogão com panela: `fogao.png`, `fogao_vapor.png`
+- Fogão com panela: `fogao.png`, `fogao_aceso.png`
 - Pia: `pia.png`
 - Mesa com toalha xadrez: `mesa.png`
 - Cadeira de coração: `cadeira.png`

@@ -38,6 +38,13 @@
    120
   ],
   [
+   "chama",
+   1450,
+   580,
+   70,
+   70
+  ],
+  [
    "tronco_banco",
    1560,
    600,
@@ -171,9 +178,18 @@
    "tipo": "flutua",
    "amp": 5,
    "vel": 3.0
+  },
+  "chama": {
+   "tipo": "fogo"
   }
  },
  "moveis": [
   "tronco_banco"
- ]
+ ],
+ "so_se": {
+  "chama": [
+   "fogueira",
+   1
+  ]
+ }
 }

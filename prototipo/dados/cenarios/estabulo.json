@@ -342,8 +342,14 @@
    775
   ]
  ],
- "animacoes": {},
+ "animacoes": {
+  "@laguinho": {
+   "tipo": "ondula",
+   "estado": 1
+  }
+ },
  "moveis": [
   "fardo"
- ]
+ ],
+ "so_se": {}
 }

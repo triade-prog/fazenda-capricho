@@ -155,11 +155,13 @@ P["porta_retrato"] = svg(50, 50, rr(4, 4, 42, 40, 5, C["lilas"], 'stroke-width="
 P["plantinha"] = planta_vaso(50, 60, C["lilas"])
 
 
-def cesto_brinquedos():
+def cesto_brinquedos(cheio=True):
     w, h = 140, 110
-    s = circ(48, 40, 18, C["amarelo"], 'stroke-width="2.5"') + circ(42, 34, 4, C["branco"], 'stroke="none"')
-    s += circ(84, 30, 13, "#c98c56", 'stroke-width="2.5"') + circ(73, 20, 6, "#c98c56", 'stroke-width="2"') + circ(95, 20, 6, "#c98c56", 'stroke-width="2"')
-    s += circ(80, 30, 1.8, L, 'stroke="none"') + circ(88, 30, 1.8, L, 'stroke="none"')
+    s = "" if cheio else rr(8, 40, 124, 10, 4, "#8a5a3c", 'stroke-width="2"')
+    if cheio:
+        s += circ(48, 40, 18, C["amarelo"], 'stroke-width="2.5"') + circ(42, 34, 4, C["branco"], 'stroke="none"')
+        s += circ(84, 30, 13, "#c98c56", 'stroke-width="2.5"') + circ(73, 20, 6, "#c98c56", 'stroke-width="2"') + circ(95, 20, 6, "#c98c56", 'stroke-width="2"')
+        s += circ(80, 30, 1.8, L, 'stroke="none"') + circ(88, 30, 1.8, L, 'stroke="none"')
     s += path("M6,46 L134,46 L122,108 L18,108 Z", C["mel"], 'stroke-width="3"')
     for y in (60, 76, 92):
         s += path(f"M{8 + (y-46)*0.18},{y} L{132 - (y-46)*0.18},{y}", extra='stroke-width="1.6" opacity="0.5"')
@@ -168,6 +170,12 @@ def cesto_brinquedos():
 
 
 P["cesto_brinquedos"] = cesto_brinquedos()
+P["cesto_vazio"] = cesto_brinquedos(False)
+P["bola_estrela"] = svg(44, 44, circ(22, 22, 19, C["amarelo"], 'stroke-width="2.5"') + estrela(22, 22, 9, C["rosa_forte"], 5, 'stroke-width="1.8"') + circ(14, 13, 3.5, C["branco"], 'stroke="none"'))
+P["ursinho"] = svg(48, 58, circ(12, 10, 7, "#c98c56", 'stroke-width="2.2"') + circ(36, 10, 7, "#c98c56", 'stroke-width="2.2"') + ell(24, 40, 17, 16, "#c98c56", 'stroke-width="2.5"') +
+                   circ(24, 20, 15, "#c98c56", 'stroke-width="2.5"') + ell(24, 25, 6, 4.5, "#f0d2ad", 'stroke-width="1.5"') + circ(18, 17, 2, L, 'stroke="none"') + circ(30, 17, 2, L, 'stroke="none"') +
+                   coracao(24, 41, 6, C["rosa_forte"], 'stroke-width="1.5"'))
+P["bloco"] = svg(40, 40, rr(4, 4, 32, 32, 6, C["azul"], 'stroke-width="2.5"') + coracao(20, 21, 8, C["branco"], 'stroke-width="1.8"'))
 P["porta_fechada"] = porta_casa(False)
 P["porta_aberta"] = porta_casa(True)
 for d in ("coracao", "flor", "panela", "casa"):
@@ -221,10 +229,13 @@ JOGO = {
         "porta_catarina": {"estados": ["porta_fechada", "porta_aberta"], "x": 1820, "y": 250, "leva": "quarto", "chegada": 1905},
         "porta_carol": {"estados": ["porta_fechada", "porta_aberta"], "x": 2010, "y": 250, "leva": "quarto_carol", "chegada": 2095},
         "abajur": {"estados": ["abajur_apagado", "abajur_aceso"], "x": 1715, "y": 412},
+        "cesto": {"estados": ["cesto_brinquedos", "cesto_vazio"], "x": 520, "y": 690, "repoe": True},
         "fogo": {"estados": ["fogo_baixo", "fogo_alto"], "x": 940, "y": 508},
     },
     # sofá: deitam até 3 (pose "deitar", como no beliche)
     "animacoes": {"@fogo": {"tipo": "fogo"}},
+    # brinquedos guardados no cesto: pulam para o chão quando ele é tocado
+    "dentro": {"cesto": [["bola_estrela", 480, 850], ["bloco", 600, 866], ["ursinho", 700, 846]]},
     "lugares": [{"id": "sofa", "area": [1250, 330, 440, 220], "spots": [[1520, 528], [1600, 530], [1360, 530]], "pose": "deitar"}],
     # superfícies onde os objetos se apoiam: [x inicial, x final, altura]
     "superficies": [[1076, 1324, 682], [266, 534, 382], [266, 534, 482], [266, 534, 572]],

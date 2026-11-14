@@ -74,7 +74,8 @@ for nome in sorted(usadas):
 inter = {k: {a: b for a, b in d.items()} for k, d in inter.items()}
 dados = {"id": cena, "largura": mod.W, "pecas": pecas, "interativos": inter, "objetos": objetos,
          "lugares": mod.JOGO["lugares"], "superficies": mod.JOGO["superficies"],
-         "animacoes": mod.JOGO.get("animacoes", {}), "moveis": mod.JOGO.get("moveis", [])}
+         "animacoes": mod.JOGO.get("animacoes", {}), "moveis": mod.JOGO.get("moveis", []),
+         "so_se": mod.JOGO.get("so_se", {})}
 os.makedirs(os.path.join(raiz, "prototipo/dados/cenarios"), exist_ok=True)
 with open(os.path.join(raiz, "prototipo/dados/cenarios", cena + ".json"), "w", encoding="utf-8") as f:
     json.dump(dados, f, ensure_ascii=False, indent=1)

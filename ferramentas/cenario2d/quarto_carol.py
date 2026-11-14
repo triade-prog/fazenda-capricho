@@ -66,9 +66,14 @@ P["cobertor_dobrado"] = cobertor(False)
 P["travesseiro"] = svg(130, 60, rr(4, 6, 122, 48, 22, C["rosa_claro"], 'stroke-width="3"') + coracao(65, 30, 9, C["rosa"], 'stroke-width="2"'))
 
 
-def criado_mudo():
+def criado_mudo(aberto=False):
     w, h = 130, 150
     s = rr(10, 20, 110, 110, 8, C["madeira"], 'stroke-width="3.5"') + rr(4, 10, 122, 16, 6, C["madeira_clara"], 'stroke-width="3"')
+    if aberto:  # gaveta de cima puxada: aparece o fundo escuro e a frente desce um pouco
+        s += rr(18, 36, 94, 16, 3, "#6b4630", 'stroke-width="2.5"') + rr(16, 46, 98, 34, 5, C["madeira_clara"], 'stroke-width="2.8"')
+        s += circ(65, 63, 4, C["dourado"], 'stroke-width="2"') + rr(22, 84, 86, 34, 5, C["madeira_clara"], 'stroke-width="2.5"') + circ(65, 101, 4, C["dourado"], 'stroke-width="2"')
+        s += rr(18, 128, 14, 20, 3, C["madeira_esc"]) + rr(98, 128, 14, 20, 3, C["madeira_esc"])
+        return svg(w, h, s)
     s += rr(22, 40, 86, 34, 5, C["madeira_clara"], 'stroke-width="2.5"') + rr(22, 84, 86, 34, 5, C["madeira_clara"], 'stroke-width="2.5"')
     s += circ(65, 57, 4, C["dourado"], 'stroke-width="2"') + circ(65, 101, 4, C["dourado"], 'stroke-width="2"')
     s += rr(18, 128, 14, 20, 3, C["madeira_esc"]) + rr(98, 128, 14, 20, 3, C["madeira_esc"])
@@ -76,6 +81,9 @@ def criado_mudo():
 
 
 P["criado_mudo"] = criado_mudo()
+P["criado_mudo_aberto"] = criado_mudo(True)
+P["laco"] = svg(50, 30, path("M25,15 L6,4 Q2,15 6,26 Z", C["rosa_forte"], 'stroke-width="2.2"') + path("M25,15 L44,4 Q48,15 44,26 Z", C["rosa_forte"], 'stroke-width="2.2"') + circ(25, 15, 6, C["rosa_chiclete"], 'stroke-width="2"'))
+P["livrinho"] = svg(40, 32, rr(4, 4, 32, 26, 4, C["lilas"], 'stroke-width="2.3"') + rr(31, 6, 4, 22, 2, C["branco"], 'stroke-width="1.2"') + estrela(18, 17, 6, C["amarelo"], 5, 'stroke-width="1.3"'))
 
 
 def abajur_mesa(aceso):
@@ -205,6 +213,8 @@ TABELA = [
 JOGO = {
     "interativos": {
         "porta_sala": {"estados": ["porta_fechada", "porta_aberta"], "x": 50, "y": 250, "leva": "sala", "chegada": 135},
+        "gaveta_esq": {"estados": ["criado_mudo", "criado_mudo_aberto"], "x": 720, "y": 470, "prateleiras": [[742, 828, 516]]},
+        "gaveta_dir": {"estados": ["criado_mudo", "criado_mudo_aberto"], "x": 1490, "y": 470, "prateleiras": [[1512, 1598, 516]]},
         "guarda_roupa": {"estados": ["guarda_roupa_fechado", "guarda_roupa_aberto"], "x": 260, "y": 200},
         "abajur_esq": {"estados": ["abajur_apagado", "abajur_aceso"], "x": 745, "y": 372},
         "abajur_dir": {"estados": ["abajur_apagado", "abajur_aceso"], "x": 1515, "y": 372},
@@ -213,7 +223,9 @@ JOGO = {
     },
     "objetos": ["escova_cabelo"],
     "lugares": [{"id": "cama_carol", "area": [880, 330, 580, 170], "spots": [[1170, 520], [1050, 524]], "pose": "deitar"}],
-    "superficies": [[1800, 2040, 470]],
+    # surpresas guardadas nas gavetas dos criados-mudos
+    "dentro": {"gaveta_esq": [["laco", 785, 516]], "gaveta_dir": [["livrinho", 1555, 516]]},
+    "superficies": [[1800, 2040, 470], [880, 1460, 515]],
 }
 
 if __name__ == "__main__":

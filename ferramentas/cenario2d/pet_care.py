@@ -145,7 +145,26 @@ def cercadinho():
     return svg(w, h, s)
 
 
+def cercadinho_aberto():
+    """Mesmo cercadinho com o portãozinho do meio aberto (as ripas do meio viram para o lado)."""
+    w, h = 420, 180
+    s = ell(210, 136, 170, 24, "#fff0f6", 'stroke-width="2"')
+    for i, x in enumerate(range(16, 410, 30)):
+        if 4 < i < 9:
+            continue
+        s += rr(x, 30, 14, 128, 6, C["branco"], 'stroke-width="2.5"')
+    for x0, x1 in ((6, 150), (290, 414)):
+        s += rr(x0, 44, x1 - x0, 14, 6, C["branco"], 'stroke-width="3"') + rr(x0, 120, x1 - x0, 14, 6, C["branco"], 'stroke-width="3"')
+    # portão aberto, visto de lado
+    s += path("M290,34 L250,58 L250,176 L290,160 Z", C["branco"], 'stroke-width="2.5"') + path("M278,42 L278,164 M264,50 L264,170", extra='stroke-width="2"')
+    s += coracao(270, 30, 10, C["rosa_forte"], 'stroke-width="2"')
+    for x in (60, 360):
+        s += flor(x, 44, 8, C["lilas"], C["amarelo"])
+    return svg(w, h, s)
+
+
 P["cercadinho"] = cercadinho()
+P["cercadinho_aberto"] = cercadinho_aberto()
 
 
 def prateleira():
@@ -186,6 +205,7 @@ TABELA = [
 # Como o cenário entra no protótipo (ver para_jogo.py).
 JOGO = {
     "interativos": {
+        "cercadinho": {"estados": ["cercadinho", "cercadinho_aberto"], "x": 1900, "y": 520},
         "chuveirinho": {"estados": ["chuveirinho_desligado", "chuveirinho_ligado"], "x": 760, "y": 290},
         "banheira": {"estados": ["banheira_vazia", "banheira_agua", "banheira_espuma"], "x": 840, "y": 440},
         "tigela_cao": {"estados": ["tigela_cao_vazia", "tigela_cao_cheia"], "x": 1560, "y": 640},

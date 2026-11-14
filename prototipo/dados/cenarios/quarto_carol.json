@@ -38,7 +38,7 @@
    130
   ],
   [
-   "criado_mudo",
+   "@gaveta_esq",
    720,
    470,
    130,
@@ -66,20 +66,6 @@
    330
   ],
   [
-   "travesseiro",
-   920,
-   455,
-   130,
-   60
-  ],
-  [
-   "travesseiro",
-   1290,
-   455,
-   130,
-   60
-  ],
-  [
    "@cobertor",
    890,
    505,
@@ -87,7 +73,7 @@
    110
   ],
   [
-   "criado_mudo",
+   "@gaveta_dir",
    1490,
    470,
    130,
@@ -142,6 +128,42 @@
    "estado": 0,
    "w": 170,
    "h": 350
+  },
+  "gaveta_esq": {
+   "estados": [
+    "criado_mudo",
+    "criado_mudo_aberto"
+   ],
+   "x": 720,
+   "y": 470,
+   "prateleiras": [
+    [
+     742,
+     828,
+     516
+    ]
+   ],
+   "estado": 0,
+   "w": 130,
+   "h": 150
+  },
+  "gaveta_dir": {
+   "estados": [
+    "criado_mudo",
+    "criado_mudo_aberto"
+   ],
+   "x": 1490,
+   "y": 470,
+   "prateleiras": [
+    [
+     1512,
+     1598,
+     516
+    ]
+   ],
+   "estado": 0,
+   "w": 130,
+   "h": 150
   },
   "guarda_roupa": {
    "estados": [
@@ -201,11 +223,41 @@
  },
  "objetos": [
   {
+   "tipo": "travesseiro",
+   "x": 985.0,
+   "y": 515,
+   "w": 130,
+   "h": 60
+  },
+  {
+   "tipo": "travesseiro",
+   "x": 1355.0,
+   "y": 515,
+   "w": 130,
+   "h": 60
+  },
+  {
    "tipo": "escova_cabelo",
    "x": 1870.0,
    "y": 470,
    "w": 80,
    "h": 40
+  },
+  {
+   "tipo": "laco",
+   "x": 785,
+   "y": 516,
+   "w": 50,
+   "h": 30,
+   "dentro": "gaveta_esq"
+  },
+  {
+   "tipo": "livrinho",
+   "x": 1555,
+   "y": 516,
+   "w": 40,
+   "h": 32,
+   "dentro": "gaveta_dir"
   }
  ],
  "lugares": [
@@ -235,10 +287,16 @@
    1800,
    2040,
    470
+  ],
+  [
+   880,
+   1460,
+   515
   ]
  ],
  "animacoes": {},
  "moveis": [
   "banquinho"
- ]
+ ],
+ "so_se": {}
 }

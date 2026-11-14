@@ -98,15 +98,20 @@ def fogao(vapor):
     # panela
     s += path("M70,40 L170,40 L162,82 L78,82 Z", C["rosa_chiclete"], 'stroke-width="3"') + rr(64, 32, 112, 12, 5, C["rosa"], 'stroke-width="2.5"')
     s += path("M170,46 L196,40 M70,46 L44,40", extra='stroke-width="5"')
-    if vapor:
-        for x in (96, 144):
-            s += path(f"M{x},28 q-10,-10 0,-18 q10,-8 0,-18", extra=f'stroke="#c9bcd6" stroke-width="3"')
-        s += coracao(120, 10, 8, C["rosa"], 'stroke-width="2"')
+    if vapor:  # fogão aceso: chaminhas debaixo da panela (a fumacinha é a peça "vapor", que se mexe)
+        for x in (60, 180):
+            s += path(f"M{x-9},82 Q{x-10},70 {x},60 Q{x+10},70 {x+9},82 Z", "#ff9a3c", 'stroke-width="1.8"')
+            s += path(f"M{x-4},82 Q{x-5},75 {x},69 Q{x+5},75 {x+4},82 Z", C["amarelo"], 'stroke="none"')
     return svg(w, h, s)
 
 
+P["vapor"] = svg(80, 56, "".join(path(f"M{x},54 q-10,-10 0,-18 q10,-8 0,-18", extra='stroke="#c9bcd6" stroke-width="3.5"') for x in (16, 64)) +
+                 coracao(40, 26, 9, C["rosa"], 'stroke-width="2"'))
+P["torneira_fechada"] = svg(80, 70, "")
+P["torneira_aberta"] = svg(80, 70, rr(35, 2, 10, 50, 5, "#8fd3ff", 'stroke-width="1.8"') + path("M38,8 L38,44", extra='stroke="#ffffff" stroke-width="2" opacity="0.8"') +
+                           ell(40, 54, 20, 6, "#bfe6ff", 'stroke-width="1.8"') + circ(22, 46, 3, "#bfe6ff", 'stroke-width="1.2"') + circ(59, 44, 2.5, "#bfe6ff", 'stroke-width="1.2"'))
 P["fogao"] = fogao(False)
-P["fogao_vapor"] = fogao(True)
+P["fogao_aceso"] = fogao(True)
 
 
 def pia():
@@ -172,7 +177,7 @@ P["placa_casa"] = plaquinha("casa")
 
 POS = [("fundo", 0, 0), ("porta_aberta", 60, 250), ("placa_casa", 110, 180),
        ("geladeira_fechada", 300, 170),
-       ("fogao_vapor", 600, 340), ("pia", 1200, 400), ("prato_sujo", 1240, 420),
+       ("fogao_aceso", 600, 340), ("vapor", 680, 290), ("torneira_fechada", 1318, 404), ("pia", 1200, 400), ("prato_sujo", 1240, 420),
        ("xicara", 940, 400), ("vaso_flores", 1000, 350),
        ("cadeira", 1480, 470), ("mesa", 1560, 500), ("cadeira", 1990, 470),
        ("prato_limpo", 1640, 528), ("sanduiche", 1700, 520), ("vaso_flores", 1910, 468),
@@ -182,7 +187,7 @@ POS = [("fundo", 0, 0), ("porta_aberta", 60, 250), ("placa_casa", 110, 180),
 TABELA = [
     ("Fundo da cozinha", "2200 × 900", None, "Parede rosa-pêssego com vigas, azulejinhos rosa e branco, armários de madeira embutidos atrás da bancada, prateleira com potes coloridos e uma plantinha, panelas de cobre penduradas e janela com cortina rosa. SEM geladeira, fogão, pia, mesa e porta.", ["fundo"]),
     ("Geladeira lilás", "238 × 430", "fechada · aberta", "Geladeira retrô lilás com cantos bem arredondados e ímãs de coração. Aberta: prateleiras com frutas, leite, cenoura e maçã (para a Lumi), peixinho (gatos) e biscoito de coração (cães); a porta aberta aparece fina do lado direito.", ["geladeira_fechada", "geladeira_aberta"]),
-    ("Fogão com panela", "240 × 260", "normal · com vapor", "Fogãozinho branco e rosa com forno e botões lilás, panela rosa em cima. Vapor: fiozinhos de vapor e um coração subindo. Sem chama.", ["fogao", "fogao_vapor"]),
+    ("Fogão com panela", "240 × 260", "normal · com vapor", "Fogãozinho branco e rosa com forno e botões lilás, panela rosa em cima. Vapor: fiozinhos de vapor e um coração subindo. Sem chama.", ["fogao", "fogao_aceso"]),
     ("Pia", "260 × 200", None, "Bancada de madeira com cuba branca e torneira prateada com registro de coração. Tampo PLANO.", ["pia"]),
     ("Mesa com toalha xadrez", "420 × 200", None, "Mesa de madeira com toalha xadrez vermelho-rosado e branca. Tampo PLANO para pratos e comidinhas.", ["mesa"]),
     ("Cadeira de coração", "110 × 230", None, "Cadeira de madeira com coração vazado no encosto; o jogo usa quatro.", ["cadeira"]),
@@ -199,7 +204,8 @@ JOGO = {
         "porta_sala": {"estados": ["porta_fechada", "porta_aberta"], "x": 60, "y": 250, "leva": "sala", "chegada": 145, "estado": 0},
         "geladeira": {"estados": ["geladeira_fechada", "geladeira_aberta"], "x": 300, "y": 170, "repoe": True,
                       "prateleiras": [[334, 498, 300], [334, 498, 400], [334, 498, 490], [334, 498, 574]]},
-        "fogao": {"estados": ["fogao", "fogao_vapor"], "x": 600, "y": 340},
+        "fogao": {"estados": ["fogao", "fogao_aceso"], "x": 600, "y": 340},
+        "torneira": {"estados": ["torneira_fechada", "torneira_aberta"], "x": 1318, "y": 404},
         "prato_pia": {"estados": ["prato_sujo", "prato_limpo"], "x": 1240, "y": 420},
         "tigela_cao": {"estados": ["tigela_cao_vazia", "tigela_cao_cheia"], "x": 700, "y": 760},
         "tigela_gato": {"estados": ["tigela_gato_vazia", "tigela_gato_cheia"], "x": 800, "y": 760},

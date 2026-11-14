@@ -103,6 +103,15 @@ P["livro_fechado"] = livro(False)
 P["livro_aberto"] = livro(True)
 
 
+def chama():
+    """Chama que se mexe por cima da fogueira quando ela está brilhando."""
+    s = ""
+    for dx, hh, c in [(-14, 44, "#ff9a3c"), (14, 44, "#ff9a3c"), (0, 62, "#ff7b54"), (0, 34, C["amarelo"])]:
+        x = 35 + dx
+        s += path(f"M{x-14},68 Q{x-16},{68-hh*0.5} {x},{68-hh} Q{x+16},{68-hh*0.5} {x+14},68 Z", c, 'stroke-width="2.2"')
+    return svg(70, 70, s)
+
+
 def fogueira(brilho):
     w, h = 170, 120
     s = ""
@@ -120,6 +129,7 @@ def fogueira(brilho):
     return svg(w, h, s)
 
 
+P["chama"] = chama()
 P["fogueira"] = fogueira(False)
 P["fogueira_brilho"] = fogueira(True)
 P["binoculo"] = svg(64, 44, circ(18, 26, 14, C["roxo"], 'stroke-width="2.5"') + circ(46, 26, 14, C["roxo"], 'stroke-width="2.5"') +
@@ -132,7 +142,7 @@ P["passarinho"] = svg(40, 35, path("M8,20 L1,15 L3,24 Z", C["azul"], 'stroke-wid
                       path("M33,15 L39,17 L33,19 Z", C["laranja"], 'stroke-width="1.5"'))
 
 POS = [("fundo", 0, 0), ("cabana_aberta", 820, 230), ("saco_dormir", 890, 500), ("lanterna_ligada", 1020, 420),
-       ("fogueira_brilho", 1400, 560), ("tronco_banco", 1560, 600), ("tronco_banco", 1180, 690),
+       ("fogueira_brilho", 1400, 560), ("chama", 1450, 580), ("tronco_banco", 1560, 600), ("tronco_banco", 1180, 690),
        ("livro_aberto", 640, 690), ("livro_fechado", 560, 700), ("binoculo", 1700, 560), ("passarinho", 1880, 300),
        ("@catarina", 700, 860), ("@catarina", 1640, 880)]
 

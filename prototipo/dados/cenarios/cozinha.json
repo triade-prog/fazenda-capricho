@@ -38,6 +38,20 @@
    260
   ],
   [
+   "vapor",
+   680,
+   290,
+   80,
+   56
+  ],
+  [
+   "@torneira",
+   1318,
+   404,
+   80,
+   70
+  ],
+  [
    "pia",
    1200,
    400,
@@ -166,13 +180,24 @@
   "fogao": {
    "estados": [
     "fogao",
-    "fogao_vapor"
+    "fogao_aceso"
    ],
    "x": 600,
    "y": 340,
    "estado": 1,
    "w": 240,
    "h": 260
+  },
+  "torneira": {
+   "estados": [
+    "torneira_fechada",
+    "torneira_aberta"
+   ],
+   "x": 1318,
+   "y": 404,
+   "estado": 0,
+   "w": 80,
+   "h": 70
   },
   "prato_pia": {
    "estados": [
@@ -288,8 +313,25 @@
    556
   ]
  ],
- "animacoes": {},
+ "animacoes": {
+  "vapor": {
+   "tipo": "flutua",
+   "amp": 4,
+   "vel": 2.6,
+   "lado": 3
+  },
+  "@torneira": {
+   "tipo": "agua",
+   "estado": 1
+  }
+ },
  "moveis": [
   "cadeira"
- ]
+ ],
+ "so_se": {
+  "vapor": [
+   "fogao",
+   1
+  ]
+ }
 }

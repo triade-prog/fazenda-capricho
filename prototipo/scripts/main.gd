@@ -193,15 +193,19 @@ func _a_vista(t: Toy) -> bool:
 ## Ao abrir ou fechar um móvel com prateleiras: o que está lá dentro aparece ou some com a porta.
 func _guardar_ou_mostrar(iid: String) -> void:
 	var c := cenarios[cena] as Cenario
-	if not c.interativos[iid].has("prateleiras"):
-		return
-	var r := c.rect_de(iid)
 	for t in _toys_aqui():
 		if t.is_character or t.holder or t.lifted:
 			continue
-		if c.estado(iid) == 0 and r.has_point(t.global_position + Vector2(0, -6)) and t.global_position.y < FLOOR_Y:
-			t.set_meta("guardado", iid)
+		if c.estado(iid) == 0:  # fechou: o que está pousado numa prateleira dele fica guardado
+			for pr in c.interativos[iid].get("prateleiras", []):
+				var gp := t.global_position
+				if gp.x >= float(pr[0]) and gp.x <= float(pr[1]) and absf(gp.y - float(pr[2])) < 4.0:
+					t.set_meta("guardado", iid)
+		var antes := t.visible
 		t.visible = _a_vista(t)
+		if t.visible and not antes:  # aparece com um pulinho
+			t.squash = Vector2(0.3, 0.3)
+			t.play_anim().tween_property(t, "squash", Vector2.ONE, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 ## Puxa um móvel de lado; quem está sentado nele vai junto.
