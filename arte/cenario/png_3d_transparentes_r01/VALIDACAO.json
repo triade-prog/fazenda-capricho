@@ -1,0 +1,34 @@
+{
+  "arquivos_png": 381,
+  "ids_unicos": 381,
+  "canal_rgba": true,
+  "borda_transparente_em_todos": true,
+  "catalogo_original": 380,
+  "extras": 1,
+  "por_cenario": {
+    "01_quarto_meninas": 20,
+    "02_sala": 25,
+    "03_cozinha": 26,
+    "04_sede": 18,
+    "05_entrada": 16,
+    "06_quarto_carol": 22,
+    "07_estabulo": 33,
+    "08_plantacao": 87,
+    "09_pet_care": 26,
+    "10_casa_arvore": 42,
+    "11_cabana": 14,
+    "12_casinha": 20,
+    "13_placas": 16,
+    "14_mapa_botoes": 16
+  },
+  "por_tipo": {
+    "objetos": 322,
+    "fundos": 14,
+    "previas": 12,
+    "extras": 1,
+    "interface": 32
+  },
+  "observacoes_visuais": 22,
+  "sprites_com_uma_dimensao_menor_64": 66,
+  "testado_no_jogo": false
+}

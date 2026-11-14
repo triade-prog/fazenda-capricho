@@ -1,0 +1,1 @@
+Registro do processamento desta entrega. Requer Python, Pillow, NumPy e SciPy, as pranchas de origem, os JSONs de OCR e as imagens complementares. Os caminhos no script referem-se ao ambiente da geração; ajuste ROOT antes de reutilizar. As fontes não foram duplicadas neste ZIP. As regras de recorte foram verificadas para estas pranchas específicas.

@@ -1,0 +1,5 @@
+Modo: geração integrada de imagens, com referência visual da plantação e saída transparente.
+
+SOLO: Single isolated 3D toy garden plot, compacted dry brown earth with two cracks, rounded honey wooden rim, elevated front/isometric view, no plants/seeds/locks/tools/text, transparent RGBA.
+
+NUVEM: One pale pink-white smiling 3D toy cloud matching the reference, five blue teardrops below with transparent separation, whole cloud visible, no background/ground/text. A second dry state uses the same image with drops removed, preserving placement and alpha.
