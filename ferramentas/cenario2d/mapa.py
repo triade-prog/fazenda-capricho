@@ -4,6 +4,7 @@ Gera arte/interface/mapa/*.png e copia para prototipo/assets/mapa/.
 Quando a arte 3D chegar, é só trocar os PNGs (mesmos nomes; figurinhas 400 × 300).
 Uso: python3 ferramentas/cenario2d/mapa.py [foto_do_quarto.png]
 """
+import json
 import os
 import shutil
 import sys
@@ -27,7 +28,7 @@ RECORTES = {
     "sede": ("sede/2d/previa.png", 660, 60),
     "entrada": ("entrada/2d/previa.png", 700, 120),
     "estabulo": ("estabulo/2d/previa.png", 1000, 120),
-    "plantacao": ("plantacao/2d/previa.png", 330, 280),
+    "plantacao": ("plantacao/2d/previa.png", 2250, 160),
     "pet_care": ("pet_care/2d/previa.png", 640, 100),
     "casa_arvore": ("casa_arvore/2d/previa_fora.png", 470, 0),
     "casa_arvore_dentro": ("casa_arvore/2d/previa_dentro.png", 380, 260),
@@ -52,8 +53,31 @@ def figurinha(im):
     return out
 
 
+def cenario_do_jogo(cena):
+    """Monta o cenário como o jogo desenha (dados/cenarios/<cena>.json + assets), sem personagens."""
+    with open(os.path.join(raiz, "prototipo/dados/cenarios", cena + ".json"), encoding="utf-8") as f:
+        d = json.load(f)
+    im = Image.new("RGBA", (d["largura"], 900), "white")
+
+    def por(nome, x, y, w, h):
+        arq = os.path.join(raiz, "prototipo/assets/cenario", cena, nome + ".png")
+        if os.path.exists(arq) and w >= 1 and h >= 1:
+            im.alpha_composite(Image.open(arq).convert("RGBA").resize((round(w), round(h)), Image.LANCZOS), (round(x), round(y)))
+    for nome, x, y, w, h in d["pecas"]:
+        if nome.startswith("@"):
+            it = d["interativos"][nome[1:]]
+            if not it["estados"]:
+                continue
+            nome = it["estados"][it["estado"]]
+        por(nome, x, y, w, h)
+    for o in d["objetos"]:
+        if not o.get("dentro"):
+            por(o["tipo"], o["x"] - o["w"] / 2, o["y"] - o["h"], o["w"], o["h"])
+    return im
+
+
 for cena, (arq, x0, y0) in RECORTES.items():
-    im = Image.open(os.path.join(raiz, "arte/cenario", arq))
+    im = cenario_do_jogo(cena)  # com as peças 3D; antes era a prévia 2D (arq)
     figurinha(im.crop((x0, y0, x0 + 800, y0 + 600))).save(os.path.join(dest, cena + ".png"))
 if len(sys.argv) > 1:  # o quarto da Catarina não tem prévia 2D: usa uma foto do jogo
     im = Image.open(sys.argv[1])

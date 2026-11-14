@@ -3,7 +3,7 @@ prototipo/dados/cenarios/<cena>.json com a posição de cada peça (a mesma da p
 
 Uso: python3 ferramentas/cenario2d/para_jogo.py sala
 O módulo do cenário precisa ter POS, P, W e JOGO (interativos, lugares, superficies).
-Quando a peça 3D chegar com o mesmo nome, é só trocar o PNG em assets/cenario/<cena>/.
+As peças 3D transparentes de arte/cenario/<pasta>/png3d/ entram no lugar das 2D de mesmo nome (pecas3d.py).
 """
 import importlib
 import json
@@ -13,6 +13,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from comum import _tamanho  # noqa: E402
+import pecas3d  # noqa: E402
 import placas  # noqa: E402
 import vida  # noqa: E402
 from PIL import Image  # noqa: E402
@@ -66,6 +67,12 @@ for d in inter.values():
 for nome in sorted(usadas):
     pasta = origem if nome in mod.P else origem_placas
     de, para = os.path.join(pasta, nome + ".png"), os.path.join(destino, nome + ".png")
+    im = pecas3d.montar(nome, os.path.join(os.path.dirname(pasta), "png3d"), pasta)
+    if im is not None:  # peça 3D encaixada no quadro da peça 2D
+        if im.width > LIMITE:
+            im = im.resize((LIMITE, round(im.height * LIMITE / im.width)), Image.LANCZOS)
+        im.save(para)
+        continue
     im = Image.open(de)
     if im.width > LIMITE:  # iPads mais antigos não aceitam textura maior que 4096 px
         im.resize((LIMITE, round(im.height * LIMITE / im.width)), Image.LANCZOS).save(para)
