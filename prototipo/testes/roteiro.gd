@@ -16,6 +16,9 @@ func _ready() -> void:
 	Fazendinha.arquivo = "user://teste_fazendinha.json"
 	if FileAccess.file_exists(Fazendinha.arquivo):
 		DirAccess.remove_absolute(Fazendinha.arquivo)
+	Decoracao.arquivo = "user://teste_decoracao.json"
+	if FileAccess.file_exists(Decoracao.arquivo):
+		DirAccess.remove_absolute(Decoracao.arquivo)
 	main = load("res://main.tscn").instantiate()
 	add_child(main)
 	await _espera(0.6)
@@ -416,6 +419,125 @@ func _roteiro() -> void:
 	main.mapa.abrir()
 	main.mapa.fechar_mapa()
 	_confere(main.cena == "quarto" and not main.mapa.aberto(), "fechar o mapa deixa tudo como estava")
+	await _decorar()
+
+
+# ---------------------------------------------------------------- modo Decorar
+
+func _decorar() -> void:
+	var dc: Decoracao = main.decoracao
+	_confere(not dc.botao.visible, "no quarto da Catarina não aparece o botão de decorar")
+	main._ir_pelo_mapa("sala")
+	await _espera(1.2)
+	var sala: Cenario = main.cenarios["sala"]
+	_confere(dc.botao.visible, "na Sala aparece o botão da poltrona")
+	var cat: Toy = null
+	for t in main.toys:
+		if t.kind == "catarina":
+			cat = t
+	main.camera_to(1200.0)
+	await _espera(0.3)
+	await _foto("60_sala_antes")
+	dc.botao.pressed.emit()
+	await _espera(0.2)
+	_confere(dc.ligado and sala.decorando, "o botão da poltrona liga o modo Decorar")
+	await _foto("61_modo_decorar")
+
+	var i_mesa := sala.indice_da_chave("mesa_centro#0")
+	var i_vaso := sala.indice_da_chave("vaso_flores#2")
+	var i_lareira := sala.indice_da_chave("lareira#0")
+	var i_fogo := sala.indice_da_chave("@fogo#0")
+	var i_sofa := sala.indice_da_chave("sofa#0")
+	var i_porta := sala.indice_da_chave("@porta_cozinha#0")
+	_confere(not sala.pode_decorar(i_porta) and not sala.pode_decorar(0), "portas e o fundo não saem do lugar")
+
+	# uma comidinha em cima da mesa de centro vai junto com a mesa
+	var obj: Toy = null
+	for t in main.toys:
+		if t.cena == "sala" and not t.is_character:
+			obj = t
+			break
+	obj.global_position = Vector2(1120, 682)
+	var mesa0: Vector2 = sala._rect_peca(i_mesa).position
+	await _leva(mesa0 + Vector2(130, 60), mesa0 + Vector2(-170, 60))
+	var andou: Vector2 = sala._rect_peca(i_mesa).position - mesa0
+	_confere(absf(andou.x + 300.0) < 3.0, "arrastar a mesa de centro leva a mesa")
+	_confere(sala.deco.get(i_vaso, Vector2.ZERO).distance_to(andou) < 1.0, "o vaso em cima da mesa vai junto")
+	_confere(absf(obj.global_position.x - (1120.0 + andou.x)) < 3.0, "a comidinha em cima da mesa vai junto")
+	var tem_sup := false
+	for sp in sala.superficies:
+		tem_sup = tem_sup or (absf(sp.x - (1076.0 + andou.x)) < 1.0 and absf(sp.z - 682.0) < 1.0)
+	_confere(tem_sup, "o tampo da mesa continua segurando coisas no lugar novo")
+
+	# a lareira leva o fogo, e o fogo continua acendendo e apagando no lugar novo
+	var lar0: Vector2 = sala._rect_peca(i_lareira).position
+	await _leva(lar0 + Vector2(210, 120), lar0 + Vector2(210 - 200, 160))
+	var dl: Vector2 = sala._rect_peca(i_lareira).position - lar0
+	_confere(dl.length() > 100.0 and sala.deco.get(i_fogo, Vector2.ZERO).distance_to(dl) < 1.0, "a lareira leva o fogo junto")
+	_confere(sala.rect_de("fogo").position.distance_to(Vector2(940, 508) + dl) < 1.0, "o toque do fogo acompanha a lareira")
+
+	# Catarina sentada no sofá vai junto com o sofá
+	var slot_sofa: Slot = null
+	for sl in main.slots:
+		if sl.cena == "sala" and sl.id == "sofa":
+			slot_sofa = sl
+	dc.desligar()
+	await _espera(0.1)
+	main._enter_slot(cat, slot_sofa)
+	cat.cena = "sala"
+	await _espera(0.6)
+	dc.botao.pressed.emit()
+	await _espera(0.1)
+	var cat0: Vector2 = cat.global_position
+	var sofa0: Vector2 = sala._rect_peca(i_sofa).position
+	await _leva(sofa0 + Vector2(60, 150), sofa0 + Vector2(60 + 120, 150 + 40))
+	var ds: Vector2 = sala._rect_peca(i_sofa).position - sofa0
+	_confere(ds.distance_to(Vector2(120, 40)) < 3.0, "o sofá vai para baixo e para o lado")
+	_confere(cat.global_position.distance_to(cat0 + ds) < 3.0 and cat.slot == slot_sofa, "quem está sentado no sofá vai junto")
+	_confere(slot_sofa.area.position.distance_to(Vector2(1250, 330) + ds) < 1.0, "o lugar de sentar acompanha o sofá")
+	await _foto("62_sala_arrumada")
+
+	# tocar numa peça sem arrastar só dá uma balançadinha; personagens não são pegos no modo Decorar
+	var antes: Dictionary = sala.deco.duplicate()
+	await _toca(sala._rect_peca(i_mesa).get_center())
+	_confere(sala.deco == antes, "tocar sem arrastar não muda nada de lugar")
+	var cat1: Vector2 = cat.global_position
+	await _leva(cat.global_position + Vector2(0, -150), cat.global_position + Vector2(-300, -150))
+	_confere(cat.slot == slot_sofa or cat.global_position.distance_to(cat1) < 1.0 or not main.dragging, "no modo Decorar não se pega personagem")
+
+	dc.botao.pressed.emit()
+	await _espera(0.2)
+	_confere(not dc.ligado and not sala.decorando, "o certinho verde sai do modo Decorar")
+	var salvo: Variant = JSON.parse_string(FileAccess.get_file_as_string(Decoracao.arquivo))
+	var s_sala: Dictionary = salvo["cenarios"]["sala"] if salvo is Dictionary and salvo["cenarios"].has("sala") else {}
+	_confere(s_sala.has("mesa_centro#0") and s_sala.has("vaso_flores#2") and s_sala.has("sofa#0") and s_sala.has("@fogo#0"),
+		"a arrumação fica guardada no aparelho")
+	_confere(absf(float(s_sala.get("sofa#0", [0, 0])[1]) - ds.y) < 1.0, "guarda o lugar certo do sofá")
+
+	# o que foi guardado volta quando o jogo abre de novo (um segundo jogo, aberto do zero)
+	var main2: Node2D = load("res://main.tscn").instantiate()
+	main2.visible = false
+	add_child(main2)
+	await get_tree().process_frame
+	var sala2: Cenario = main2.cenarios["sala"]
+	_confere(sala2._rect_peca(i_sofa).position.distance_to(sala._rect_peca(i_sofa).position) < 1.0
+		and sala2._rect_peca(i_mesa).position.distance_to(sala._rect_peca(i_mesa).position) < 1.0
+		and sala2.rect_de("fogo").position.distance_to(sala.rect_de("fogo").position) < 1.0,
+		"ao abrir o jogo de novo, as peças voltam para onde ficaram")
+	main2.queue_free()
+	await get_tree().process_frame
+	main._leave_slot(cat)
+
+
+## No modo Decorar: põe o dedo na peça (mundo) e leva até `para`, como um dedo de verdade.
+func _leva(de: Vector2, para: Vector2) -> void:
+	await _mostra(de.x)
+	var sp: Vector2 = main.world_to_screen(de)
+	_evento(sp, true)
+	await get_tree().process_frame
+	await _desliza(sp, main.world_to_screen(para))
+	_evento(main.world_to_screen(para), false)
+	await _espera(0.3)
 
 
 # ---------------------------------------------------------------- fazendinha (Plantação)

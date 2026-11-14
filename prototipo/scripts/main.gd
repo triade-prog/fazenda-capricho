@@ -43,6 +43,7 @@ var cenarios := {}                # id -> nó do cenário (room.gd ou Cenario)
 var porta_quarto_aberta: Sprite2D
 var fazenda: Fazendinha           # jogo de plantar, colher e vender (Plantação)
 var mapa: MapaFazenda             # botão da ferradura + mapa da fazenda
+var decoracao: Decoracao          # botão da poltrona: modo Decorar (arrumar móveis e enfeites)
 var trocando := false             # durante a passagem de um cenário para outro
 var cam: Camera2D
 var toys: Array[Toy] = []
@@ -97,6 +98,9 @@ func _ready() -> void:
 	mapa = MapaFazenda.new()
 	add_child(mapa)
 	mapa.escolheu.connect(_ir_pelo_mapa)
+	decoracao = Decoracao.new()
+	add_child(decoracao)
+	decoracao.preparar(self)
 	_show_intro()
 
 
@@ -443,6 +447,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if st.pressed:
 			if mapa and (mapa.aberto() or mapa.botao.get_global_rect().has_point(st.position)):
 				return  # o toque é do botão da ferradura ou do mapa
+			if decoracao and decoracao.botao.visible and decoracao.botao.get_global_rect().has_point(st.position):
+				return  # o toque é do botão do modo Decorar
 			if touch_index == -1:
 				touch_index = st.index
 				_on_press(st.position)
@@ -466,6 +472,10 @@ func _on_press(sp: Vector2) -> void:
 	panning = false
 	puxando = false
 	pan_velocity = 0.0
+	if decoracao and decoracao.ligado:
+		# modo Decorar: o toque é só das peças do cenário (ou rola, num espaço vazio)
+		press_ui = "d" if decoracao.pegar(p) else "rolar"
+		return
 	var t := _toy_at(p, [])
 	if cena != "quarto":
 		var iid: String = (cenarios[cena] as Cenario).interativo_em(p)
@@ -494,6 +504,11 @@ func _on_press(sp: Vector2) -> void:
 
 func _on_move(sp: Vector2) -> void:
 	var moved := sp.distance_to(press_screen) > DRAG_START
+	if press_ui == "d":
+		last_screen = sp
+		if moved:
+			decoracao.levar(screen_to_world(sp))
+		return
 	if press_toy and not dragging and moved:
 		_start_drag(press_toy, screen_to_world(sp))
 	elif press_ui.begins_with("p:") and moved and not panning and not puxando:
@@ -538,6 +553,10 @@ func _drop_point(finger: Vector2) -> Vector2:
 
 func _on_release(sp: Vector2) -> void:
 	var p := screen_to_world(sp)
+	if press_ui == "d":
+		decoracao.soltar()
+		press_ui = ""
+		return
 	if dragging:
 		var t := drag_toy
 		dragging = false

@@ -11,6 +11,11 @@ extends Node2D
 ##   "superficies": [[x inicial, x final, altura], ...]
 ##   "animacoes": {peça ou "@id": {"tipo": "fogo" | "gira" | "balanca" | "flutua", ...}}  peças que se mexem sozinhas
 ##   "moveis": [peça, ...]  móveis que dá para puxar de lado (cadeiras, banquinhos)
+##
+## Modo Decorar (decoracao.gd): cada peça pode ser levada para outro lugar; o deslocamento fica em
+## "deco" e leva junto o que está em cima dela (enfeites, lugares de sentar/deitar, superfícies).
+
+signal peca_movida(i: int, d: Vector2)   # o modo Decorar mudou uma peça de lugar
 
 var id := ""
 var largura := 2200.0
@@ -23,6 +28,11 @@ var animacoes := {}
 var moveis: Array = []
 var so_se := {}                   # peça -> [interativo, estado]: só aparece nesse estado
 var desloc := {}                  # índice da peça -> quanto o móvel foi puxado (x)
+var deco := {}                    # índice da peça -> Vector2 (arrumação do modo Decorar)
+var decorando := false            # modo Decorar ligado: mostra o contorno das peças que mudam de lugar
+var deco_ativa := -1              # peça que está sendo levada no modo Decorar
+var _lugar_dono := {}             # índice do lugar -> peça em que ele está (sofá, cama, rede)
+var _sup_dono := {}               # índice da superfície -> peça em que ela está (mesa, prateleira)
 var _sac := {}                    # índice da peça -> tempo que falta da balançadinha
 var _t := 0.0
 var _tex := {}
@@ -72,7 +82,7 @@ func _draw() -> void:
 		var t := _textura(nome)
 		if t == null:
 			continue
-		var r := Rect2(p[1] + float(desloc.get(i, 0.0)), p[2], p[3], p[4])
+		var r := _rect_peca(i)
 		var a: Dictionary = animacoes.get(chave, {})
 		if not a.is_empty() and a.has("estado") and int(a["estado"]) != est:
 			a = {}
@@ -117,6 +127,8 @@ func _draw() -> void:
 		if str(a.get("tipo", "")) == "fogo":
 			_faiscas(r.size, fase)
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	if decorando:
+		_contornos()
 
 
 ## Faíscas subindo do fogo (desenhadas no sistema da chama: origem na base, no meio).
@@ -153,7 +165,8 @@ func _aparece(chave: String) -> bool:
 
 func _rect_peca(i: int) -> Rect2:
 	var p: Array = pecas[i]
-	return Rect2(p[1] + float(desloc.get(i, 0.0)), p[2], p[3], p[4])
+	var dd: Vector2 = deco.get(i, Vector2.ZERO)
+	return Rect2(p[1] + float(desloc.get(i, 0.0)) + dd.x, p[2] + dd.y, p[3], p[4])
 
 
 ## Peça parada (enfeite) que está no ponto: a de cima. -1 se não há (o fundo não conta).
@@ -227,3 +240,167 @@ func alternar(iid: String) -> int:
 
 func destino(iid: String) -> String:
 	return str(interativos[iid].get("leva", ""))
+
+
+# ---------------------------------------------------------------- modo Decorar
+
+## Peças que não mudam de lugar: o fundo, portas e plaquinhas de caminho (levam a outro cenário),
+## peças enormes (a casa, a árvore da casinha) e as que a fazendinha usa pela posição.
+const DECO_FIXAS := {"plantacao": ["banca", "bica"]}
+const DECO_MAX := Vector2(700.0, 560.0)
+
+
+func pode_decorar(i: int) -> bool:
+	if i <= 0 or i >= pecas.size():
+		return false
+	var nome := str(pecas[i][0])
+	if nome.begins_with("@") and destino(nome.substr(1)) != "":
+		return false
+	if nome.begins_with("placa_") or nome in DECO_FIXAS.get(id, []):
+		return false
+	return float(pecas[i][3]) <= DECO_MAX.x and float(pecas[i][4]) <= DECO_MAX.y
+
+
+## Peça que dá para levar no ponto p (a de cima). -1 se não há.
+func peca_deco_em(p: Vector2) -> int:
+	var achou := -1
+	for i in range(1, pecas.size()):
+		if pode_decorar(i) and _rect_peca(i).has_point(p):
+			achou = i
+	return achou
+
+
+## O que está em cima da peça i e vai junto com ela (enfeite na estante, vaso na mesa, fogo na lareira).
+func carga(i: int) -> Array:
+	var r := _rect_peca(i)
+	var leva := []
+	for j in range(i + 1, pecas.size()):
+		if not pode_decorar(j):
+			continue
+		var rj := _rect_peca(j)
+		var pe := Vector2(rj.get_center().x, rj.end.y)
+		# está em cima (ou pendurado) se é menor e o pé fica dentro da peça, acima da base dela
+		if rj.get_area() < r.get_area() and r.has_point(pe) and pe.y <= r.end.y - 1.0:
+			leva.append(j)
+	return leva
+
+
+## Descobre em que peça está cada lugar (sofá, cama) e cada superfície (mesa, prateleira).
+## Chamado uma vez, com as peças ainda na posição original.
+func preparar_deco() -> void:
+	_lugar_dono.clear()
+	_sup_dono.clear()
+	for k in lugares.size():
+		var a: Array = lugares[k]["area"]
+		var ra := Rect2(a[0], a[1], a[2], a[3])
+		var melhor := 0.0
+		for i in range(1, pecas.size()):
+			if not pode_decorar(i):
+				continue
+			var cobre := _rect_peca(i).intersection(ra).get_area() / maxf(ra.get_area(), 1.0)
+			if cobre > 0.3 and cobre >= melhor:
+				melhor = cobre
+				_lugar_dono[k] = i
+	for k in superficies.size():
+		var sp: Vector3 = superficies[k]
+		var meio := Vector2((sp.x + sp.y) / 2.0, sp.z + 4.0)
+		for i in range(1, pecas.size()):
+			if pode_decorar(i) and _rect_peca(i).has_point(meio) and float(pecas[i][3]) >= (sp.y - sp.x) * 0.7:
+				_sup_dono[k] = i
+
+
+func lugares_da(i: int) -> Array:
+	var r := []
+	for k in _lugar_dono:
+		if _lugar_dono[k] == i:
+			r.append(str(lugares[k]["id"]))
+	return r
+
+
+## Superfícies (e prateleiras) em que as coisas se apoiam na peça i.
+func superficies_da(i: int) -> Array[Vector3]:
+	var r: Array[Vector3] = []
+	for k in _sup_dono:
+		if _sup_dono[k] == i:
+			r.append(superficies[k])
+	var nome := str(pecas[i][0])
+	if nome.begins_with("@"):
+		for pr in interativos[nome.substr(1)].get("prateleiras", []):
+			r.append(Vector3(pr[0], pr[1], pr[2]))
+	return r
+
+
+## Leva a peça i (só ela) d pixels; o que pertence a ela (lugares, superfícies, área de toque) vai junto.
+func deslocar(i: int, d: Vector2) -> void:
+	if d == Vector2.ZERO:
+		return
+	deco[i] = deco.get(i, Vector2.ZERO) + d
+	var nome := str(pecas[i][0])
+	if nome.begins_with("@"):
+		var it: Dictionary = interativos[nome.substr(1)]
+		it["x"] = float(it["x"]) + d.x
+		it["y"] = float(it["y"]) + d.y
+		if it.has("prateleiras"):
+			var novas := []
+			for pr in it["prateleiras"]:
+				novas.append([float(pr[0]) + d.x, float(pr[1]) + d.x, float(pr[2]) + d.y])
+			it["prateleiras"] = novas
+	for k in _sup_dono:
+		if _sup_dono[k] == i:
+			superficies[k] += Vector3(d.x, d.x, d.y)
+	for k in _lugar_dono:
+		if _lugar_dono[k] == i:
+			var a: Array = lugares[k]["area"]
+			lugares[k]["area"] = [float(a[0]) + d.x, float(a[1]) + d.y, a[2], a[3]]
+	peca_movida.emit(i, d)
+	queue_redraw()
+
+
+## Nome estável de cada peça para o salvamento: "vaso_flores#2" = o segundo vaso_flores.
+func chave_peca(i: int) -> String:
+	var nome := str(pecas[i][0])
+	var n := 0
+	for j in i:
+		if str(pecas[j][0]) == nome:
+			n += 1
+	return "%s#%d" % [nome, n]
+
+
+## Arrumação para guardar: {chave da peça: [dx, dy]} (só as que saíram do lugar).
+func arrumacao() -> Dictionary:
+	var r := {}
+	for i in deco:
+		var d: Vector2 = deco[i]
+		if d.length() > 0.5:
+			r[chave_peca(i)] = [snappedf(d.x, 0.1), snappedf(d.y, 0.1)]
+	return r
+
+
+func indice_da_chave(chave: String) -> int:
+	for i in pecas.size():
+		if chave_peca(i) == chave:
+			return i
+	return -1
+
+
+## Contorno tracejado nas peças que mudam de lugar; a que está sendo levada fica dourada.
+func _contornos() -> void:
+	for i in range(1, pecas.size()):
+		if not pode_decorar(i):
+			continue
+		var r := _rect_peca(i).grow(4.0)
+		if i == deco_ativa:
+			draw_rect(r, Color(1.0, 0.85, 0.3, 0.25), true)
+			draw_rect(r, Color("#f2c14e"), false, 5.0)
+		else:
+			_tracejado(r, Color(1, 1, 1, 0.85), 3.0)
+
+
+func _tracejado(r: Rect2, cor: Color, larg: float) -> void:
+	var cantos := [r.position, Vector2(r.end.x, r.position.y), r.end, Vector2(r.position.x, r.end.y), r.position]
+	for k in 4:
+		var a: Vector2 = cantos[k]
+		var b: Vector2 = cantos[k + 1]
+		var n := maxi(1, int(a.distance_to(b) / 14.0))
+		for m in range(0, n, 2):
+			draw_line(a.lerp(b, float(m) / n), a.lerp(b, minf(1.0, float(m + 1) / n)), cor, larg)
