@@ -447,6 +447,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if st.pressed:
 			if mapa and (mapa.aberto() or mapa.botao.get_global_rect().has_point(st.position)):
 				return  # o toque é do botão da ferradura ou do mapa
+			if fazenda and fazenda.loja and fazenda.loja.aberta():
+				return  # o toque é da lojinha
 			if decoracao and decoracao.botao.visible and decoracao.botao.get_global_rect().has_point(st.position):
 				return  # o toque é do botão do modo Decorar
 			if touch_index == -1:
@@ -481,6 +483,8 @@ func _on_press(sp: Vector2) -> void:
 		var iid: String = (cenarios[cena] as Cenario).interativo_em(p)
 		if t:
 			press_toy = t
+		elif cena == Fazendinha.CENA and fazenda.loja_em(p):
+			press_ui = "loja"
 		elif cena == Fazendinha.CENA and fazenda.alvo_em(p) != -1:
 			press_ui = "f:%d" % fazenda.alvo_em(p)
 		elif iid != "":
@@ -517,7 +521,7 @@ func _on_move(sp: Vector2) -> void:
 			puxando = true
 		else:
 			panning = true
-	elif press_ui == "rolar" and moved:
+	elif (press_ui == "rolar" or press_ui == "loja") and moved:
 		panning = true
 	if puxando:
 		_mover_movel(int(press_ui.substr(2)), (sp.x - last_screen.x) / cam.zoom.x)
@@ -584,6 +588,8 @@ func _on_release(sp: Vector2) -> void:
 		_tocar_interativo(press_ui.substr(2))
 	elif press_ui.begins_with("f:"):
 		fazenda.toque(int(press_ui.substr(2)))
+	elif press_ui == "loja":
+		fazenda.loja.abrir()
 	elif press_ui.begins_with("p:"):
 		(cenarios[cena] as Cenario).sacudir(int(press_ui.substr(2)))  # enfeite tocado dá uma balançadinha
 	press_toy = null

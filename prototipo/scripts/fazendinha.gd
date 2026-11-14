@@ -35,6 +35,7 @@ var enxada: Toy
 var pacotes := {}                 # cultura -> Toy
 var relogio := {}                 # id da árvore -> segundos contados
 var chovendo := 0.0
+var loja: Lojinha                 # tela da lojinha de enfeites
 var pedidos: Array = []           # papeizinhos do quadro: {quem, item, quer, tem, feito}
 var _nivel_item := {}             # colheita -> nível que libera
 var hud: CanvasLayer
@@ -66,6 +67,8 @@ func preparar(p_main: Node2D) -> void:
 			_nivel_item[str(f)] = int(dados["arvores"][a]["nivel"])
 	_fazer_hud()
 	_atualiza_nivel(false)
+	loja = Lojinha.new().preparar(self)
+	add_child(loja)
 	carregar()
 	_completa_pedidos()
 
@@ -186,6 +189,78 @@ func _draw() -> void:
 		var r := cen.rect_de(iid)
 		draw_texture_rect(_textura("cadeado"), Rect2(Vector2(r.get_center().x - 30.0, r.end.y - 150.0), Vector2(60, 67)), false)
 	_desenha_pedidos()
+	# botão da lojinha em cima da banca (pulsa devagar para chamar a atenção)
+	var bl := botao_loja()
+	draw_texture_rect(_textura_loja("botao_loja"), bl.grow(3.0 * sin(Time.get_ticks_msec() / 400.0)), false)
+
+
+# ---------------------------------------------------------------- lojinha de enfeites
+
+func _textura_loja(nome: String) -> Texture2D:
+	if not _tex.has("loja/" + nome):
+		_tex["loja/" + nome] = load("res://assets/loja/%s.png" % nome) as Texture2D
+	return _tex["loja/" + nome]
+
+
+func botao_loja() -> Rect2:
+	var b := _r(dados["banca"])
+	return Rect2(b.get_center().x - 45.0, b.position.y - 100.0, 90, 90)
+
+
+## O toque foi na lojinha? (o botão da cestinha ou a própria banca)
+func loja_em(p: Vector2) -> bool:
+	return botao_loja().has_point(p) or _r(dados["banca"]).has_point(p)
+
+
+## Compra um enfeite: paga em ferradurinhas e ele cai ao lado da banca, pronto para arrastar.
+func comprar(tipo: String) -> bool:
+	var d: Dictionary = dados["loja"]["enfeites"][tipo]
+	if nivel < int(d["nivel"]) or ferraduras < int(d["preco"]):
+		return false
+	ferraduras -= int(d["preco"])
+	_atualiza_hud()
+	_bump(txt_ferraduras)
+	var b := _r(dados["banca"])
+	var t := _enfeite(tipo, CENA, Vector2(b.position.x - 90.0 + randf_range(-40, 40), b.position.y - 40.0))
+	main._fall(t, t.global_position)
+	main._pop(t)
+	main._sparkle(t.global_position + Vector2(0, -40), 6)
+	main._log("comprou %s (-%d)" % [tipo, int(d["preco"])])
+	salvar()
+	return true
+
+
+## Enfeite comprado: um objeto solto que a criança arrasta para onde quiser (um personagem pode levar a outro cenário).
+func _enfeite(tipo: String, cena: String, pos: Vector2) -> Toy:
+	var d: Dictionary = dados["loja"]["enfeites"][tipo]
+	var w := float(d["w"])
+	var h := float(d["h"])
+	var spr := Sprite2D.new()
+	spr.texture = _textura_loja(tipo)
+	spr.centered = false
+	spr.scale = Vector2(w / spr.texture.get_width(), h / spr.texture.get_height())
+	spr.position = Vector2(-w / 2.0, -h)
+	var t := Toy.new()
+	t.kind = tipo
+	var arte := Node2D.new()
+	arte.add_child(spr)
+	t.setup_art(arte, maxf(26.0, maxf(w, h) / 2.0))
+	t.grab_offset = Vector2(0, -h / 2.0)
+	t.position = pos
+	t.cena = cena
+	t.set_meta("enfeite", true)
+	t.visible = cena == main.cena
+	main.add_child(t)
+	main.toys.append(t)
+	return t
+
+
+func _enfeites() -> Array:
+	var r: Array = []
+	for t in main.toys:
+		if t.get_meta("enfeite", false):
+			r.append([t.kind, t.cena, snappedf(t.global_position.x, 1.0), snappedf(t.global_position.y, 1.0)])
+	return r
 
 
 # ---------------------------------------------------------------- pedidos da família
@@ -571,6 +646,8 @@ func _voa(imagem: String, de: Vector2) -> void:
 
 ## Chamado a cada quadro, mesmo com a criança em outro cenário: a plantação continua crescendo.
 func passar(delta: float) -> void:
+	if visible:
+		queue_redraw()  # o botão da lojinha pulsa
 	_desde_salvar += delta
 	if _desde_salvar >= SALVAR_A_CADA:
 		salvar()
@@ -627,6 +704,7 @@ func salvar(agora: float = -1.0) -> void:
 		"regador": {"cheio": regador_cheio, "x": regador.global_position.x, "y": regador.global_position.y},
 		"soltos": _soltos(),
 		"pedidos": pedidos,
+		"enfeites": _enfeites(),
 	}
 	var f := FileAccess.open(arquivo, FileAccess.WRITE)
 	if f:
@@ -681,6 +759,15 @@ func carregar(agora: float = -1.0) -> bool:
 		if dados["tamanhos"].has(str(s[0])):
 			var tam: Array = dados["tamanhos"][str(s[0])]
 			main._add_objeto(CENA, {"tipo": str(s[0]), "x": float(s[1]), "y": float(s[2]), "w": tam[0], "h": tam[1]})
+	for t in main.toys.duplicate():
+		if t.get_meta("enfeite", false):
+			if t.holder:
+				t.holder.held_item = null
+			main.toys.erase(t)
+			t.queue_free()
+	for en in d.get("enfeites", []):
+		if en is Array and en.size() == 4 and dados["loja"]["enfeites"].has(str(en[0])) and main.cenarios.has(str(en[1])):
+			_enfeite(str(en[0]), str(en[1]), Vector2(float(en[2]), float(en[3])))
 	pedidos.clear()
 	for pd in d.get("pedidos", []):
 		if pd is Dictionary and dados["pedidos"]["quem"].has(str(pd.get("quem", ""))) and dados["vende"].has(str(pd.get("item", ""))) \

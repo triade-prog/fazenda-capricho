@@ -711,6 +711,29 @@ func _fazendinha() -> void:
 	await _espera(1.8)
 	_confere(fz.pedidos.size() == 3 and int(fz.pedidos[0]["tem"]) == 0 and not fz.pedidos[0]["feito"], "depois de um instante chega um pedido novo no lugar")
 
+	# lojinha de enfeites: abre na banca, compra com ferradurinhas, o enfeite fica guardado
+	await _toca(fz.botao_loja().get_center())
+	_confere(fz.loja.aberta(), "tocar no botão da cestinha em cima da banca abre a lojinha")
+	await _espera(0.3)
+	await _foto("39e_lojinha")
+	var f1: int = fz.ferraduras
+	_confere(not fz.comprar("arco_flores") and fz.ferraduras == f1, "enfeite com cadeado não é vendido")
+	var bt: Button = fz.loja.cartoes["vaso_flor"]
+	bt.pressed.emit()  # o toque em botões de tela não passa pelo _unhandled_input do jogo
+	await _espera(0.8)
+	var vaso: Toy = main._find("vaso_flor")
+	_confere(fz.ferraduras == f1 - 8 and vaso != null and not fz.loja.aberta(), "tocar no vaso compra por 8 ferradurinhas e a lojinha fecha")
+	await _arrasta(vaso.global_position + Vector2(0, -50), Vector2(2300, 800), 0.8)
+	_confere(absf(vaso.global_position.x - 2300.0) < 40.0, "o enfeite comprado é arrastado para onde a criança quiser")
+	await _foto("39f_enfeite_comprado")
+	var xv: float = vaso.global_position.x
+	fz.salvar(agora)
+	vaso.global_position.x = 500.0
+	fz.carregar(agora)
+	await get_tree().process_frame
+	vaso = main._find("vaso_flor")
+	_confere(vaso != null and absf(vaso.global_position.x - xv) < 2.0 and main._count("vaso_flor") == 1, "o enfeite fica guardado no lugar, sem duplicar")
+
 
 # ---------------------------------------------------------------- utilidades
 # Todos os toques são enviados em coordenadas de TELA, como um dedo de verdade no iPad.

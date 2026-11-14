@@ -35,6 +35,18 @@
               "quem": {"lumi": ["colheita_cenoura", "maca"],
                        "catarina": ["morango", "maca", "laranja", "banana", "colheita_tomate", "flor_margarida", "flor_coracao", "girassol_cabeca"],
                        "carol": ["colheita_alface", "colheita_cenoura", "colheita_tomate", "abobora_media", "flor_tulipa", "laranja"]}},
+  "_loja": "Lojinha de enfeites (abre ao tocar na banca): 'preco' em ferradurinhas, 'nivel' que libera, 'w' e 'h' = tamanho do enfeite no cenário. Imagens em assets/loja/ (ferramentas/cenario2d/loja.py).",
+  "loja": {"enfeites": {
+    "vaso_flor": {"preco": 8, "nivel": 1, "w": 70, "h": 100},
+    "pedra_caminho": {"preco": 5, "nivel": 1, "w": 100, "h": 44},
+    "cogumelo": {"preco": 10, "nivel": 1, "w": 70, "h": 70},
+    "cerquinha": {"preco": 12, "nivel": 2, "w": 132, "h": 94},
+    "catavento": {"preco": 15, "nivel": 2, "w": 80, "h": 146},
+    "lanterna_jardim": {"preco": 20, "nivel": 3, "w": 60, "h": 140},
+    "casinha_passarinho": {"preco": 25, "nivel": 3, "w": 92, "h": 168},
+    "banquinho_jardim": {"preco": 30, "nivel": 4, "w": 140, "h": 86},
+    "arco_flores": {"preco": 60, "nivel": 5, "w": 220, "h": 256}
+  }},
   "enxada": [345, 890],
   "regador": [120, 885],
   "bica": [30, 570, 110, 190],
