@@ -262,6 +262,18 @@ def quadro_pedidos():
 
 
 P["quadro_pedidos"] = quadro_pedidos()
+
+
+def quadro_pedidos_grande():
+    """Quadro do jogo: três papeizinhos em branco (o jogo desenha em cada um quem pede, o quê e quantos)."""
+    w, h = 250, 215
+    s = rr(115, 160, 20, 54, 3, C["madeira_esc"]) + rr(4, 6, 242, 170, 12, C["madeira"], 'stroke-width="3.5"') + rr(12, 14, 226, 154, 8, "#f3dcb4", 'stroke-width="2"')
+    for x in (20, 92, 164):
+        s += rr(x, 28, 66, 132, 3, C["branco"], 'stroke-width="2"') + rr(x + 27, 20, 12, 16, 2, C["rosa_chiclete"], 'stroke-width="1.5"')
+    return svg(w, h, s)
+
+
+P["quadro_pedidos_grande"] = quadro_pedidos_grande()
 P["contador"] = svg(300, 70, rr(4, 6, 292, 58, 29, C["madeira_clara"], 'stroke-width="3.5"') + rr(12, 13, 276, 44, 22, "#fbe9cc", 'stroke-width="1.5"') +
                     path("M30,52 L27,34 A15,15 0 0 1 57,34 L54,52 L47,52 L49,35 A6,6 0 0 0 37,35 L39,52 Z", C["dourado"], 'stroke-width="2"') +
                     coracao(42, 37, 5, C["rosa_forte"], 'stroke-width="1.2"') + estrela(178, 35, 17, C["amarelo"], 5, 'stroke-width="2.2"') +
@@ -613,8 +625,8 @@ JOGO = {
     "extras": [("seta_casa_e", 1430, 440), ("seta_ferradura_d", 1560, 440)],
     "omitir": ["cenoura_4", "alface_3", "tomate_4", "terra_fofa", "terra_dura", "terra_fechada",
                 "sementes_cenoura", "sementes_tomate", "regador_cheio", "enxada",
-                "morango_2", "morango_4", "abobora_gigante", "girassol_caule", "girassol_cabeca"],
-    "tambem": ["terra_dura", "terra_fofa", "terra_fechada", "regador_vazio", "regador_cheio", "enxada",
+                "morango_2", "morango_4", "abobora_gigante", "girassol_caule", "girassol_cabeca", "quadro_pedidos"],
+    "tambem": ["quadro_pedidos_grande", "terra_dura", "terra_fofa", "terra_fechada", "regador_vazio", "regador_cheio", "enxada",
                "sementes_cenoura", "sementes_alface", "sementes_tomate",
                "cenoura_1", "cenoura_2", "cenoura_3", "cenoura_4", "alface_1", "alface_2", "alface_3", "alface_4",
                "tomate_1", "tomate_2", "tomate_3", "tomate_4",

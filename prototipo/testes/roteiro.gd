@@ -680,6 +680,37 @@ func _fazendinha() -> void:
 	await get_tree().process_frame
 	_confere(fz.plots[1]["estagio"] == 4 and fz.plots[1]["estado"] == "planta", "muito tempo fechado: a alface fica pronta e espera, sem estragar")
 
+	# pedidos da família: o quadro mostra quem quer o quê; entregar tudo paga mais que a banca
+	_confere(fz.pedidos.size() == 3, "o quadro tem três pedidos da família")
+	var so_liberado := true
+	for pd in fz.pedidos:
+		so_liberado = so_liberado and int(fz._nivel_item[pd["item"]]) <= fz.nivel
+	_confere(so_liberado, "ninguém pede o que o nível ainda não liberou")
+	fz.pedidos = [{"quem": "lumi", "item": "colheita_cenoura", "quer": 2, "tem": 0, "feito": false},
+		{"quem": "carol", "item": "colheita_alface", "quer": 3, "tem": 0, "feito": false},
+		{"quem": "catarina", "item": "flor_margarida", "quer": 2, "tem": 0, "feito": false}]
+	fz.queue_redraw()
+	var qd: Vector2 = fz.quadro().get_center()
+	var c1: Toy = main._add_objeto("plantacao", {"tipo": "colheita_cenoura", "x": 2880.0, "y": 870.0, "w": 30, "h": 60})
+	var c2: Toy = main._add_objeto("plantacao", {"tipo": "colheita_cenoura", "x": 2940.0, "y": 870.0, "w": 30, "h": 60})
+	var m1: Toy = main._add_objeto("plantacao", {"tipo": "maca", "x": 2820.0, "y": 870.0, "w": 30, "h": 32})
+	var f0: int = fz.ferraduras
+	var e0: int = fz.estrelas
+	await _arrasta(m1.global_position + Vector2(0, -16), qd, 0.9)
+	_confere(is_instance_valid(m1) and fz.ferraduras == f0, "o que ninguém pediu não é aceito no quadro (só cai no chão)")
+	await _arrasta(c1.global_position + Vector2(0, -30), qd, 0.6)
+	_confere(int(fz.pedidos[0]["tem"]) == 1 and fz.ferraduras == f0, "entregar uma cenoura pinta uma bolinha do pedido da Lumi")
+	await _foto("39c_pedidos")
+	fz.salvar(agora)
+	fz.pedidos = []
+	fz.carregar(agora)
+	_confere(fz.pedidos.size() == 3 and int(fz.pedidos[0]["tem"]) == 1 and fz.pedidos[0]["quem"] == "lumi", "os pedidos e o que já foi entregue ficam guardados")
+	await _arrasta(c2.global_position + Vector2(0, -30), qd, 0.5)
+	_confere(fz.ferraduras == f0 + 15 and fz.estrelas == e0 + 2, "pedido completo: 15 ferradurinhas (a banca daria 10) e 2 estrelinhas")
+	await _foto("39d_pedido_pronto")
+	await _espera(1.8)
+	_confere(fz.pedidos.size() == 3 and int(fz.pedidos[0]["tem"]) == 0 and not fz.pedidos[0]["feito"], "depois de um instante chega um pedido novo no lugar")
+
 
 # ---------------------------------------------------------------- utilidades
 # Todos os toques são enviados em coordenadas de TELA, como um dedo de verdade no iPad.

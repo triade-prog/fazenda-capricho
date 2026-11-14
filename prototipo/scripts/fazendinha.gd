@@ -35,6 +35,8 @@ var enxada: Toy
 var pacotes := {}                 # cultura -> Toy
 var relogio := {}                 # id da árvore -> segundos contados
 var chovendo := 0.0
+var pedidos: Array = []           # papeizinhos do quadro: {quem, item, quer, tem, feito}
+var _nivel_item := {}             # colheita -> nível que libera
 var hud: CanvasLayer
 var txt_ferraduras: Label
 var txt_estrelas: Label
@@ -57,9 +59,15 @@ func preparar(p_main: Node2D) -> void:
 	regador = _objeto("regador_cheio", dados["regador"], Vector2(80, 55))
 	enxada = _objeto("enxada", dados["enxada"], Vector2(45, 90))
 	cen.set_estado("nuvem", 0)  # a nuvem só chove quando a criança toca nela
+	for c in dados["culturas"]:
+		_nivel_item[str(dados["culturas"][c]["colheita"])] = int(dados["culturas"][c]["nivel"])
+	for a in dados["arvores"]:
+		for f in dados["arvores"][a]["fruta"]:
+			_nivel_item[str(f)] = int(dados["arvores"][a]["nivel"])
 	_fazer_hud()
 	_atualiza_nivel(false)
 	carregar()
+	_completa_pedidos()
 
 
 func _objeto(tipo: String, pos: Array, tam: Vector2) -> Toy:
@@ -177,6 +185,114 @@ func _draw() -> void:
 	for iid in _fechadas():
 		var r := cen.rect_de(iid)
 		draw_texture_rect(_textura("cadeado"), Rect2(Vector2(r.get_center().x - 30.0, r.end.y - 150.0), Vector2(60, 67)), false)
+	_desenha_pedidos()
+
+
+# ---------------------------------------------------------------- pedidos da família
+
+## Onde fica o quadro de pedidos e cada papelzinho dele.
+func quadro() -> Rect2:
+	var q: Array = dados["pedidos"]["quadro"]
+	return Rect2(q[0], q[1], 250, 215)
+
+
+func _papel(k: int) -> Rect2:
+	return Rect2(quadro().position + Vector2(20.0 + 72.0 * k, 28.0), Vector2(66, 132))
+
+
+## Cada papelzinho mostra, só com desenhos: quem pede, o que quer e uma bolinha para cada unidade.
+func _desenha_pedidos() -> void:
+	draw_texture_rect(_textura("quadro_pedidos_grande"), quadro(), false)
+	for k in pedidos.size():
+		var pd: Dictionary = pedidos[k]
+		var r := _papel(k)
+		var cx := r.get_center().x
+		draw_texture_rect(_textura("rosto_" + str(pd["quem"])), Rect2(cx - 26.0, r.position.y + 10.0, 52, 52), false)
+		var tam: Array = dados["tamanhos"][pd["item"]]
+		var e := minf(44.0 / float(tam[0]), 40.0 / float(tam[1]))
+		var ts := Vector2(tam[0], tam[1]) * e
+		draw_texture_rect(_textura(str(pd["item"])), Rect2(Vector2(cx, r.position.y + 86.0) - ts / 2.0, ts), false)
+		var n := int(pd["quer"])
+		for j in n:
+			var c := Vector2(cx + (j - (n - 1) / 2.0) * 18.0, r.end.y - 14.0)
+			draw_circle(c, 7.0, Color("5c3a4a"))
+			draw_circle(c, 5.0, Color("ff6fa8") if j < int(pd["tem"]) else Color.WHITE)
+		if pd.get("feito", false):
+			draw_texture_rect(_textura("estrelinha"), Rect2(cx - 26.0, r.position.y + 62.0, 52, 52), false)
+
+
+func _novo_pedido() -> Dictionary:
+	var opcoes: Array = []
+	for quem in dados["pedidos"]["quem"]:
+		for item in dados["pedidos"]["quem"][quem]:
+			var repetido := false
+			for pd in pedidos:
+				repetido = repetido or (pd["quem"] == quem and pd["item"] == item)
+			if not repetido and int(_nivel_item.get(str(item), 99)) <= nivel:
+				opcoes.append([quem, item])
+	if opcoes.is_empty():
+		return {}
+	var o: Array = opcoes[randi() % opcoes.size()]
+	var quer := int(dados["pedidos"]["quantos"].get(str(o[1]), randi_range(2, 3)))
+	return {"quem": str(o[0]), "item": str(o[1]), "quer": quer, "tem": 0, "feito": false}
+
+
+func _completa_pedidos() -> void:
+	while pedidos.size() < int(dados["pedidos"]["papeis"]):
+		var pd := _novo_pedido()
+		if pd.is_empty():
+			break
+		pedidos.append(pd)
+	queue_redraw()
+
+
+## A colheita foi solta no quadro: conta para o primeiro pedido que quer aquilo. false = ninguém pediu.
+func _entregar(t: Toy) -> bool:
+	for k in pedidos.size():
+		var pd: Dictionary = pedidos[k]
+		if pd["item"] != t.kind or pd.get("feito", false):
+			continue
+		main.toys.erase(t)
+		t.kill_move()
+		t.queue_free()
+		pd["tem"] = int(pd["tem"]) + 1
+		var onde := _papel(k).get_center()
+		main._sparkle(onde, 4)
+		main._log("entregou %s para %s (%d de %d)" % [pd["item"], pd["quem"], pd["tem"], pd["quer"]])
+		if int(pd["tem"]) >= int(pd["quer"]):
+			_pedido_pronto(k)
+		queue_redraw()
+		return true
+	return false
+
+
+## Pedido completo: paga melhor que a banca, dá estrelinhas e, depois de um instante, vem outro pedido.
+func _pedido_pronto(k: int) -> void:
+	var pd: Dictionary = pedidos[k]
+	pd["feito"] = true
+	var premio := int(ceil(int(dados["vende"][pd["item"]]) * int(pd["quer"]) * float(dados["pedidos"]["bonus"])))
+	var onde := _papel(k).get_center()
+	ferraduras += premio
+	main._hearts(onde, 6)
+	_voa("ferradurinha", onde)
+	main._float_text(onde + Vector2(0, -90), "+%d" % premio, 40)
+	_atualiza_hud()
+	_bump(txt_ferraduras)
+	_ganhar_estrelas(int(dados["pedidos"]["estrelas"]), onde)
+	main._log("pedido pronto: %s para %s (+%d)" % [pd["item"], pd["quem"], premio])
+	get_tree().create_timer(1.6).timeout.connect(_troca_pedido.bind(pd))
+
+
+func _troca_pedido(pd: Dictionary) -> void:
+	var k := pedidos.find(pd)
+	if k == -1:
+		return
+	pedidos.remove_at(k)
+	var novo := _novo_pedido()
+	if not novo.is_empty():
+		pedidos.insert(k, novo)
+		main._sparkle(_papel(k).get_center(), 5)
+	queue_redraw()
 
 
 ## Árvores e peças especiais que o nível ainda não liberou.
@@ -280,6 +396,12 @@ func soltar(t: Toy, p: Vector2) -> bool:
 		_regar(i, p)
 		return false  # o regador fica onde foi solto
 	if dados["vende"].has(t.kind) and t.holder == null:
+		var qd := quadro().grow(25.0)
+		if qd.has_point(p) or qd.has_point(t.global_position + Vector2(0, -10)):
+			if _entregar(t):
+				return true
+			main._sparkle(quadro().get_center(), 2)  # ninguém pediu isso: a colheita só cai no chão
+			return false
 		var banca := _r(dados["banca"]).grow(30.0)
 		var cesta := cen.rect_de("cesta").grow(30.0)
 		for r in [banca, cesta]:
@@ -504,6 +626,7 @@ func salvar(agora: float = -1.0) -> void:
 		"plots": plots, "pecas": pecas, "relogio": relogio,
 		"regador": {"cheio": regador_cheio, "x": regador.global_position.x, "y": regador.global_position.y},
 		"soltos": _soltos(),
+		"pedidos": pedidos,
 	}
 	var f := FileAccess.open(arquivo, FileAccess.WRITE)
 	if f:
@@ -558,6 +681,12 @@ func carregar(agora: float = -1.0) -> bool:
 		if dados["tamanhos"].has(str(s[0])):
 			var tam: Array = dados["tamanhos"][str(s[0])]
 			main._add_objeto(CENA, {"tipo": str(s[0]), "x": float(s[1]), "y": float(s[2]), "w": tam[0], "h": tam[1]})
+	pedidos.clear()
+	for pd in d.get("pedidos", []):
+		if pd is Dictionary and dados["pedidos"]["quem"].has(str(pd.get("quem", ""))) and dados["vende"].has(str(pd.get("item", ""))) \
+				and not pd.get("feito", false) and pedidos.size() < int(dados["pedidos"]["papeis"]):
+			pedidos.append({"quem": str(pd["quem"]), "item": str(pd["item"]), "quer": int(pd.get("quer", 2)),
+				"tem": mini(int(pd.get("tem", 0)), int(pd.get("quer", 2)) - 1), "feito": false})
 	# o tempo que o jogo ficou fechado também faz crescer
 	var t_agora := agora if agora >= 0.0 else Time.get_unix_time_from_system()
 	var fechado := clampf(t_agora - float(d.get("salvo_em", t_agora)), 0.0, MAX_FECHADO)
