@@ -200,17 +200,23 @@ func _mover_grupo(c: Cenario, grupo: Array, d: Vector2) -> void:
 		(t as Toy).global_position += d
 
 
-## Objetos e personagens soltos (fora de lugar e de mão) em pé numa superfície das peças do grupo.
+## Objetos e personagens soltos (fora de lugar e de mão) em pé numa superfície das peças do grupo,
+## e o que está guardado dentro delas.
 func _apoiados(c: Cenario, grupo: Array) -> Array:
 	var sups: Array[Vector3] = []
+	var guardam := []                  # móveis que guardam coisas dentro (cesto, gaveta, geladeira)
 	for i in grupo:
 		sups.append_array(c.superficies_da(int(i)))
+		var nome := str(c.pecas[int(i)][0])
+		if nome.begins_with("@"):
+			guardam.append(nome.substr(1))
 	var r := []
-	if sups.is_empty():
-		return r
 	for t in main.toys:
 		var toy := t as Toy
 		if toy.cena != c.id or toy.slot or toy.holder or toy.mount or toy.lifted:
+			continue
+		if str(toy.get_meta("guardado", "")) in guardam:
+			r.append(toy)
 			continue
 		var pos := toy.global_position
 		for s in sups:

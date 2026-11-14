@@ -261,21 +261,40 @@ func pode_decorar(i: int) -> bool:
 	return float(pecas[i][3]) <= DECO_MAX.x and float(pecas[i][4]) <= DECO_MAX.y
 
 
-## Peça que dá para levar no ponto p (a de cima). -1 se não há.
+## Peça que dá para levar no ponto p (a de cima). Se for parte de um móvel (o fogo da lareira,
+## o cobertor da cama, a torneira da pia), quem vai é o móvel inteiro. -1 se não há.
 func peca_deco_em(p: Vector2) -> int:
 	var achou := -1
 	for i in range(1, pecas.size()):
-		if pode_decorar(i) and _rect_peca(i).has_point(p):
+		if pode_decorar(i) and _aparece(str(pecas[i][0])) and _rect_peca(i).has_point(p):
 			achou = i
+	while achou >= 0 and eh_parte(achou):
+		achou = _pai(achou)
 	return achou
+
+
+## Parte de um móvel: peça que muda de estado (ou só aparece num estado) apoiada em outra peça.
+func eh_parte(i: int) -> bool:
+	var nome := str(pecas[i][0])
+	return (nome.begins_with("@") or so_se.has(nome)) and _pai(i) >= 0
+
+
+## A menor peça que leva a peça i em cima dela (-1 se nenhuma).
+func _pai(i: int) -> int:
+	var melhor := -1
+	for j in range(1, pecas.size()):
+		if j != i and pode_decorar(j) and i in carga(j):
+			if melhor < 0 or _rect_peca(j).get_area() < _rect_peca(melhor).get_area():
+				melhor = j
+	return melhor
 
 
 ## O que está em cima da peça i e vai junto com ela (enfeite na estante, vaso na mesa, fogo na lareira).
 func carga(i: int) -> Array:
 	var r := _rect_peca(i)
 	var leva := []
-	for j in range(i + 1, pecas.size()):
-		if not pode_decorar(j):
+	for j in range(1, pecas.size()):
+		if j == i or not pode_decorar(j):
 			continue
 		var rj := _rect_peca(j)
 		var pe := Vector2(rj.get_center().x, rj.end.y)
@@ -336,6 +355,15 @@ func deslocar(i: int, d: Vector2) -> void:
 		return
 	deco[i] = deco.get(i, Vector2.ZERO) + d
 	var nome := str(pecas[i][0])
+	# onde as comidinhas e brinquedos reaparecem (geladeira, cesto) também muda
+	var sups := superficies_da(i)
+	for o in objetos:
+		var dela := nome.begins_with("@") and str(o.get("dentro", "")) == nome.substr(1)
+		for sp in sups:
+			dela = dela or (absf(float(o["y"]) - sp.z) < 6.0 and float(o["x"]) >= sp.x - 8.0 and float(o["x"]) <= sp.y + 8.0)
+		if dela:
+			o["x"] = float(o["x"]) + d.x
+			o["y"] = float(o["y"]) + d.y
 	if nome.begins_with("@"):
 		var it: Dictionary = interativos[nome.substr(1)]
 		it["x"] = float(it["x"]) + d.x
@@ -386,7 +414,7 @@ func indice_da_chave(chave: String) -> int:
 ## Contorno tracejado nas peças que mudam de lugar; a que está sendo levada fica dourada.
 func _contornos() -> void:
 	for i in range(1, pecas.size()):
-		if not pode_decorar(i):
+		if not pode_decorar(i) or eh_parte(i) or not _aparece(str(pecas[i][0])):
 			continue
 		var r := _rect_peca(i).grow(4.0)
 		if i == deco_ativa:

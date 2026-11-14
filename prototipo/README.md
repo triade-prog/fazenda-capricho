@@ -78,6 +78,7 @@ de um iPad Air deitado (1180 x 820).
 | Ganhar biscoitos | Tocar no pote de biscoitos na mesinha (até 3 no quarto) |
 | Reações rápidas | Tocar em qualquer um: Bob late ou espirra, Nina uiva, Leo pede "Dá, dá!", a Lumi relincha e gira |
 | Rolar o quarto | Arrastar o dedo num espaço vazio (parede ou chão); solto, o quarto continua deslizando um pouco |
+| Arrumar os móveis e enfeites (modo Decorar) | Nos cenários (menos o quarto da Catarina), tocar no botão da poltrona embaixo da ferradura: as peças ganham um contorno e dá para levar cada uma para onde quiser; o que está em cima (vaso, fogo, quem está sentado) vai junto. O certinho verde sai do modo. A arrumação fica guardada no aparelho (`user://decoracao.json`, `scripts/decoracao.gd`) |
 | Levar alguém para o outro lado do quarto | Arrastar o personagem até a borda da tela: o quarto rola junto |
 | Ir para a Sala | Tocar na porta do quarto (vai só a "câmera") **ou** soltar alguém na porta (vai junto, com o que estiver segurando e com quem estiver montado) |
 | Voltar ao quarto | Na Sala, a porta com a placa de coração leva de volta ao quarto (da mesma forma: tocar ou soltar alguém nela) |

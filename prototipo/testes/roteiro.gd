@@ -450,6 +450,12 @@ func _decorar() -> void:
 	var i_sofa := sala.indice_da_chave("sofa#0")
 	var i_porta := sala.indice_da_chave("@porta_cozinha#0")
 	_confere(not sala.pode_decorar(i_porta) and not sala.pode_decorar(0), "portas e o fundo não saem do lugar")
+	_confere(sala.peca_deco_em(sala.rect_de("fogo").get_center()) == i_lareira, "pegar no fogo leva a lareira inteira")
+	var coz: Cenario = main.cenarios["cozinha"]
+	_confere(coz.peca_deco_em(coz.rect_de("torneira").get_center()) == coz.indice_da_chave("pia#0")
+		and coz.indice_da_chave("@torneira#0") in coz.carga(coz.indice_da_chave("pia#0")), "a torneira faz parte da pia")
+	var cab: Cenario = main.cenarios["cabana"]
+	_confere(cab.indice_da_chave("chama#0") in cab.carga(cab.indice_da_chave("@fogueira#0")), "a chama vai junto com a fogueira")
 
 	# uma comidinha em cima da mesa de centro vai junto com a mesa
 	var obj: Toy = null
