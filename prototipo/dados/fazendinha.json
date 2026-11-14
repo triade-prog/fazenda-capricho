@@ -1,25 +1,36 @@
 {
-  "_sobre": "Economia do jogo da fazendinha (Plantação). Valores iniciais do documento de cenários (C11), para ajustar vendo a criança brincar. 'semente' e 'vende' em ferradurinhas; 'tempo' em segundos do plantio até ficar pronta (dividido em 3 passagens de estágio; regar passa de estágio na hora).",
+  "_sobre": "Economia do jogo da fazendinha (Plantação). Valores iniciais do documento de cenários (C11), para ajustar vendo a criança brincar. 'semente' e 'vende' em ferradurinhas; 'tempo' em segundos do plantio até ficar pronta (dividido em 3 passagens de estágio; regar passa de estágio na hora). 'nivel' é o nível de estrelinhas que libera a cultura, a árvore ou o lugar; 'niveis' são as estrelinhas de cada nível (nível 1 = 0).",
   "inicio": {"ferraduras": 30, "estrelas": 0},
-  "abrir_terreno_estrelas": 10,
+  "niveis": [0, 10, 25, 45, 70, 100],
   "culturas": {
-    "cenoura": {"semente": 2, "tempo": 60, "estrelas": 1, "colheita": "colheita_cenoura", "quantos": 3, "altura": 200},
-    "alface": {"semente": 2, "tempo": 60, "estrelas": 1, "colheita": "colheita_alface", "quantos": 3, "altura": 200},
-    "tomate": {"semente": 4, "tempo": 120, "estrelas": 2, "colheita": "colheita_tomate", "quantos": 3, "altura": 240, "libera_com_terreno": true}
+    "cenoura": {"lugar": "terra", "nivel": 1, "semente": 2, "tempo": 60, "estrelas": 1, "colheita": "colheita_cenoura", "quantos": 3, "altura": 200},
+    "alface": {"lugar": "terra", "nivel": 1, "semente": 2, "tempo": 60, "estrelas": 1, "colheita": "colheita_alface", "quantos": 3, "altura": 200},
+    "tomate": {"lugar": "terra", "nivel": 2, "semente": 4, "tempo": 120, "estrelas": 2, "colheita": "colheita_tomate", "quantos": 3, "altura": 240},
+    "girassol": {"lugar": "girassol", "nivel": 2, "semente": 3, "tempo": 120, "estrelas": 1, "colheita": "girassol_cabeca", "quantos": 1},
+    "morango": {"lugar": "morango", "nivel": 3, "semente": 5, "tempo": 120, "estrelas": 2, "colheita": "morango", "quantos": 3},
+    "abobora": {"lugar": "abobora", "nivel": 4, "semente": 8, "tempo": 240, "estrelas": 3, "colheita": "abobora_media", "quantos": 1}
   },
-  "morango": {"tempo": 120, "estrelas": 2, "colheita": "morango", "quantos": 2},
   "arvores": {
-    "macieira": {"fruta": "maca", "quantos": 3, "tempo": 180},
-    "laranjeira": {"fruta": "laranja", "quantos": 3, "tempo": 180},
-    "bananeira": {"fruta": "banana", "quantos": 2, "tempo": 240}
+    "canteiro_flores": {"fruta": ["flor_margarida", "flor_tulipa", "flor_coracao"], "quantos": 3, "tempo": 30, "estrelas": 1, "nivel": 1},
+    "macieira": {"fruta": ["maca"], "quantos": 3, "tempo": 180, "estrelas": 1, "nivel": 1},
+    "laranjeira": {"fruta": ["laranja"], "quantos": 3, "tempo": 180, "estrelas": 1, "nivel": 4},
+    "bananeira": {"fruta": ["banana"], "quantos": 2, "tempo": 240, "estrelas": 2, "nivel": 6}
   },
-  "vende": {"colheita_cenoura": 5, "colheita_alface": 5, "colheita_tomate": 10, "morango": 12, "maca": 4, "laranja": 5, "banana": 8},
+  "especiais": {"flor_arco_iris": 4},
+  "vende": {"colheita_cenoura": 5, "colheita_alface": 5, "colheita_tomate": 10, "morango": 12, "maca": 4, "laranja": 5, "banana": 8,
+            "girassol_cabeca": 8, "abobora_media": 20, "flor_margarida": 3, "flor_tulipa": 3, "flor_coracao": 3},
   "tamanhos": {"colheita_cenoura": [30, 60], "colheita_alface": [50, 45], "colheita_tomate": [30, 30], "morango": [22, 26],
-               "maca": [30, 32], "laranja": [32, 32], "banana": [50, 30]},
-  "quadradinhos": [[380, 700, true], [590, 700, true], [800, 700, true], [1010, 700, true], [380, 810, true], [800, 810, false], [1010, 810, false]],
-  "pacotes": {"cenoura": [200, 720], "alface": [265, 720], "tomate": [330, 720]},
-  "enxada": [300, 880],
-  "regador": [210, 875],
+               "maca": [30, 32], "laranja": [32, 32], "banana": [50, 30], "girassol_cabeca": [60, 60], "abobora_media": [110, 90],
+               "flor_margarida": [25, 55], "flor_tulipa": [25, 55], "flor_coracao": [25, 55]},
+  "_quadradinhos": "[x da esquerda, y da base, nível que abre, tipo de lugar]. Os 7 primeiros são a lavoura (ordem não pode mudar: o salvamento guarda pela posição na lista).",
+  "quadradinhos": [[380, 700, 1, "terra"], [590, 700, 1, "terra"], [800, 700, 1, "terra"], [1010, 700, 1, "terra"], [380, 810, 1, "terra"],
+                   [800, 810, 2, "terra"], [1010, 810, 2, "terra"],
+                   [1655, 650, 2, "girassol"], [1790, 670, 2, "girassol"],
+                   [590, 850, 3, "morango"], [1270, 900, 3, "morango"],
+                   [1270, 780, 4, "abobora"]],
+  "pacotes": {"cenoura": [190, 700], "alface": [255, 700], "tomate": [320, 700], "girassol": [190, 795], "morango": [255, 795], "abobora": [320, 795]},
+  "enxada": [345, 890],
+  "regador": [120, 885],
   "bica": [30, 570, 110, 190],
   "banca": [2530, 770, 260, 170]
 }

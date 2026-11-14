@@ -24,13 +24,6 @@
    190
   ],
   [
-   "@morango_1",
-   590,
-   740,
-   160,
-   110
-  ],
-  [
    "espantalho",
    1150,
    390,
@@ -50,48 +43,6 @@
    810,
    120,
    80
-  ],
-  [
-   "abobora_gigante",
-   1270,
-   630,
-   160,
-   150
-  ],
-  [
-   "@morango_2",
-   1270,
-   790,
-   160,
-   110
-  ],
-  [
-   "girassol_caule",
-   1690,
-   280,
-   90,
-   360
-  ],
-  [
-   "girassol_cabeca",
-   1690,
-   250,
-   90,
-   90
-  ],
-  [
-   "girassol_caule",
-   1790,
-   300,
-   90,
-   360
-  ],
-  [
-   "girassol_cabeca",
-   1790,
-   270,
-   90,
-   90
   ],
   [
    "@canteiro_flores",
@@ -217,32 +168,6 @@
    "estado": 1,
    "w": 220,
    "h": 90
-  },
-  "morango_1": {
-   "estados": [
-    "morango_1",
-    "morango_2",
-    "morango_3",
-    "morango_4"
-   ],
-   "x": 590,
-   "y": 740,
-   "estado": 1,
-   "w": 160,
-   "h": 110
-  },
-  "morango_2": {
-   "estados": [
-    "morango_1",
-    "morango_2",
-    "morango_3",
-    "morango_4"
-   ],
-   "x": 1270,
-   "y": 790,
-   "estado": 3,
-   "w": 160,
-   "h": 110
   },
   "cesta": {
    "estados": [

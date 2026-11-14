@@ -90,7 +90,8 @@ de um iPad Air deitado (1180 x 820).
 | Plantação: regar e crescer | Arrastar o **regador** até a planta: cresce um estágio na hora. O regador esvazia e enche na **bica**. O tempo também faz crescer (cenoura e alface em 1 min) e tocar na **nuvem** rega tudo. Planta pronta nunca estraga |
 | Plantação: colher e vender | Tocar na planta pronta: os legumes pulam para o chão e ela dá estrelinhas. Soltar a colheita na **banca** ou na **cesta** vende por ferradurinhas (contador no canto de cima) |
 | Plantação: progresso guardado | A fazendinha é salva no aparelho a cada 5 s e ao sair do jogo (ferradurinhas, estrelinhas, canteiros, árvores, regador e a colheita no chão). Ao abrir de novo, as plantas cresceram pelo tempo que o jogo ficou fechado. Para recomeçar do zero, apagar os dados do site no navegador |
-| Plantação: pomar, morangos e terreno | Tocar numa árvore com frutas derruba as frutas (voltam com o tempo ou com uma rega); os canteiros de morango crescem e são colhidos do mesmo jeito; com 10 estrelinhas os quadradinhos com cadeado abrem e chega a semente de tomate |
+| Plantação: pomar e flores | Tocar numa árvore com frutas derruba as frutas (voltam com o tempo ou com uma rega). O **canteiro de flores** funciona igual e dá florzinhas para colher |
+| Plantação: culturas e níveis | As estrelinhas sobem o nível da fazendinha (10, 25, 45, 70 e 100) e cada nível tira um cadeado, com festa na tela: **nível 2** abre mais terra, o tomate e o girassol (plantado na covinha); **nível 3** os canteiros de morango; **nível 4** a abóbora gigante e a laranjeira; **nível 6** a bananeira. Tocar num cadeado mostra quantas estrelinhas faltam. Cada semente só serve no lugar dela |
 | Pet Care | Do Estábulo, plaquinha da pata: chuveirinho, banheira (vazia, com água, com espuma), tigelas; pegar xampu, toalha, brinquedos e petiscos (os bichos comem o biscoito) |
 | Casa na Árvore | Da Sede, plaquinha da árvore: cachos de frutinhas, escorregador, cesto; a porta roxa leva para dentro (baú, fogãozinho, passarinho, caminha, brinquedos) |
 | Cabana e Casinha (propostas) | Do pátio da Casa na Árvore, plaquinhas da cabana e da cesta: cabana, lanterna, fogueira, livro e saco de dormir; toldo, caixa registradora, maleta e potinhos |
@@ -187,6 +188,6 @@ de olhos fechados para dormir. Tiras grandes (personagem com 450 px ou mais) dev
 - Só a Nina tem animações desenhadas (folha de pet). Os outros personagens ainda são imagens únicas
   com respiração feita pelo jogo; ver `docs/padrao_geracao_personagens.md`.
 - Sem sons. O salvamento por enquanto guarda só a fazendinha: os outros cenários (onde ficou cada personagem e objeto, portas, luzes) voltam ao começo quando o jogo fecha.
-- Fazendinha: ainda sem pedidos da família, lojinha de enfeites, níveis além do primeiro terreno, girassol, abóbora e flores plantáveis (documento de cenários, C11).
+- Fazendinha: ainda sem pedidos da família, lojinha de enfeites, os bichos dos níveis 5 e 7 (galinheiro e curral) e os 4 quadradinhos extras do nível 6. As flores nascem sozinhas no canteiro (sem semente) e ainda não viram buquê (documento de cenários, C11).
 - A versão web foi testada no Chromium emulando um iPad; ainda falta testar no Safari de um iPad de verdade.
 - Os textos que aparecem nas falas usam a fonte padrão do Godot; a fonte do jogo ainda será escolhida.

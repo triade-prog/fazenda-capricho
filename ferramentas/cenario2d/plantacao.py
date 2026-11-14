@@ -276,7 +276,7 @@ def morango_canteiro(estagio):
     oy = 60
     for x in (40, 80, 120):
         base = oy + 8
-        if estagio == 1:
+        if estagio in (0, 1):
             s += ""
         elif estagio == 2:
             s += path(f"M{x},{base} L{x},{base-14}", extra=f'stroke="{C["verde_esc"]}" stroke-width="3"') + folha(x, base - 12, 12, -150) + folha(x, base - 12, 12, -30)
@@ -296,7 +296,7 @@ def morango_canteiro(estagio):
     return svg(w, h, s)
 
 
-for e in range(1, 5):
+for e in range(0, 5):   # 0 = canteiro vazio, esperando a semente (jogo da fazendinha)
     P[f"morango_{e}"] = morango_canteiro(e)
 P["morango"] = svg(22, 26, desenho_planta("morango", 11, 12, 0.85))
 
@@ -320,6 +320,22 @@ def abobora(w, h, gigante=False):
 P["abobora_pequena"] = abobora(60, 50)
 P["abobora_media"] = abobora(110, 90)
 P["abobora_gigante"] = abobora(160, 150, True)
+
+
+def covinha(broto):
+    """Montinho de terra onde se planta a abóbora e o girassol (160 x 80, base embaixo)."""
+    s = ell(80, 62, 74, 16, TERRA_ESC, 'stroke-width="3"') + ell(80, 56, 60, 15, TERRA_FOFA, 'stroke-width="3"')
+    if broto:
+        s += path("M80,54 L80,26", extra=f'stroke="{C["verde_esc"]}" stroke-width="4"') + folha(80, 30, 22, -150) + folha(80, 30, 22, -30)
+    else:
+        s += ell(80, 54, 9, 5, "#8a6a4a", 'stroke-width="2"')
+    return svg(160, 80, s)
+
+
+P["covinha"] = covinha(False)
+P["covinha_broto"] = covinha(True)
+P["cadeado"] = svg(50, 56, path("M14,28 L14,18 A11,11 0 0 1 36,18 L36,28", extra='stroke-width="5"') +
+                   rr(6, 24, 38, 28, 7, C["dourado"], 'stroke-width="3"') + circ(25, 37, 4.5, L, 'stroke="none"'))
 P["girassol_caule"] = svg(90, 360, path("M45,358 C40,260 52,160 45,40", extra='stroke-width="11"') +
                           path("M45,358 C40,260 52,160 45,40", extra=f'stroke-width="7" stroke="{C["verde_esc"]}"') +
                           folha(44, 280, 40, -160) + folha(46, 220, 40, -20) + folha(44, 150, 34, -165) + folha(46, 100, 30, -15))
@@ -582,8 +598,6 @@ def _c(nome, x, y, estados):
 JOGO = {
     "interativos": {
         "nuvem": _c("nuvem", 560, 150, ["nuvem_parada", "nuvem_chovendo"]),
-        "morango_1": _c("morango_1", 590, 740, ["morango_1", "morango_2", "morango_3", "morango_4"]),
-        "morango_2": _c("morango_2", 1270, 790, ["morango_1", "morango_2", "morango_3", "morango_4"]),
         "cesta": _c("cesta", 680, 810, ["cesta_vazia", "cesta_cheia"]),
         "canteiro_flores": _c("canteiro_flores", 1890, 700, ["canteiro_colhido", "canteiro_flores"]),
         "borboleta": _c("borboleta", 1960, 560, ["borboleta_fechada", "borboleta_aberta"]),
@@ -598,13 +612,18 @@ JOGO = {
     },
     "extras": [("seta_casa_e", 1430, 440), ("seta_ferradura_d", 1560, 440)],
     "omitir": ["cenoura_4", "alface_3", "tomate_4", "terra_fofa", "terra_dura", "terra_fechada",
-                "sementes_cenoura", "sementes_tomate", "regador_cheio", "enxada"],
+                "sementes_cenoura", "sementes_tomate", "regador_cheio", "enxada",
+                "morango_2", "morango_4", "abobora_gigante", "girassol_caule", "girassol_cabeca"],
     "tambem": ["terra_dura", "terra_fofa", "terra_fechada", "regador_vazio", "regador_cheio", "enxada",
                "sementes_cenoura", "sementes_alface", "sementes_tomate",
                "cenoura_1", "cenoura_2", "cenoura_3", "cenoura_4", "alface_1", "alface_2", "alface_3", "alface_4",
                "tomate_1", "tomate_2", "tomate_3", "tomate_4",
                "colheita_cenoura", "colheita_alface", "colheita_tomate", "morango", "maca", "laranja", "banana",
-               "ferradurinha", "estrelinha", "contador"],
+               "ferradurinha", "estrelinha", "contador",
+               "sementes_morango", "sementes_abobora", "sementes_girassol",
+               "morango_0", "morango_1", "morango_2", "morango_3", "morango_4",
+               "covinha", "covinha_broto", "cadeado", "abobora_pequena", "abobora_media", "abobora_gigante",
+               "girassol_caule", "girassol_cabeca", "flor_margarida", "flor_tulipa", "flor_coracao"],
     "objetos": ["maca"],
     "lugares": [],
     "superficies": [],
