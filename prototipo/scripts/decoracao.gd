@@ -228,6 +228,8 @@ func _apoiados(c: Cenario, grupo: Array) -> Array:
 
 ## Uma peça mudou de lugar: os lugares de sentar/deitar dela (e quem está neles) vão junto.
 func _peca_movida(i: int, d: Vector2, c: Cenario) -> void:
+	if main.fazenda and c.id == Fazendinha.CENA:
+		main.fazenda.queue_redraw()  # cadeados e frutas das árvores acompanham a árvore
 	var ids := c.lugares_da(i)
 	for s in main.slots:
 		var sl := s as Slot

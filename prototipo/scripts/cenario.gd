@@ -248,9 +248,18 @@ func destino(iid: String) -> String:
 ## peças enormes (a casa, a árvore da casinha) e as que a fazendinha usa pela posição.
 const DECO_FIXAS := {"plantacao": ["banca", "bica"]}
 const DECO_MAX := Vector2(700.0, 560.0)
+## Partes que não estão em cima do móvel, mas são dele: vão sempre juntas e, tocadas, levam o móvel.
+const DECO_PARTES := {"pet_care": {"bolha": "@banheira"}, "cabana": {"@lanterna": "@cabana"}}
+
+var _presas := {}                 # peças grudadas numa peça fixa (escada e escorregador da casa na árvore)
 
 
+## Peça que pode mudar de lugar no modo Decorar.
 func pode_decorar(i: int) -> bool:
+	return _solta(i) and not _presas.has(i)
+
+
+func _solta(i: int) -> bool:
 	if i <= 0 or i >= pecas.size():
 		return false
 	var nome := str(pecas[i][0])
@@ -276,11 +285,19 @@ func peca_deco_em(p: Vector2) -> int:
 ## Parte de um móvel: peça que muda de estado (ou só aparece num estado) apoiada em outra peça.
 func eh_parte(i: int) -> bool:
 	var nome := str(pecas[i][0])
-	return (nome.begins_with("@") or so_se.has(nome)) and _pai(i) >= 0
+	return (nome.begins_with("@") or so_se.has(nome) or _dono_fixo(i) != "") and _pai(i) >= 0
+
+
+## Nome do móvel de que a peça i é parte pela lista DECO_PARTES ("" se não está na lista).
+func _dono_fixo(i: int) -> String:
+	return str(DECO_PARTES.get(id, {}).get(str(pecas[i][0]), ""))
 
 
 ## A menor peça que leva a peça i em cima dela (-1 se nenhuma).
 func _pai(i: int) -> int:
+	var dono := _dono_fixo(i)
+	if dono != "":
+		return indice_da_chave(dono + "#0")
 	var melhor := -1
 	for j in range(1, pecas.size()):
 		if j != i and pode_decorar(j) and i in carga(j):
@@ -296,10 +313,16 @@ func carga(i: int) -> Array:
 	for j in range(1, pecas.size()):
 		if j == i or not pode_decorar(j):
 			continue
+		var dono := _dono_fixo(j)
+		if dono != "":
+			if dono == str(pecas[i][0]):
+				leva.append(j)
+			continue
 		var rj := _rect_peca(j)
 		var pe := Vector2(rj.get_center().x, rj.end.y)
-		# está em cima (ou pendurado) se é menor e o pé fica dentro da peça, acima da base dela
-		if rj.get_area() < r.get_area() and r.has_point(pe) and pe.y <= r.end.y - 1.0:
+		# está em cima (ou pendurado) se é menor e o pé fica dentro da peça, acima da base dela;
+		# duas peças do mesmo tamanho no mesmo lugar (a casinha e o lado de dentro dela) andam juntas
+		if (rj.get_area() < r.get_area() and r.has_point(pe) and pe.y <= r.end.y - 1.0) or rj == r:
 			leva.append(j)
 	return leva
 
@@ -309,6 +332,25 @@ func carga(i: int) -> Array:
 func preparar_deco() -> void:
 	_lugar_dono.clear()
 	_sup_dono.clear()
+	_presas.clear()
+	# o que está grudado numa peça grande que não muda de lugar (a árvore da casinha) também fica
+	for k in range(1, pecas.size()):
+		if _solta(k):
+			continue
+		var rk := _rect_peca(k)
+		var grande := rk.size.x > DECO_MAX.x or rk.size.y > DECO_MAX.y
+		if not grande:
+			continue
+		for j in range(1, pecas.size()):
+			var rj := _rect_peca(j)
+			var pe := Vector2(rj.get_center().x, rj.end.y)
+			if j == k or not _solta(j) or rj.get_area() >= rk.get_area() * 0.5:
+				continue
+			var em_cima := rk.has_point(pe) and pe.y <= rk.end.y - 1.0
+			# numa peça grande, o que começa lá em cima também está grudado (escada, escorregador, lanterna do arco)
+			var pendurada := (rk.has_point(rj.position) or rk.has_point(Vector2(rj.end.x, rj.position.y)))
+			if em_cima or pendurada:
+				_presas[j] = true
 	for k in lugares.size():
 		var a: Array = lugares[k]["area"]
 		var ra := Rect2(a[0], a[1], a[2], a[3])

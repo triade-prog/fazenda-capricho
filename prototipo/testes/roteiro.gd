@@ -456,6 +456,14 @@ func _decorar() -> void:
 		and coz.indice_da_chave("@torneira#0") in coz.carga(coz.indice_da_chave("pia#0")), "a torneira faz parte da pia")
 	var cab: Cenario = main.cenarios["cabana"]
 	_confere(cab.indice_da_chave("chama#0") in cab.carga(cab.indice_da_chave("@fogueira#0")), "a chama vai junto com a fogueira")
+	_confere(cab.peca_deco_em(cab.rect_de("lanterna").get_center()) == cab.indice_da_chave("@cabana#0"), "pegar na lanterna leva a barraca")
+	var pet: Cenario = main.cenarios["pet_care"]
+	_confere(pet.indice_da_chave("bolha#1") in pet.carga(pet.indice_da_chave("@banheira#0")), "as bolhas vão junto com a banheira")
+	var cas: Cenario = main.cenarios["casinha"]
+	_confere(cas.indice_da_chave("casinha_interior#0") in cas.carga(cas.indice_da_chave("casinha#0")), "a casinha vai inteira (por fora e por dentro)")
+	var arv: Cenario = main.cenarios["casa_arvore"]
+	_confere(not arv.pode_decorar(arv.indice_da_chave("@escorregador#0")) and not arv.pode_decorar(arv.indice_da_chave("escada_madeira#0")),
+		"escada e escorregador ficam grudados na casa da árvore")
 
 	# uma comidinha em cima da mesa de centro vai junto com a mesa
 	var obj: Toy = null
