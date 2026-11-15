@@ -563,6 +563,13 @@ LUGARES = {
     "entrada": dict(x=560, y=830, rotulo="Entrada", placa=(800, 950), destinos=[["entrada", ""]]),
     "casinha": dict(x=1150, y=730, rotulo="Casinha", placa=(1320, 1010), destinos=[["casinha", ""]]),
 }
+# Peças 3D da Carol para o mapa (arte/interface/mapa_fazenda/novo3d/): entram no jogo no lugar da 2D.
+NOVO3D = os.path.join(base, "novo3d")
+if os.path.exists(os.path.join(NOVO3D, "casa_arvore.png")):  # casa na árvore inteira, com nuvem (15/11/2026)
+    import re
+    P["casa_arvore"] = re.sub(r'width="[^"]+" height="[^"]+"', 'width="640" height="480" preserveAspectRatio="none"',
+                              P["casa_arvore"], count=1)
+    LUGARES["casa_arvore"].update(x=-60, placa=(230, 496))
 ORDEM = ["casa_arvore", "estabulo", "horta", "pet_care", "casa", "cabana", "casinha", "entrada"]
 MARCA_X, MARCA_Y = 0.5, 0.22   # ponta do marcador "você está aqui": fração da peça do lugar
 UI = dict(titulo=(10, 10), fechar=(1470, 20), faixa=(450, 1100),
@@ -687,7 +694,12 @@ _fundo = Image.new("RGBA", (200, 200), "#ffe3ef")
 _fundo.alpha_composite(_r)
 _fundo.putalpha(_m)
 _fundo.save(os.path.join(jogo, "_rosto_catarina.png"))
+import pecas3d  # noqa: E402
 for f in os.listdir(d2):
     if f.endswith(".png"):
-        shutil.copyfile(os.path.join(d2, f), os.path.join(jogo, f))
+        im3 = pecas3d.montar(f[:-4], NOVO3D, d2)
+        if im3 is not None:
+            im3.save(os.path.join(jogo, f))
+        else:
+            shutil.copyfile(os.path.join(d2, f), os.path.join(jogo, f))
 print(len(P), "peças em", d2)

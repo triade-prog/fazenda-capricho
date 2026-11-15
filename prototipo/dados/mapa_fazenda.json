@@ -210,14 +210,14 @@
  "lugares": {
   "casa_arvore": {
    "rect": [
-    -10,
+    -60,
     40,
-    520,
+    640,
     480
    ],
    "rotulo": "Casa na Árvore",
    "placa": [
-    200,
+    230,
     496
    ],
    "destinos": [
