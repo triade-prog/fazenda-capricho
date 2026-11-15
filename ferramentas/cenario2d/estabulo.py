@@ -515,7 +515,8 @@ for _n, _w, _h in [("cesto_pendurado", 180, 250), ("ferradura", 115, 120), ("gan
                    ("lanterna_acesa", 52, 110), ("lanterna_jardim", 90, 170), ("pente_pendurado", 32, 118),
                    ("prateleira_banho", 280, 44), ("escova_pendurada", 50, 125),
                    ("balde_vazio", 110, 136), ("balde_agua", 110, 136), ("ducha_ligada", 240, 430), ("ducha_desligada", 240, 430),
-                   ("feno", 70, 36), ("shampoo", 40, 85)]:
+                   ("feno", 70, 36), ("shampoo", 40, 85),
+                   ("vaso_flores", 66, 92), ("flor_pendurada_rosa", 44, 80), ("flor_pendurada_lilas", 44, 80), ("cascata", 240, 160)]:
     P[_n] = quadro(P[_n], _w, _h)
 
 # Posição das peças na prévia e no jogo (canto de cima à esquerda, em pixels do jogo).
@@ -523,7 +524,7 @@ W, H, CHAO = 3300, 900, 600
 POS = [("fundo", 0, 0),
        # estábulo (parede)
        ("cesto_pendurado", 80, 200), ("ferradura", 330, 250), ("suporte_manta", 500, 260),
-       ("prateleira_banho", 870, 330), ("shampoo", 910, 250), ("pote_creme", 980, 284), ("vaso_flores", 1070, 240),
+       ("prateleira_banho", 870, 330), ("shampoo", 910, 250), ("pote_creme", 980, 284), ("vaso_flores", 1078, 238),
        ("ganchos", 895, 380), ("pente_pendurado", 915, 410), ("escova_pendurada", 982, 410), ("espelho", 1050, 410),
        ("ducha_ligada", 1170, 190), ("lanterna_acesa", 1395, 150), ("trepadeira_flores", 1440, 180),
        # estábulo (chão)

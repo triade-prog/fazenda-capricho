@@ -24,10 +24,12 @@ ORIG = os.path.join(RAIZ, "arte/objetos3d/estabulo_originais")
 
 SOZINHAS = ["lanterna_jardim", "cesto_pendurado", "pente_pendurado", "espelho", "pente", "escova_pendurada", "escova_pelo",
             "suporte_manta", "ganchos", "ferradura", "prateleira_banho", "tapete_coracao", "toalha", "tigela_racao", "tigela_agua",
-            "pote_creme", "shampoo", "caixote_frutas", "fardo", "feno", "arvore"]
+            "pote_creme", "shampoo", "caixote_frutas", "fardo", "feno", "arvore",
+            "vaso_flores", "trepadeira_flores", "cascata", "vitoria_regia"]
 JUNTAS = [["lanterna_apagada"], ["ducha_ligada", "ducha_desligada"], ["balde_vazio", "balde_agua"],
           ["banheira_espuma", "banheira_agua"], ["cocho_vazio", "cocho_feno", "cocho_cenouras"],
-          ["porteira_fechada", "porteira_aberta"]]
+          ["porteira_fechada", "porteira_aberta"], ["laguinho_parado", "laguinho_ondas"],
+          ["flor_pendurada_rosa", "flor_pendurada_lilas"]]
 
 
 def importar():
@@ -39,6 +41,12 @@ def importar():
         caixa = (min(c[0] for c in caixas), min(c[1] for c in caixas), max(c[2] for c in caixas), max(c[3] for c in caixas))
         for n, im in zip(grupo, ims):
             im.crop(caixa).save(os.path.join(N, n + ".png"))
+
+
+def vitoria_regia():
+    """A folha veio vista de cima; achatada para parecer deitada na água."""
+    im = Image.open(os.path.join(N, "vitoria_regia.png"))
+    im.resize((im.width, round(im.height * 0.55)), Image.LANCZOS).save(os.path.join(N, "vitoria_regia.png"))
 
 
 def parede_telhado():
@@ -97,6 +105,7 @@ def lanterna_acesa():
 
 if __name__ == "__main__":
     importar()
+    vitoria_regia()
     parede_telhado()
     fundo()
     lanterna_acesa()

@@ -98,84 +98,84 @@
    58,
    168,
    44,
-   64
+   80
   ],
   [
    "flor_pendurada_rosa",
    178,
    168,
    44,
-   64
+   80
   ],
   [
    "flor_pendurada_lilas",
    298,
    168,
    44,
-   64
+   80
   ],
   [
    "flor_pendurada_rosa",
    418,
    168,
    44,
-   64
+   80
   ],
   [
    "flor_pendurada_lilas",
    538,
    168,
    44,
-   64
+   80
   ],
   [
    "flor_pendurada_rosa",
    658,
    168,
    44,
-   64
+   80
   ],
   [
    "flor_pendurada_lilas",
    778,
    168,
    44,
-   64
+   80
   ],
   [
    "flor_pendurada_rosa",
    898,
    168,
    44,
-   64
+   80
   ],
   [
    "flor_pendurada_lilas",
    1018,
    168,
    44,
-   64
+   80
   ],
   [
    "flor_pendurada_rosa",
    1138,
    168,
    44,
-   64
+   80
   ],
   [
    "flor_pendurada_lilas",
    1258,
    168,
    44,
-   64
+   80
   ],
   [
    "flor_pendurada_rosa",
    1378,
    168,
    44,
-   64
+   80
   ],
   [
    "cesto_pendurado",
@@ -363,8 +363,8 @@
    "cascata",
    2700,
    540,
-   230,
-   180
+   240,
+   160
   ],
   [
    "vitoria_regia",
@@ -631,10 +631,10 @@
   },
   {
    "tipo": "vaso_flores",
-   "x": 1115.0,
+   "x": 1111.0,
    "y": 330,
-   "w": 90,
-   "h": 90
+   "w": 66,
+   "h": 92
   },
   {
    "tipo": "toalha",

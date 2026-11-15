@@ -4,6 +4,7 @@ balde_vazio
 banheira_agua
 banheira_espuma
 caixote_frutas
+cascata
 cesto_pendurado
 cocho_cenouras
 cocho_feno
@@ -16,8 +17,12 @@ espelho
 fardo
 feno
 ferradura
+flor_pendurada_lilas
+flor_pendurada_rosa
 fundo
 ganchos
+laguinho_ondas
+laguinho_parado
 lanterna_acesa
 lanterna_apagada
 lanterna_jardim
@@ -35,3 +40,6 @@ telhado_estabulo
 tigela_agua
 tigela_racao
 toalha
+trepadeira_flores
+vaso_flores
+vitoria_regia
