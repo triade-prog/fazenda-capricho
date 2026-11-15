@@ -15,6 +15,10 @@ sys.path.insert(0, os.path.dirname(__file__))
 from comum import _tamanho  # noqa: E402
 import comuns  # noqa: E402
 import pecas3d  # noqa: E402
+
+# 15/11/2026: Carol decidiu refazer toda a arte 3D do zero. Até lá os cenários usam só as peças 2D.
+# (as peças 3D antigas continuam guardadas em arte/cenario/<pasta>/png3d/; é só voltar para True)
+USAR_3D = False
 import placas  # noqa: E402
 import vida  # noqa: E402
 from PIL import Image  # noqa: E402
@@ -71,7 +75,7 @@ for d in inter.values():
 for nome in sorted(usadas):
     pasta = origem_comuns if nome in comuns.P else origem if nome in mod.P else origem_placas
     de, para = os.path.join(pasta, nome + ".png"), os.path.join(destino, nome + ".png")
-    im = pecas3d.montar(nome, os.path.join(os.path.dirname(pasta), "png3d"), pasta)
+    im = pecas3d.montar(nome, os.path.join(os.path.dirname(pasta), "png3d"), pasta) if USAR_3D else None
     if im is not None:  # peça 3D encaixada no quadro da peça 2D
         if im.width > LIMITE:
             im = im.resize((LIMITE, round(im.height * LIMITE / im.width)), Image.LANCZOS)

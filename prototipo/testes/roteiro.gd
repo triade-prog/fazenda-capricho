@@ -283,7 +283,8 @@ func _roteiro() -> void:
 		var spr: Sprite2D = main._sprite_de(leite)
 		main._consume(leite, quem)
 		await get_tree().create_timer(0.7).timeout
-		_confere(is_instance_valid(spr) and spr.texture.resource_path.contains("comidas/copo_leite/") and not spr.texture.resource_path.ends_with("0.png"), "o leite vai acabando aos goles")
+		if not main._fases_comida("copo_leite").is_empty():  # só quando houver as fases do copo (arte 3D)
+			_confere(is_instance_valid(spr) and spr.texture.resource_path.contains("comidas/copo_leite/") and not spr.texture.resource_path.ends_with("0.png"), "o leite vai acabando aos goles")
 		await get_tree().create_timer(1.5).timeout
 		_confere(not is_instance_valid(leite), "o copo some quando acaba o leite")
 	await _foto("20b_cozinha")
