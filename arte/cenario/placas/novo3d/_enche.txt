@@ -1,3 +1,9 @@
+seta_casa_d
+seta_casa_e
+seta_cenoura_d
+seta_cenoura_e
 seta_cesta_d
 seta_ferradura_d
 seta_ferradura_e
+seta_pata_d
+seta_pata_e

@@ -1,0 +1,28 @@
+FAZENDA CAPRICHO — ESTÁBULO E JARDIM — 3D R01
+
+58 PNGs individuais: 57 peças RGBA transparentes + 1 fundo opaco.
+Inclui os 53 nomes do ZIP 2D e 5 complementos: cerca_modulo, placa_casa, placa_horta, placa_pets e fechamento_telhado.
+A égua e os botões de interface não estão incorporados ao fundo.
+
+PASTAS
+01_cenario: fundo, estrutura, árvore, porteira, cerca e placas.
+02_alimentacao: cochos, alimentos, tigelas e feno.
+03_banho: banheira, balde, ducha, produtos e tecidos.
+04_acessorios: ferramentas, prateleira, decoração e lanterna.
+05_jardim: lago, cascata, vegetação, banco e pedras.
+
+RESOLUÇÃO E TRANSPARÊNCIA
+Conteúdo preservado na resolução nativa gerada, sem ampliação artificial.
+Cada sprite foi aparado e recebeu 8px de margem transparente. Fundo mantido inteiro opaco.
+Tamanhos exatos em inventario.csv; dimensões nativas e checksums em inventario.json.
+
+MONTAGEM
+As prévias JPG foram montadas a partir destes PNGs.
+montagem.json sugere coordenadas e ordem de camadas em um panorama3300x900.
+Posicionar fechamento_telhado atrás do contorno rosa e acima da parede.
+Repetir cerca_modulo para prolongar a cerca. Pedra, fardo, flores e plantas são reutilizáveis.
+Exibir somente um estado alternativo por objeto. Alinhar os estados pela base e pelo corpo do objeto; adaptar tamanho de exibição.
+As imagens com água/espuma/ondas representam estados estáticos, não animações completas.
+
+São sprites raster com aparência3D toy, não modelos3D editáveis.
+Nenhum código, colisão, interação ou upload ao GitHub foi aplicado. A integração e o teste no iPad ficam no motor do jogo.

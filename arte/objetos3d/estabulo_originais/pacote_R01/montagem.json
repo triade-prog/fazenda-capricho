@@ -1,0 +1,984 @@
+{
+  "canvas": [
+    3300,
+    900
+  ],
+  "rect": "[esquerda, topo, direita, base] do conteúdo sem margem transparente",
+  "instancias": [
+    {
+      "id": "fundo",
+      "rect": [
+        0,
+        0,
+        3300,
+        900
+      ],
+      "z": 0,
+      "instancia": "fundo"
+    },
+    {
+      "id": "cerca_modulo",
+      "rect": [
+        1500,
+        520,
+        1870,
+        605
+      ],
+      "z": 8,
+      "instancia": "cerca_0"
+    },
+    {
+      "id": "cerca_modulo",
+      "rect": [
+        1860,
+        520,
+        2230,
+        605
+      ],
+      "z": 8,
+      "instancia": "cerca_1"
+    },
+    {
+      "id": "cerca_modulo",
+      "rect": [
+        2220,
+        520,
+        2590,
+        605
+      ],
+      "z": 8,
+      "instancia": "cerca_2"
+    },
+    {
+      "id": "cerca_modulo",
+      "rect": [
+        2580,
+        520,
+        2950,
+        605
+      ],
+      "z": 8,
+      "instancia": "cerca_3"
+    },
+    {
+      "id": "cerca_modulo",
+      "rect": [
+        2940,
+        520,
+        3310,
+        605
+      ],
+      "z": 8,
+      "instancia": "cerca_4"
+    },
+    {
+      "id": "arvore",
+      "rect": [
+        1890,
+        55,
+        2390,
+        602
+      ],
+      "z": 10,
+      "instancia": "arvore"
+    },
+    {
+      "id": "fechamento_telhado",
+      "rect": [
+        20,
+        82,
+        1480,
+        178
+      ],
+      "z": 18,
+      "instancia": "fechamento_telhado"
+    },
+    {
+      "id": "parede_estabulo",
+      "rect": [
+        0,
+        112,
+        1500,
+        600
+      ],
+      "z": 20,
+      "instancia": "parede_estabulo"
+    },
+    {
+      "id": "telhado_estabulo",
+      "rect": [
+        0,
+        50,
+        1540,
+        166
+      ],
+      "z": 25,
+      "instancia": "telhado_estabulo"
+    },
+    {
+      "id": "porteira_fechada",
+      "rect": [
+        1540,
+        430,
+        1840,
+        620
+      ],
+      "z": 30,
+      "instancia": "porteira_fechada"
+    },
+    {
+      "id": "placa_casa",
+      "rect": [
+        1848,
+        410,
+        1953,
+        640
+      ],
+      "z": 20,
+      "instancia": "placa_casa"
+    },
+    {
+      "id": "placa_horta",
+      "rect": [
+        2380,
+        410,
+        2500,
+        640
+      ],
+      "z": 20,
+      "instancia": "placa_horta"
+    },
+    {
+      "id": "placa_pets",
+      "rect": [
+        3150,
+        410,
+        3270,
+        640
+      ],
+      "z": 20,
+      "instancia": "placa_pets"
+    },
+    {
+      "id": "cocho_feno",
+      "rect": [
+        65,
+        492,
+        353,
+        667
+      ],
+      "z": 40,
+      "instancia": "cocho_feno"
+    },
+    {
+      "id": "caixote_frutas",
+      "rect": [
+        36,
+        662,
+        285,
+        819
+      ],
+      "z": 50,
+      "instancia": "caixote_frutas"
+    },
+    {
+      "id": "feno",
+      "rect": [
+        630,
+        650,
+        686,
+        680
+      ],
+      "z": 50,
+      "instancia": "feno"
+    },
+    {
+      "id": "fardo",
+      "rect": [
+        1055,
+        730,
+        1270,
+        860
+      ],
+      "z": 50,
+      "instancia": "fardo"
+    },
+    {
+      "id": "fardo",
+      "rect": [
+        1285,
+        740,
+        1495,
+        870
+      ],
+      "z": 50,
+      "instancia": "fardo_2"
+    },
+    {
+      "id": "tigela_racao",
+      "rect": [
+        438,
+        775,
+        582,
+        852
+      ],
+      "z": 50,
+      "instancia": "tigela_racao"
+    },
+    {
+      "id": "tigela_agua",
+      "rect": [
+        621,
+        775,
+        765,
+        852
+      ],
+      "z": 50,
+      "instancia": "tigela_agua"
+    },
+    {
+      "id": "escova_pelo",
+      "rect": [
+        270,
+        799,
+        367,
+        850
+      ],
+      "z": 60,
+      "instancia": "escova_pelo"
+    },
+    {
+      "id": "pente",
+      "rect": [
+        296,
+        866,
+        364,
+        899
+      ],
+      "z": 60,
+      "instancia": "pente"
+    },
+    {
+      "id": "banheira_espuma",
+      "rect": [
+        846,
+        528,
+        1165,
+        711
+      ],
+      "z": 40,
+      "instancia": "banheira_espuma"
+    },
+    {
+      "id": "balde_agua",
+      "rect": [
+        1265,
+        625,
+        1372,
+        745
+      ],
+      "z": 50,
+      "instancia": "balde_agua"
+    },
+    {
+      "id": "ducha_ligada",
+      "rect": [
+        1173,
+        210,
+        1390,
+        623
+      ],
+      "z": 35,
+      "instancia": "ducha_ligada"
+    },
+    {
+      "id": "shampoo",
+      "rect": [
+        825,
+        625,
+        864,
+        703
+      ],
+      "z": 50,
+      "instancia": "shampoo_chao"
+    },
+    {
+      "id": "toalha",
+      "rect": [
+        1060,
+        564,
+        1141,
+        640
+      ],
+      "z": 50,
+      "instancia": "toalha"
+    },
+    {
+      "id": "tapete_coracao",
+      "rect": [
+        765,
+        738,
+        1065,
+        823
+      ],
+      "z": 48,
+      "instancia": "tapete_coracao"
+    },
+    {
+      "id": "prateleira_banho",
+      "rect": [
+        869,
+        335,
+        1145,
+        373
+      ],
+      "z": 40,
+      "instancia": "prateleira_banho"
+    },
+    {
+      "id": "shampoo",
+      "rect": [
+        917,
+        257,
+        956,
+        334
+      ],
+      "z": 41,
+      "instancia": "shampoo"
+    },
+    {
+      "id": "pote_creme",
+      "rect": [
+        986,
+        291,
+        1048,
+        334
+      ],
+      "z": 41,
+      "instancia": "pote_creme"
+    },
+    {
+      "id": "vaso_flores",
+      "rect": [
+        1074,
+        242,
+        1154,
+        334
+      ],
+      "z": 41,
+      "instancia": "vaso_flores"
+    },
+    {
+      "id": "ganchos",
+      "rect": [
+        888,
+        391,
+        1120,
+        419
+      ],
+      "z": 41,
+      "instancia": "ganchos"
+    },
+    {
+      "id": "pente_pendurado",
+      "rect": [
+        914,
+        413,
+        944,
+        527
+      ],
+      "z": 42,
+      "instancia": "pente_pendurado"
+    },
+    {
+      "id": "escova_pendurada",
+      "rect": [
+        975,
+        413,
+        1025,
+        528
+      ],
+      "z": 42,
+      "instancia": "escova_pendurada"
+    },
+    {
+      "id": "espelho",
+      "rect": [
+        1051,
+        413,
+        1108,
+        526
+      ],
+      "z": 42,
+      "instancia": "espelho"
+    },
+    {
+      "id": "ferradura",
+      "rect": [
+        343,
+        264,
+        433,
+        375
+      ],
+      "z": 40,
+      "instancia": "ferradura"
+    },
+    {
+      "id": "suporte_manta",
+      "rect": [
+        506,
+        265,
+        641,
+        421
+      ],
+      "z": 40,
+      "instancia": "suporte_manta"
+    },
+    {
+      "id": "cesto_pendurado",
+      "rect": [
+        89,
+        207,
+        263,
+        424
+      ],
+      "z": 40,
+      "instancia": "cesto_pendurado"
+    },
+    {
+      "id": "lanterna_acesa",
+      "rect": [
+        1382,
+        156,
+        1454,
+        291
+      ],
+      "z": 40,
+      "instancia": "lanterna_acesa"
+    },
+    {
+      "id": "trepadeira_flores",
+      "rect": [
+        1435,
+        183,
+        1498,
+        600
+      ],
+      "z": 42,
+      "instancia": "trepadeira_flores"
+    },
+    {
+      "id": "flor_pendurada_lilas",
+      "rect": [
+        66,
+        176,
+        106,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_0"
+    },
+    {
+      "id": "flor_pendurada_rosa",
+      "rect": [
+        186,
+        176,
+        226,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_1"
+    },
+    {
+      "id": "flor_pendurada_rosa",
+      "rect": [
+        306,
+        176,
+        346,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_2"
+    },
+    {
+      "id": "flor_pendurada_lilas",
+      "rect": [
+        426,
+        176,
+        466,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_3"
+    },
+    {
+      "id": "flor_pendurada_rosa",
+      "rect": [
+        546,
+        176,
+        586,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_4"
+    },
+    {
+      "id": "flor_pendurada_rosa",
+      "rect": [
+        666,
+        176,
+        706,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_5"
+    },
+    {
+      "id": "flor_pendurada_lilas",
+      "rect": [
+        786,
+        176,
+        826,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_6"
+    },
+    {
+      "id": "flor_pendurada_rosa",
+      "rect": [
+        906,
+        176,
+        946,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_7"
+    },
+    {
+      "id": "flor_pendurada_rosa",
+      "rect": [
+        1026,
+        176,
+        1066,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_8"
+    },
+    {
+      "id": "flor_pendurada_lilas",
+      "rect": [
+        1146,
+        176,
+        1186,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_9"
+    },
+    {
+      "id": "flor_pendurada_rosa",
+      "rect": [
+        1266,
+        176,
+        1306,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_10"
+    },
+    {
+      "id": "flor_pendurada_rosa",
+      "rect": [
+        1386,
+        176,
+        1426,
+        229
+      ],
+      "z": 35,
+      "instancia": "flor_teto_11"
+    },
+    {
+      "id": "banco_tronco",
+      "rect": [
+        2560,
+        522,
+        2790,
+        610
+      ],
+      "z": 20,
+      "instancia": "banco_tronco"
+    },
+    {
+      "id": "laguinho_ondas",
+      "rect": [
+        2150,
+        639,
+        2900,
+        875
+      ],
+      "z": 30,
+      "instancia": "laguinho_ondas"
+    },
+    {
+      "id": "cascata",
+      "rect": [
+        2705,
+        568,
+        2925,
+        747
+      ],
+      "z": 40,
+      "instancia": "cascata"
+    },
+    {
+      "id": "vitoria_regia",
+      "rect": [
+        2315,
+        749,
+        2435,
+        810
+      ],
+      "z": 45,
+      "instancia": "vitoria_regia"
+    },
+    {
+      "id": "vitoria_regia_flor",
+      "rect": [
+        2477,
+        733,
+        2627,
+        824
+      ],
+      "z": 45,
+      "instancia": "vitoria_regia_flor"
+    },
+    {
+      "id": "flores_lago",
+      "rect": [
+        2150,
+        566,
+        2380,
+        685
+      ],
+      "z": 38,
+      "instancia": "flores_lago"
+    },
+    {
+      "id": "flores_lago",
+      "rect": [
+        2824,
+        735,
+        3044,
+        848
+      ],
+      "z": 45,
+      "instancia": "flores_margem_2"
+    },
+    {
+      "id": "moita_flores",
+      "rect": [
+        2845,
+        547,
+        3120,
+        685
+      ],
+      "z": 32,
+      "instancia": "moita_flores"
+    },
+    {
+      "id": "moita_colhida",
+      "rect": [
+        3077,
+        624,
+        3277,
+        713
+      ],
+      "z": 32,
+      "instancia": "moita_colhida"
+    },
+    {
+      "id": "touceira",
+      "rect": [
+        2430,
+        552,
+        2530,
+        688
+      ],
+      "z": 35,
+      "instancia": "touceira"
+    },
+    {
+      "id": "touceira",
+      "rect": [
+        2948,
+        630,
+        3038,
+        757
+      ],
+      "z": 35,
+      "instancia": "touceira_2"
+    },
+    {
+      "id": "lanterna_jardim",
+      "rect": [
+        2110,
+        620,
+        2210,
+        766
+      ],
+      "z": 45,
+      "instancia": "lanterna_jardim"
+    },
+    {
+      "id": "pedra",
+      "rect": [
+        1900,
+        848,
+        2000,
+        882
+      ],
+      "z": 50,
+      "instancia": "pedra_0"
+    },
+    {
+      "id": "pedra",
+      "rect": [
+        1968,
+        806,
+        2071,
+        841
+      ],
+      "z": 50,
+      "instancia": "pedra_1"
+    },
+    {
+      "id": "pedra",
+      "rect": [
+        2048,
+        855,
+        2137,
+        886
+      ],
+      "z": 50,
+      "instancia": "pedra_2"
+    },
+    {
+      "id": "pedra",
+      "rect": [
+        1480,
+        850,
+        1570,
+        883
+      ],
+      "z": 50,
+      "instancia": "pedra_3"
+    },
+    {
+      "id": "pedra",
+      "rect": [
+        3200,
+        812,
+        3285,
+        847
+      ],
+      "z": 50,
+      "instancia": "pedra_4"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        1811,
+        835,
+        1829,
+        868
+      ],
+      "z": 60,
+      "instancia": "margarida_0"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        1847,
+        784,
+        1865,
+        817
+      ],
+      "z": 60,
+      "instancia": "margarida_1"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        1944,
+        702,
+        1962,
+        735
+      ],
+      "z": 60,
+      "instancia": "margarida_3"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        1851,
+        808,
+        1869,
+        841
+      ],
+      "z": 60,
+      "instancia": "margarida_4"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        2016,
+        681,
+        2034,
+        714
+      ],
+      "z": 60,
+      "instancia": "margarida_7"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        1848,
+        800,
+        1866,
+        833
+      ],
+      "z": 60,
+      "instancia": "margarida_9"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        1964,
+        696,
+        1982,
+        729
+      ],
+      "z": 60,
+      "instancia": "margarida_10"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        1636,
+        749,
+        1654,
+        782
+      ],
+      "z": 60,
+      "instancia": "margarida_11"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        2071,
+        662,
+        2089,
+        695
+      ],
+      "z": 60,
+      "instancia": "margarida_12"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        1774,
+        752,
+        1792,
+        785
+      ],
+      "z": 60,
+      "instancia": "margarida_13"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        1845,
+        690,
+        1863,
+        723
+      ],
+      "z": 60,
+      "instancia": "margarida_15"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        2056,
+        879,
+        2074,
+        912
+      ],
+      "z": 60,
+      "instancia": "margarida_20"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        1849,
+        696,
+        1867,
+        729
+      ],
+      "z": 60,
+      "instancia": "margarida_22"
+    },
+    {
+      "id": "margarida",
+      "rect": [
+        1607,
+        842,
+        1625,
+        875
+      ],
+      "z": 60,
+      "instancia": "margarida_23"
+    }
+  ],
+  "estados_alternativos": [
+    [
+      "porteira_fechada",
+      "porteira_aberta"
+    ],
+    [
+      "cocho_vazio",
+      "cocho_feno",
+      "cocho_cenouras"
+    ],
+    [
+      "tigela_agua",
+      "tigela_racao"
+    ],
+    [
+      "balde_vazio",
+      "balde_agua"
+    ],
+    [
+      "banheira_agua",
+      "banheira_espuma"
+    ],
+    [
+      "ducha_desligada",
+      "ducha_ligada"
+    ],
+    [
+      "lanterna_apagada",
+      "lanterna_acesa"
+    ],
+    [
+      "laguinho_parado",
+      "laguinho_ondas"
+    ],
+    [
+      "moita_flores",
+      "moita_colhida"
+    ]
+  ],
+  "observacao": "Montagem visual de referência. Ajustar escala/âncoras, colisões e áreas de toque no motor do jogo. Imagens de estados não formam animação contínua por si."
+}

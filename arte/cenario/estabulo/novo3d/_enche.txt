@@ -1,6 +1,7 @@
 arvore
 balde_agua
 balde_vazio
+banco_tronco
 banheira_agua
 banheira_espuma
 caixote_frutas
@@ -15,10 +16,12 @@ escova_pelo
 escova_pendurada
 espelho
 fardo
+fechamento_telhado
 feno
 ferradura
 flor_pendurada_lilas
 flor_pendurada_rosa
+flores_lago
 fundo
 ganchos
 laguinho_ondas
@@ -26,7 +29,11 @@ laguinho_parado
 lanterna_acesa
 lanterna_apagada
 lanterna_jardim
+margarida
+moita_colhida
+moita_flores
 parede_estabulo
+pedra
 pente
 pente_pendurado
 porteira_aberta
@@ -40,6 +47,8 @@ telhado_estabulo
 tigela_agua
 tigela_racao
 toalha
+touceira
 trepadeira_flores
 vaso_flores
 vitoria_regia
+vitoria_regia_flor

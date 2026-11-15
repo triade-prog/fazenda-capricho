@@ -87,6 +87,13 @@
    500
   ],
   [
+   "fechamento_telhado",
+   20,
+   82,
+   1460,
+   96
+  ],
+  [
    "telhado_estabulo",
    -10,
    30,
@@ -709,6 +716,7 @@
  "so_se": {},
  "passagens": {},
  "fundos": [
+  "fechamento_telhado",
   "grama",
   "parede_estabulo",
   "telhado_estabulo"

@@ -56,6 +56,7 @@ def fundo():
         pa += rr(x, 120, 30, chao - 120, 4, C["madeira_esc"])
     pa += rr(-5, 150, div + 5, 22, 3, C["madeira_esc"])           # viga
     S.add("parede_estabulo", pa, -8, 106, div + 12, chao - 100)
+    S.add("fechamento_telhado", path("M20,178 L750,82 L1480,178 Z", C["madeira"], 'stroke-width="3"'), 20, 82, 1460, 96)
     S.add("telhado_estabulo", path(f"M-5,135 L750,55 L{div+40},135 L{div+40},165 L750,85 L-5,165 Z", C["vermelho_rosa"], 'stroke-width="4"'),
           -10, 30, div + 56, 177)
     for i, x in enumerate(range(80, div - 40, 120)):

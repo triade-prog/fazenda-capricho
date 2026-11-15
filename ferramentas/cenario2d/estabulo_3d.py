@@ -19,14 +19,16 @@ sys.path.insert(0, os.path.join(RAIZ, "ferramentas"))
 from limpar_3d import limpar  # noqa: E402
 
 N = os.path.join(RAIZ, "arte/cenario/estabulo/novo3d")
-ORIG = os.path.join(RAIZ, "arte/objetos3d/estabulo_originais")
+ORIG = os.path.join(RAIZ, "arte/objetos3d/estabulo_originais/pacote_R01")   # pacote completo da Carol (R01)
+PLACAS = os.path.join(RAIZ, "arte/cenario/placas/novo3d")
 
 
 SOZINHAS = ["lanterna_jardim", "cesto_pendurado", "pente_pendurado", "espelho", "pente", "escova_pendurada", "escova_pelo",
             "suporte_manta", "ganchos", "ferradura", "prateleira_banho", "tapete_coracao", "toalha", "tigela_racao", "tigela_agua",
             "pote_creme", "shampoo", "caixote_frutas", "fardo", "feno", "arvore",
-            "vaso_flores", "trepadeira_flores", "cascata", "vitoria_regia"]
-JUNTAS = [["lanterna_apagada"], ["ducha_ligada", "ducha_desligada"], ["balde_vazio", "balde_agua"],
+            "vaso_flores", "trepadeira_flores", "cascata", "vitoria_regia",
+            "vitoria_regia_flor", "flores_lago", "margarida", "pedra", "touceira", "banco_tronco"]
+JUNTAS = [["lanterna_apagada", "lanterna_acesa"], ["moita_flores", "moita_colhida"], ["ducha_ligada", "ducha_desligada"], ["balde_vazio", "balde_agua"],
           ["banheira_espuma", "banheira_agua"], ["cocho_vazio", "cocho_feno", "cocho_cenouras"],
           ["porteira_fechada", "porteira_aberta"], ["laguinho_parado", "laguinho_ondas"],
           ["flor_pendurada_rosa", "flor_pendurada_lilas"]]
@@ -50,13 +52,28 @@ def vitoria_regia():
 
 
 def parede_telhado():
-    parede = limpar(Image.open(os.path.join(ORIG, "_parede.png")))
+    parede = limpar(Image.open(os.path.join(ORIG, "parede_estabulo.png")))
     parede.resize((round(parede.height * 1512 / 500), parede.height), Image.LANCZOS).save(os.path.join(N, "parede_estabulo.png"))
-    limpar(Image.open(os.path.join(ORIG, "_telhado.png"))).save(os.path.join(N, "telhado_estabulo.png"))
+    limpar(Image.open(os.path.join(ORIG, "telhado_estabulo.png"))).save(os.path.join(N, "telhado_estabulo.png"))
+    oitao = limpar(Image.open(os.path.join(ORIG, "fechamento_telhado.png")))     # triângulo atrás do telhado (1460 × 96 no jogo)
+    oitao.resize((oitao.width, round(oitao.width * 96 / 1460)), Image.LANCZOS).save(os.path.join(N, "fechamento_telhado.png"))
+
+
+def placas():
+    """Placas de seta 3D do pacote (casa, horta, pets), valem para todos os cenários; a outra direção é o espelho."""
+    from PIL import ImageOps
+    for nome, desenho, lado in [("placa_casa", "casa", "e"), ("placa_horta", "cenoura", "d"), ("placa_pets", "pata", "d")]:
+        im = limpar(Image.open(os.path.join(ORIG, nome + ".png")))
+        outro = "d" if lado == "e" else "e"
+        im.save(os.path.join(PLACAS, f"seta_{desenho}_{lado}.png"))
+        ImageOps.mirror(im).save(os.path.join(PLACAS, f"seta_{desenho}_{outro}.png"))
+    arq = os.path.join(PLACAS, "_enche.txt")
+    nomes = sorted(f[:-4] for f in os.listdir(PLACAS) if f.endswith(".png"))
+    open(arq, "w", encoding="utf-8").write("\n".join(nomes) + "\n")
 
 
 def fundo(W=3300, H=900, chao=600):
-    im = Image.open(os.path.join(ORIG, "_fundo.png")).convert("RGB")
+    im = Image.open(os.path.join(ORIG, "fundo.png")).convert("RGB")
     k = chao / 585                                     # a linha do horizonte da imagem fica no chão do jogo
     im = im.resize((round(im.width * k * H / 900), round(im.height * k)), Image.LANCZOS)
     im = im.crop((0, im.height - H, im.width, im.height))
@@ -107,8 +124,8 @@ if __name__ == "__main__":
     importar()
     vitoria_regia()
     parede_telhado()
+    placas()
     fundo()
-    lanterna_acesa()
     nomes = sorted(f[:-4] for f in os.listdir(N) if f.endswith(".png"))
     with open(os.path.join(N, "_enche.txt"), "w", encoding="utf-8") as f:
         f.write("\n".join(nomes) + "\n")
