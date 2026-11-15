@@ -445,6 +445,7 @@ P["mesinha_cha"] = mesinha_cha()
 P["cadeirinha"] = svg(60, 80, rr(8, 4, 44, 46, 10, C["madeira"]) + rr(16, 12, 28, 30, 8, C["madeira_clara"], 'stroke-width="2"') +
                       rr(8, 48, 8, 30, 3, C["madeira_esc"], 'stroke-width="2.5"') + rr(44, 48, 8, 30, 3, C["madeira_esc"], 'stroke-width="2.5"') +
                       rr(2, 44, 56, 14, 6, C["rosa"]) + coracao(30, 26, 6, C["rosa_forte"], 'stroke-width="1.5"'))
+P["cadeirinha_dir"] = P["cadeirinha_esq"] = P["cadeirinha"]  # as do lado da mesinha (3D: vistas de lado)
 
 
 def bau(aberto):
@@ -539,7 +540,7 @@ POS = [("fundo_patio", 0, 0), ("arvore_casinha", 450, 0), ("cacho_com", 540, 150
        ("bola", 1700, 790), ("placa_casa", 40, 520), ("placa_cabana", 2460, 470), ("@catarina", 1550, 860), ("frutinha", 1600, 820)]
 POS_DENTRO = [("fundo_dentro", 0, 0), ("passarinho_pousado", 830, 100), ("porta_dentro_aberta", 1440, 340), ("cama", 60, 550), ("cozinha_desligada", 470, 460),
        ("panelinha", 480, 425), ("bule", 560, 415), ("xicara_cha", 640, 435), ("tapete", 520, 790), ("cadeirinha", 840, 620),
-       ("mesinha_cha", 780, 680), ("cadeirinha", 720, 720), ("cadeirinha", 960, 720), ("bau_aberto", 1040, 500), ("unicornio", 1210, 580),
+       ("mesinha_cha", 780, 680), ("cadeirinha_dir", 720, 720), ("cadeirinha_esq", 960, 720), ("bau_aberto", 1040, 500), ("unicornio", 1210, 580),
        ("ursinho_heroi", 1100, 740), ("@catarina", 1330, 880)]
 
 # Como o pátio entra no protótipo (ver para_jogo.py).

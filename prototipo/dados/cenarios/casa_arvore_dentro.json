@@ -59,14 +59,14 @@
    80
   ],
   [
-   "cadeirinha",
+   "cadeirinha_dir",
    720,
    720,
    60,
    80
   ],
   [
-   "cadeirinha",
+   "cadeirinha_esq",
    960,
    720,
    60,
@@ -203,6 +203,10 @@
   }
  },
  "moveis": [
-  "cadeirinha"
- ]
+  "cadeirinha",
+  "cadeirinha_dir",
+  "cadeirinha_esq"
+ ],
+ "so_se": {},
+ "passagens": {}
 }

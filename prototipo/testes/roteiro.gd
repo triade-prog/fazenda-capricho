@@ -268,6 +268,24 @@ func _roteiro() -> void:
 	_confere(not k._aparece("vapor"), "com o fogão apagado a fumacinha some")
 	await _toca(k.rect_de("fogao").get_center())
 	_confere(k.estado("fogao") == 1 and k._aparece("vapor"), "acender o fogão traz as chaminhas e a fumacinha")
+	_confere(k._passagem("fogao").begins_with("fogao_"), "o fogão acende aos poucos (chaminhas crescendo)")
+	await get_tree().create_timer(0.6).timeout
+	_confere(k._passagem("fogao") == "", "depois da passagem o fogão fica aceso")
+	var leite: Toy = null
+	var quem: Toy = null
+	for t in main.toys:
+		if t.kind == "copo_leite" and leite == null:
+			leite = t
+		if t.kind == "catarina":
+			quem = t
+	_confere(leite != null and quem != null, "tem copo de leite e a Catarina para o teste de beber")
+	if leite and quem:
+		var spr: Sprite2D = main._sprite_de(leite)
+		main._consume(leite, quem)
+		await get_tree().create_timer(0.7).timeout
+		_confere(is_instance_valid(spr) and spr.texture.resource_path.contains("comidas/copo_leite/") and not spr.texture.resource_path.ends_with("0.png"), "o leite vai acabando aos goles")
+		await get_tree().create_timer(1.5).timeout
+		_confere(not is_instance_valid(leite), "o copo some quando acaba o leite")
 	await _foto("20b_cozinha")
 	await _toca(k.rect_de("porta_sala").get_center())
 	await _espera(0.8)

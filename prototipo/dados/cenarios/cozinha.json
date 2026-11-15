@@ -39,10 +39,10 @@
   ],
   [
    "vapor",
-   680,
-   290,
-   80,
-   56
+   665,
+   234,
+   110,
+   146
   ],
   [
    "@torneira",
@@ -74,9 +74,9 @@
   ],
   [
    "cadeira",
-   1480,
+   1455,
    470,
-   110,
+   160,
    230
   ],
   [
@@ -88,9 +88,9 @@
   ],
   [
    "cadeira",
-   1990,
+   1965,
    470,
-   110,
+   160,
    230
   ],
   [
@@ -271,15 +271,15 @@
    "tipo": "banana",
    "x": 445,
    "y": 300,
-   "w": 50,
-   "h": 30,
+   "w": 44,
+   "h": 50,
    "dentro": "geladeira"
   },
   {
    "tipo": "copo_leite",
    "x": 365,
    "y": 400,
-   "w": 30,
+   "w": 34,
    "h": 44,
    "dentro": "geladeira"
   },
@@ -315,10 +315,27 @@
  ],
  "animacoes": {
   "vapor": {
-   "tipo": "flutua",
-   "amp": 4,
-   "vel": 2.6,
-   "lado": 3
+   "tipo": "quadros",
+   "quadros": [
+    "vapor_0",
+    "vapor_1",
+    "vapor_2",
+    "vapor_3",
+    "vapor_4",
+    "vapor_5",
+    "vapor_6",
+    "vapor_7"
+   ],
+   "vel": 5
+  },
+  "@fogao": {
+   "tipo": "quadros",
+   "estado": 1,
+   "quadros": [
+    "fogao_aceso",
+    "fogao_3"
+   ],
+   "vel": 3
   },
   "@torneira": {
    "tipo": "agua",
@@ -333,5 +350,17 @@
    "fogao",
    1
   ]
+ },
+ "passagens": {
+  "fogao": {
+   "1": [
+    "fogao_1",
+    "fogao_2",
+    "fogao_3"
+   ],
+   "0": [
+    "fogao_5"
+   ]
+  }
  }
 }

@@ -16,6 +16,11 @@ ESTICA = 0.12      # quanto o desenho pode esticar para preencher melhor o quadr
 EM_CIMA = ("luzinhas", "gancho", "toalha_gancho", "varal", "lustre")  # penduradas: alinham pelo alto
 
 
+def _enche(pasta3d):
+    arq = os.path.join(pasta3d, "_enche.txt")
+    return open(arq, encoding="utf-8").read().split() if os.path.exists(arq) else []
+
+
 def _prefixo(nome):
     return nome.rsplit("_", 1)[0] if "_" in nome else nome
 
@@ -51,6 +56,8 @@ def montar(nome, pasta3d, pasta2d):
     grupo = _grupo(nome, pasta3d, pasta2d)
     base = Image.open(os.path.join(pasta2d, nome + ".png")).convert("RGBA")
     alvo = _uniao([Image.open(os.path.join(pasta2d, n + ".png")).convert("RGBA").getbbox() for n in grupo])
+    if nome in _enche(pasta3d):  # peça avulsa (arte/objetos3d/): ocupa o quadro inteiro, não só o desenho 2D
+        alvo = (0, 0) + base.size
     fonte = _uniao([Image.open(os.path.join(pasta3d, n + ".png")).convert("RGBA").getbbox() for n in grupo])
     aw, ah = alvo[2] - alvo[0], alvo[3] - alvo[1]
     fw, fh = fonte[2] - fonte[0], fonte[3] - fonte[1]

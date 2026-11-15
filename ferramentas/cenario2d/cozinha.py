@@ -85,7 +85,7 @@ def mesa():
 
 
 P["mesa"] = mesa()
-P["cadeira"] = svg(110, 230, rr(14, 6, 82, 120, 16, C["madeira"], 'stroke-width="3.5"') + coracao(55, 60, 20, C["madeira_esc"], 'stroke-width="3"') +
+P["cadeira"] = svg(160, 230, rr(14, 6, 82, 120, 16, C["madeira"], 'stroke-width="3.5"') + coracao(55, 60, 20, C["madeira_esc"], 'stroke-width="3"') +
                    rr(6, 120, 98, 24, 8, C["madeira"], 'stroke-width="3.5"') + rr(14, 144, 14, 84, 4, C["madeira_esc"]) + rr(82, 144, 14, 84, 4, C["madeira_esc"]))
 
 
@@ -105,13 +105,18 @@ def fogao(vapor):
     return svg(w, h, s)
 
 
-P["vapor"] = svg(80, 56, "".join(path(f"M{x},54 q-10,-10 0,-18 q10,-8 0,-18", extra='stroke="#c9bcd6" stroke-width="3.5"') for x in (16, 64)) +
+P["vapor"] = svg(110, 146, "".join(path(f"M{x},54 q-10,-10 0,-18 q10,-8 0,-18", extra='stroke="#c9bcd6" stroke-width="3.5"') for x in (16, 64)) +
                  coracao(40, 26, 9, C["rosa"], 'stroke-width="2"'))
 P["torneira_fechada"] = svg(80, 70, "")
 P["torneira_aberta"] = svg(80, 70, rr(35, 2, 10, 50, 5, "#8fd3ff", 'stroke-width="1.8"') + path("M38,8 L38,44", extra='stroke="#ffffff" stroke-width="2" opacity="0.8"') +
                            ell(40, 54, 20, 6, "#bfe6ff", 'stroke-width="1.8"') + circ(22, 46, 3, "#bfe6ff", 'stroke-width="1.2"') + circ(59, 44, 2.5, "#bfe6ff", 'stroke-width="1.2"'))
 P["fogao"] = fogao(False)
 P["fogao_aceso"] = fogao(True)
+# fases do fogão acendendo/apagando e do vapor de coração (só existem em 3D; o 2D repete a peça)
+for _n in ("fogao_1", "fogao_2", "fogao_3", "fogao_5"):
+    P[_n] = P["fogao_aceso"]
+for _i in range(8):
+    P[f"vapor_{_i}"] = P["vapor"]
 
 
 def pia():
@@ -142,8 +147,8 @@ P["xicara"] = svg(40, 36, ell(18, 32, 16, 3.5, C["rosa"], 'stroke-width="2"') + 
                   path("M30,15 q7,2 2,9", extra='stroke-width="2.2"') + coracao(18, 20, 4, C["rosa_forte"], 'stroke-width="1.2"'))
 P["maca"] = svg(30, 32, path("M15,8 Q4,2 3,16 Q4,30 15,29 Q26,30 27,16 Q26,2 15,8 Z", "#ef4d4d", 'stroke-width="2"') + path("M15,8 L16,2", extra='stroke-width="2"') +
                 circ(9, 13, 2.5, C["branco"], 'stroke="none"'))
-P["banana"] = svg(50, 30, path("M4,8 Q10,26 30,26 Q44,24 47,14 Q40,18 30,18 Q14,18 8,6 Z", C["amarelo"], 'stroke-width="2"') + rr(2, 4, 7, 6, 2, "#8a6a3a", 'stroke-width="1.5"'))
-P["copo_leite"] = svg(30, 44, path("M5,4 L25,4 L22,42 L8,42 Z", C["branco"], 'stroke-width="2.2"') + path("M6,14 L24,14", extra='stroke-width="1.5" opacity="0.5"'))
+P["banana"] = svg(44, 50, path("M4,8 Q10,26 30,26 Q44,24 47,14 Q40,18 30,18 Q14,18 8,6 Z", C["amarelo"], 'stroke-width="2"') + rr(2, 4, 7, 6, 2, "#8a6a3a", 'stroke-width="1.5"'))
+P["copo_leite"] = svg(34, 44, path("M5,4 L25,4 L22,42 L8,42 Z", C["branco"], 'stroke-width="2.2"') + path("M6,14 L24,14", extra='stroke-width="1.5" opacity="0.5"'))
 P["queijo"] = svg(44, 32, path("M4,28 L40,28 L40,14 L4,22 Z", "#ffd45c", 'stroke-width="2.2"') + path("M4,22 L40,14 L30,6 Z", "#ffe08a", 'stroke-width="2.2"') +
                   circ(16, 24, 3, "#f0b93a", 'stroke="none"') + circ(30, 22, 2.5, "#f0b93a", 'stroke="none"'))
 P["cenoura"] = svg(52, 26, path("M14,6 Q40,6 49,13 Q40,21 14,20 Q8,13 14,6 Z", C["laranja"], 'stroke-width="2.2"') + path("M14,9 L4,3 M13,13 L2,13 M14,17 L4,23", extra=f'stroke="{C["verde"]}" stroke-width="3.5"') +
@@ -177,9 +182,9 @@ P["placa_casa"] = plaquinha("casa")
 
 POS = [("fundo", 0, 0), ("porta_aberta", 60, 250), ("placa_casa", 110, 180),
        ("geladeira_fechada", 300, 170),
-       ("fogao_aceso", 600, 340), ("vapor", 680, 290), ("torneira_fechada", 1318, 404), ("pia", 1200, 400), ("prato_sujo", 1240, 420),
+       ("fogao_aceso", 600, 340), ("vapor", 665, 234), ("torneira_fechada", 1318, 404), ("pia", 1200, 400), ("prato_sujo", 1240, 420),
        ("xicara", 940, 400), ("vaso_flores", 1000, 350),
-       ("cadeira", 1480, 470), ("mesa", 1560, 500), ("cadeira", 1990, 470),
+       ("cadeira", 1455, 470), ("mesa", 1560, 500), ("cadeira", 1965, 470),
        ("prato_limpo", 1640, 528), ("sanduiche", 1700, 520), ("vaso_flores", 1910, 468),
        ("tigela_cao_cheia", 700, 760), ("tigela_gato_cheia", 800, 760), ("tigela_lumi_cheia", 900, 760),
        ("@catarina", 1100, 860), ("@catarina", 1650, 790)]

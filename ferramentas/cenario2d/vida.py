@@ -8,15 +8,19 @@ fogo (crepita), agua (escorre), ondula, gira, balanca (pêndulo; pivo "topo" ou 
 VIDA = {
     "sala": {"objetos": ["almofada_rosa", "almofada_lilas", "livro_rosa", "livro_azul"],
              "superficies": [[1262, 1678, 512]]},
-    "cozinha": {"animacoes": {"vapor": {"tipo": "flutua", "amp": 4, "vel": 2.6, "lado": 3},
+    "cozinha": {"animacoes": {"vapor": {"tipo": "quadros", "quadros": [f"vapor_{i}" for i in range(8)], "vel": 5},
+                              "@fogao": {"tipo": "quadros", "estado": 1, "quadros": ["fogao_aceso", "fogao_3"], "vel": 3},
                               "@torneira": {"tipo": "agua", "estado": 1}},
-                "so_se": {"vapor": ["fogao", 1]}},
+                "so_se": {"vapor": ["fogao", 1]},
+                # fases mostradas uma vez ao trocar de estado: {interativo: {"estado novo": [peças]}}
+                "passagens": {"fogao": {"1": ["fogao_1", "fogao_2", "fogao_3"], "0": ["fogao_5"]}},
+                "tambem": ["fogao_1", "fogao_2", "fogao_3", "fogao_5"] + [f"vapor_{i}" for i in range(8)]},
     "entrada": {"animacoes": {"moinho_helice": {"tipo": "gira", "vel": 0.9}}},
     "sede": {"animacoes": {"rede": {"tipo": "balanca", "amp": 0.025, "vel": 1.3}},
              "moveis": ["cadeira_deck"]},
     "casa_arvore": {"animacoes": {"balanco_assento": {"tipo": "balanca", "amp": 0.09, "vel": 1.8}}},
     "casa_arvore_dentro": {"animacoes": {"@passarinho": {"tipo": "flutua", "amp": 5, "vel": 3.0}},
-                           "moveis": ["cadeirinha"]},
+                           "moveis": ["cadeirinha", "cadeirinha_dir", "cadeirinha_esq"]},
     "casinha": {"moveis": ["cadeirinha"]},
     "quarto_carol": {"moveis": ["banquinho"], "objetos": ["travesseiro"]},
     "estabulo": {"moveis": ["fardo"], "animacoes": {"@laguinho": {"tipo": "ondula", "estado": 1}}},
@@ -38,4 +42,6 @@ def juntar(cena, jogo):
     jogo["moveis"] = list(jogo.get("moveis", [])) + v.get("moveis", [])
     jogo["objetos"] = list(jogo.get("objetos", [])) + v.get("objetos", [])
     jogo.setdefault("so_se", {}).update(v.get("so_se", {}))
+    jogo.setdefault("passagens", {}).update(v.get("passagens", {}))
+    jogo["tambem"] = list(jogo.get("tambem", [])) + v.get("tambem", [])
     jogo["superficies"] = list(jogo["superficies"]) + v.get("superficies", [])

@@ -1002,10 +1002,56 @@ func _consume(item: Toy, alvo: Toy) -> void:
 	item.kill_move()
 	item.busy = true
 	item.z_index = alvo.z_index + 1
+	var fases := _fases_comida(item.kind)
+	if fases.size() > 1:
+		_comer_aos_poucos(item, alvo, fases)
+		return
 	var tw := item.create_tween().set_parallel(true)
 	tw.tween_property(item, "global_position", alvo.head_global() + Vector2(0, 30), 0.25)
 	tw.tween_property(item, "modulate:a", 0.0, 0.35)
 	tw.chain().tween_callback(item.queue_free)
+
+
+## Fases de uma comida que acaba aos poucos (assets/comidas/<tipo>/0.png, 1.png...): banana, leite.
+func _fases_comida(tipo: String) -> Array[Texture2D]:
+	var fases: Array[Texture2D] = []
+	var i := 0
+	while ResourceLoader.exists("res://assets/comidas/%s/%d.png" % [tipo, i]):
+		fases.append(load("res://assets/comidas/%s/%d.png" % [tipo, i]) as Texture2D)
+		i += 1
+	return fases
+
+
+## A comida vai até a boca e troca de fase a cada mordida (ou gole) até acabar.
+func _comer_aos_poucos(item: Toy, alvo: Toy, fases: Array[Texture2D]) -> void:
+	var spr := _sprite_de(item)
+	var altura := 0.0
+	if spr:
+		altura = spr.texture.get_height() * spr.scale.y
+	var tw := item.create_tween()
+	tw.tween_property(item, "global_position", alvo.head_global() + Vector2(0, 60), 0.25)
+	for i in range(1, fases.size()):
+		tw.tween_interval(0.28)
+		tw.tween_callback(_trocar_fase.bind(spr, fases[i], altura))
+	tw.tween_interval(0.3)
+	tw.tween_property(item, "modulate:a", 0.0, 0.3)
+	tw.tween_callback(item.queue_free)
+
+
+func _sprite_de(item: Toy) -> Sprite2D:
+	for n in item.find_children("*", "Sprite2D", true, false):
+		return n as Sprite2D
+	return null
+
+
+## Troca a imagem mantendo a mesma altura e a base no mesmo lugar.
+func _trocar_fase(spr: Sprite2D, tex: Texture2D, altura: float) -> void:
+	if spr == null or not is_instance_valid(spr):
+		return
+	var k := altura / tex.get_height()
+	spr.texture = tex
+	spr.scale = Vector2(k, k)
+	spr.position = Vector2(-tex.get_width() * k / 2.0, -altura)
 
 
 func _brush(item: Toy, alvo: Toy) -> void:

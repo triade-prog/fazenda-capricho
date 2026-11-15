@@ -10,6 +10,8 @@ extends Node2D
 ##   "lugares": [{"id", "area": [x, y, w, h], "spots": [[x, y]...], "pose"}]
 ##   "superficies": [[x inicial, x final, altura], ...]
 ##   "animacoes": {peça ou "@id": {"tipo": "fogo" | "gira" | "balanca" | "flutua", ...}}  peças que se mexem sozinhas
+##     "quadros": troca a imagem pela lista "quadros", "vel" quadros por segundo (vapor, chama do fogão)
+##   "passagens": {id: {"estado": [peças]}}  imagens mostradas uma vez ao trocar de estado (fogão acendendo)
 ##   "moveis": [peça, ...]  móveis que dá para puxar de lado (cadeiras, banquinhos)
 ##
 ## Modo Decorar (decoracao.gd): cada peça pode ser levada para outro lugar; o deslocamento fica em
@@ -25,6 +27,9 @@ var objetos: Array = []           # peças que dá para pegar: {tipo, x, y (base
 var lugares: Array = []
 var superficies: Array[Vector3] = []
 var animacoes := {}
+var passagens := {}
+var _passando := {}  # id -> [lista de peças, instante em que começou]
+const PASSO := 0.14  # segundos de cada imagem da passagem
 var moveis: Array = []
 var so_se := {}                   # peça -> [interativo, estado]: só aparece nesse estado
 var desloc := {}                  # índice da peça -> quanto o móvel foi puxado (x)
@@ -52,6 +57,7 @@ func carregar(cena: String) -> Cenario:
 	lugares = data.get("lugares", [])
 	objetos = data.get("objetos", [])
 	animacoes = data.get("animacoes", {})
+	passagens = data.get("passagens", {})
 	moveis = data.get("moveis", [])
 	so_se = data.get("so_se", {})
 	set_process(false)
@@ -77,6 +83,9 @@ func _draw() -> void:
 			var d: Dictionary = interativos[nome.substr(1)]
 			est = int(d.get("estado", 0))
 			nome = str(d["estados"][est])
+			var pas := _passagem(nome_id(chave))
+			if pas != "":
+				nome = pas
 		if not _aparece(chave):
 			continue
 		var t := _textura(nome)
@@ -84,7 +93,13 @@ func _draw() -> void:
 			continue
 		var r := _rect_peca(i)
 		var a: Dictionary = animacoes.get(chave, {})
-		if not a.is_empty() and a.has("estado") and int(a["estado"]) != est:
+		if not a.is_empty() and a.has("estado") and (int(a["estado"]) != est or _passando.has(nome_id(chave))):
+			a = {}
+		if str(a.get("tipo", "")) == "quadros":  # troca de imagem; o resto do desenho é o normal
+			var qs: Array = a["quadros"]
+			t = _textura(str(qs[int(_t * float(a.get("vel", 6.0))) % qs.size()]))
+			if t == null:
+				continue
 			a = {}
 		if a.is_empty() and not _sac.has(i):
 			draw_texture_rect(t, r, false)
@@ -146,7 +161,7 @@ func _process(delta: float) -> void:
 		_sac[i] = float(_sac[i]) - delta
 		if _sac[i] <= 0.0:
 			_sac.erase(i)
-	if animacoes.is_empty() and _sac.is_empty():
+	if animacoes.is_empty() and _sac.is_empty() and _passando.is_empty():
 		set_process(false)
 	queue_redraw()
 
@@ -235,7 +250,27 @@ func alternar(iid: String) -> int:
 	if n == 0:
 		return 0
 	set_estado(iid, (estado(iid) + 1) % n)
+	var lista: Array = passagens.get(iid, {}).get(str(estado(iid)), [])
+	if not lista.is_empty():
+		_passando[iid] = [lista, _t]
+		set_process(true)
 	return estado(iid)
+
+
+func nome_id(chave: String) -> String:
+	return chave.substr(1) if chave.begins_with("@") else chave
+
+
+## Imagem da passagem em andamento (fogão acendendo), ou "" quando já terminou.
+func _passagem(iid: String) -> String:
+	if not _passando.has(iid):
+		return ""
+	var lista: Array = _passando[iid][0]
+	var k := int((_t - float(_passando[iid][1])) / PASSO)
+	if k >= lista.size():
+		_passando.erase(iid)
+		return ""
+	return str(lista[k])
 
 
 func destino(iid: String) -> String:
