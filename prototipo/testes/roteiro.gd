@@ -424,7 +424,7 @@ func _roteiro() -> void:
 	await _foto("43_cabana")
 	await _vai("seta_arvore", "casa_arvore", "44_cabana_placa")
 	await _vai("seta_casinha", "casinha", "")
-	await _toca(main.cenarios["casinha"].rect_de("toldo").position + Vector2(40, 30))  # longe dos potinhos
+	await _toca(main.cenarios["casinha"].rect_de("toldo").position + Vector2(380, 30))  # longe dos potinhos e dos botões da esquerda
 	_confere(main.cenarios["casinha"].estado("toldo") == 0, "tocar no toldo da Casinha fecha o toldo")
 	await _foto("45_casinha")
 	await _vai("seta_arvore", "casa_arvore", "46_casinha_placa")
@@ -771,28 +771,99 @@ func _fazendinha() -> void:
 	await _espera(1.8)
 	_confere(fz.pedidos.size() == 3 and int(fz.pedidos[0]["tem"]) == 0 and not fz.pedidos[0]["feito"], "depois de um instante chega um pedido novo no lugar")
 
-	# lojinha de enfeites: abre na banca, compra com ferradurinhas, o enfeite fica guardado
+	# loja: abre na banca (e pelo botão da cestinha), compra com ferradurinhas, o item vai para o baú
 	await _toca(fz.botao_loja().get_center())
-	_confere(fz.loja.aberta(), "tocar no botão da cestinha em cima da banca abre a lojinha")
+	_confere(fz.loja.aberta(), "tocar no botão da cestinha em cima da banca abre a loja")
 	await _espera(0.3)
 	await _foto("39e_lojinha")
 	var f1: int = fz.ferraduras
-	_confere(not fz.comprar("arco_flores") and fz.ferraduras == f1, "enfeite com cadeado não é vendido")
+	_confere(not fz.comprar("arco_flores") and fz.ferraduras == f1, "item com cadeado não é vendido")
 	var bt: Button = fz.loja.cartoes["vaso_flor"]
 	bt.pressed.emit()  # o toque em botões de tela não passa pelo _unhandled_input do jogo
-	await _espera(0.8)
-	var vaso: Toy = main._find("vaso_flor")
-	_confere(fz.ferraduras == f1 - 8 and vaso != null and not fz.loja.aberta(), "tocar no vaso compra por 8 ferradurinhas e a lojinha fecha")
-	await _arrasta(vaso.global_position + Vector2(0, -50), Vector2(2300, 800), 0.8)
-	_confere(absf(vaso.global_position.x - 2300.0) < 40.0, "o enfeite comprado é arrastado para onde a criança quiser")
-	await _foto("39f_enfeite_comprado")
-	var xv: float = vaso.global_position.x
-	fz.salvar(agora)
-	vaso.global_position.x = 500.0
-	fz.carregar(agora)
+	await _espera(0.5)
+	var dc: Decoracao = main.decoracao
+	_confere(fz.ferraduras == f1 - 8 and int(dc.bau.get("vaso_flor", 0)) == 1 and not fz.loja.aberta(), "comprar o vaso: 8 ferradurinhas e ele vai para o baú")
+	_confere(dc.ligado and dc.gaveta.visible, "depois da compra, o modo Decorar abre com o baú aberto")
+	fz.loja.abrir()
+	fz.loja.cartoes["vaso_flor"].pressed.emit()
+	await _espera(0.5)
+	_confere(int(dc.bau.get("vaso_flor", 0)) == 2 and fz.ferraduras == f1 - 16, "dá para comprar o mesmo item de novo (x2 no baú)")
+	await _foto("39f_bau_aberto")
+	# tira um vaso do baú e põe no chão da Plantação
+	dc._arruma_ui()
+	dc.gaveta.queue_redraw()
 	await get_tree().process_frame
-	vaso = main._find("vaso_flor")
-	_confere(vaso != null and absf(vaso.global_position.x - xv) < 2.0 and main._count("vaso_flor") == 1, "o enfeite fica guardado no lugar, sem duplicar")
+	var carta: Rect2 = dc._cartas[0][1]
+	var sp_carta: Vector2 = dc.gaveta.position + carta.get_center()
+	var alvo: Vector2 = main.screen_to_world(Vector2(_vis().x * 0.55, _vis().y * 0.55))
+	alvo.y = 760.0
+	_evento(sp_carta, true)
+	await get_tree().process_frame
+	await _desliza(sp_carta, main.world_to_screen(alvo))
+	_evento(main.world_to_screen(alvo), false)
+	await _espera(0.3)
+	var pl2: Cenario = main.cenarios["plantacao"]
+	_confere(pl2.novos_aqui() == 1 and int(dc.bau.get("vaso_flor", 0)) == 1, "arrastar o cartão do baú põe o vaso no cenário (sobra 1 no baú)")
+	var iv: int = pl2.itens.keys()[0]
+	_confere(absf(pl2._rect_peca(iv).end.y - (alvo.y + 45.0)) < 30.0, "o vaso fica onde o dedo soltou")
+	_confere(not dc.gaveta.visible, "depois de pôr o vaso, a gaveta sai da frente para ele ficar à vista")
+	await _foto("39g_vaso_do_bau")
+	# no ar não dá: volta para o baú (e a gaveta abre de novo)
+	dc.abrir_bau(true)
+	await get_tree().process_frame
+	var ceu: Vector2 = main.screen_to_world(Vector2(_vis().x * 0.5, 160))
+	_evento(sp_carta, true)
+	await get_tree().process_frame
+	await _desliza(sp_carta, main.world_to_screen(ceu))
+	_evento(main.world_to_screen(ceu), false)
+	await _espera(0.3)
+	_confere(pl2.novos_aqui() == 1 and int(dc.bau.get("vaso_flor", 0)) == 1 and dc.gaveta.visible, "solto no céu, o vaso volta para o baú (e a gaveta abre de novo)")
+	dc.abrir_bau(false)
+	# leva o vaso de volta até o baú
+	var rv: Rect2 = pl2._rect_peca(iv)
+	_evento(main.world_to_screen(rv.get_center()), true)
+	await get_tree().process_frame
+	await _desliza(main.world_to_screen(rv.get_center()), dc.botao_bau.get_global_rect().get_center())
+	_evento(dc.botao_bau.get_global_rect().get_center(), false)
+	await _espera(0.3)
+	_confere(pl2.novos_aqui() == 0 and int(dc.bau.get("vaso_flor", 0)) == 2, "arrastar o vaso até o baú guarda de novo")
+	# peça que já vinha no cenário: o espantalho vai para o baú; a banca não
+	var ie: int = pl2.indice_da_chave("espantalho#0")
+	var ib: int = pl2.indice_da_chave("banca#0")
+	_confere(pl2.pode_guardar(ie) and not pl2.pode_decorar(ib), "o espantalho pode ir para o baú; a banca fica fixa")
+	dc.guardar(pl2, [ie])
+	_confere(pl2.guardadas.has(ie) and int(dc.bau.get("plantacao/espantalho", 0)) == 1, "guardar o espantalho: ele sai do cenário e entra no baú")
+	_confere(not Itens.combina("plantacao/espantalho", "sala") and Itens.combina("vaso_flor", "sala"), "no baú, o espantalho não combina com a sala; o vaso combina")
+	dc.desligar()
+	# tudo volta igual ao abrir o jogo de novo
+	var main3: Node2D = load("res://main.tscn").instantiate()
+	main3.visible = false
+	add_child(main3)
+	await get_tree().process_frame
+	var pl3: Cenario = main3.cenarios["plantacao"]
+	_confere(int(main3.decoracao.bau.get("vaso_flor", 0)) == 2 and pl3.guardadas.has(ie), "ao abrir de novo, o baú e o espantalho guardado continuam")
+	main3.queue_free()
+	await get_tree().process_frame
+	# caminha: item que os bichos usam ganha lugar de deitar
+	dc.bau["caminha"] = 1
+	main._ir_pelo_mapa("sala")
+	await _espera(1.0)
+	dc.ligar()
+	dc.abrir_bau(true)
+	await get_tree().process_frame
+	var sala_c: Cenario = main.cenarios["sala"]
+	_confere(dc.colocar("caminha", Vector2(main.cam.position.x, 760)), "a caminha sai do baú na sala")
+	main.last_screen = main.world_to_screen(Vector2(main.cam.position.x, 760))
+	dc.soltar()
+	var lugar_ok := false
+	for s in main.slots:
+		if (s as Slot).cena == "sala" and (s as Slot).id.begins_with("item_"):
+			lugar_ok = true
+	_confere(lugar_ok and sala_c.novos_aqui() == 1, "a caminha tem lugar para um bichinho deitar")
+	await _foto("39h_caminha")
+	dc.desligar()
+	main._ir_pelo_mapa("plantacao")
+	await _espera(1.0)
 
 
 # ---------------------------------------------------------------- utilidades

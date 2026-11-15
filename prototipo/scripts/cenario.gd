@@ -42,6 +42,10 @@ var _sup_dono := {}               # índice da superfície -> peça em que ela e
 var _sac := {}                    # índice da peça -> tempo que falta da balançadinha
 var _t := 0.0
 var _tex := {}
+var guardadas := {}               # índice da peça original -> true: foi para o baú (não aparece)
+var uids := {}                    # índice da peça nova (vinda do baú) -> número fixo dela ("n12")
+var itens := {}                   # índice da peça nova -> item ("poltrona", "sala/vaso_flores")
+var _visitas := false             # tem item que chama passarinho (bebedouro, fonte)
 
 const SACUDIDA := 0.45
 
@@ -65,10 +69,21 @@ func carregar(cena: String) -> Cenario:
 	set_process(false)
 	for s in data.get("superficies", []):
 		superficies.append(Vector3(s[0], s[1], s[2]))
+	# peças iguais com o mesmo tamanho em todo cenário (revisão dos móveis): a base fica no lugar
+	var tams: Dictionary = Itens.moveis()["tamanhos"].get(cena, {})
+	for p in pecas:
+		if tams.has(nome_id(str(p[0]))):
+			var t: Array = tams[nome_id(str(p[0]))]
+			p[1] = float(p[1]) + (float(p[3]) - float(t[0])) / 2.0
+			p[2] = float(p[2]) + float(p[4]) - float(t[1])
+			p[3] = float(t[0])
+			p[4] = float(t[1])
 	return self
 
 
 func _textura(nome: String) -> Texture2D:
+	if nome.begins_with("*"):
+		return Itens.textura(nome.substr(1))
 	if not _tex.has(nome):
 		var path := "res://assets/cenario/%s/%s.png" % [id, nome]
 		_tex[nome] = load(path) as Texture2D if ResourceLoader.exists(path) else null
@@ -88,12 +103,26 @@ func _draw() -> void:
 			var pas := _passagem(nome_id(chave))
 			if pas != "":
 				nome = pas
-		if not _aparece(chave):
+		if not _aparece(chave) or guardadas.has(i):
 			continue
 		var t := _textura(nome)
 		if t == null:
 			continue
 		var r := _rect_peca(i)
+		if itens.has(i):
+			# item do baú: desenho inteiro, sem esticar, apoiado no pé do lugar dele
+			var k := minf(r.size.x / t.get_width(), r.size.y / t.get_height())
+			var tam := Vector2(t.get_width(), t.get_height()) * k
+			var rr := Rect2(Vector2(r.get_center().x - tam.x / 2.0, r.end.y - tam.y), tam)
+			if _sac.has(i):
+				draw_set_transform(Vector2(r.get_center().x, r.end.y), 0.07 * sin(_t * 26.0) * float(_sac[i]) / SACUDIDA, Vector2.ONE)
+				draw_texture_rect(t, Rect2(rr.position - Vector2(r.get_center().x, r.end.y), rr.size), false)
+				draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+			else:
+				draw_texture_rect(t, rr, false)
+			if _visitas and bool(Itens.ficha(str(itens[i])).get("visita", false)):
+				_passarinho(i, r)
+			continue
 		var a: Dictionary = animacoes.get(chave, {})
 		if not a.is_empty() and a.has("estado") and (int(a["estado"]) != est or _passando.has(nome_id(chave))):
 			a = {}
@@ -148,6 +177,18 @@ func _draw() -> void:
 		_contornos()
 
 
+## Passarinho que visita o bebedouro, a fonte e a casinha de passarinho: aparece um pouco e vai embora.
+func _passarinho(i: int, r: Rect2) -> void:
+	var ciclo := fposmod(_t + float(i) * 3.7, 12.0)
+	if ciclo > 5.0:
+		return
+	var t := Itens.icone("passarinho_visita")
+	if t == null:
+		return
+	var y := r.position.y + 6.0 - 4.0 * absf(sin(_t * 5.0))
+	draw_texture_rect(t, Rect2(Vector2(r.get_center().x - 10.0, y - 36.0), Vector2(46, 36)), false)
+
+
 ## Faíscas subindo do fogo (desenhadas no sistema da chama: origem na base, no meio).
 func _faiscas(tam: Vector2, fase: float) -> void:
 	for k in 4:
@@ -163,14 +204,14 @@ func _process(delta: float) -> void:
 		_sac[i] = float(_sac[i]) - delta
 		if _sac[i] <= 0.0:
 			_sac.erase(i)
-	if animacoes.is_empty() and _sac.is_empty() and _passando.is_empty():
+	if animacoes.is_empty() and _sac.is_empty() and _passando.is_empty() and not _visitas:
 		set_process(false)
 	queue_redraw()
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_VISIBILITY_CHANGED:
-		set_process(is_visible_in_tree() and not (animacoes.is_empty() and _sac.is_empty()))
+		set_process(is_visible_in_tree() and not (animacoes.is_empty() and _sac.is_empty() and not _visitas))
 
 
 func _aparece(chave: String) -> bool:
@@ -190,7 +231,7 @@ func _rect_peca(i: int) -> Rect2:
 func peca_em(p: Vector2) -> int:
 	var achou := -1
 	for i in ordem_desenho():
-		if i == 0 or str(pecas[i][0]).begins_with("@") or not _rect_peca(i).has_point(p) or not _aparece(str(pecas[i][0])):
+		if i == 0 or str(pecas[i][0]).begins_with("@") or guardadas.has(i) or not _rect_peca(i).has_point(p) or not _aparece(str(pecas[i][0])):
 			continue
 		# só enfeites pequenos balançam (um móvel grande balançando deixaria para trás o que está em cima dele)
 		if eh_movel(i) or (float(pecas[i][3]) <= 330.0 and float(pecas[i][4]) <= 300.0):
@@ -302,7 +343,92 @@ func ordem_desenho() -> Array:
 
 ## Peça que pode mudar de lugar no modo Decorar.
 func pode_decorar(i: int) -> bool:
-	return _solta(i) and not _presas.has(i)
+	return _solta(i) and not _presas.has(i) and not guardadas.has(i)
+
+
+## Peça que pode ir para o baú: enfeite ou móvel simples. Fica fora o que tem função no jogo
+## (peças interativas, de puxar, com lugar de sentar/deitar, a lista "so_mover" de moveis.json)
+## e as partes de um móvel (o fogo da lareira). Itens novos sempre podem voltar para o baú.
+func pode_guardar(i: int) -> bool:
+	if not pode_decorar(i) or eh_parte(i):
+		return false
+	if itens.has(i):
+		return true
+	var nome := str(pecas[i][0])
+	if nome.begins_with("@") or eh_movel(i) or nome_id(nome) in Itens.moveis()["so_mover"].get(id, []):
+		return false
+	return not _lugar_dono.values().has(i)
+
+
+## Peça de parede (quadro, planta pendurada): só anda acima do chão.
+func eh_parede(i: int) -> bool:
+	if itens.has(i):
+		return Itens.parede(str(itens[i]))
+	return nome_id(str(pecas[i][0])) in Itens.moveis()["parede"].get(id, [])
+
+
+## Nome do item que a peça vira no baú.
+func item_da_peca(i: int) -> String:
+	if itens.has(i):
+		return str(itens[i])
+	return "%s/%s" % [id, str(pecas[i][0])]
+
+
+## Põe no cenário uma peça nova vinda do baú, com o pé em (x da esquerda, y de baixo).
+## Devolve o índice dela. uid: número fixo (para guardar e trazer de volta igual).
+func colocar_item(item: String, pos: Vector2, uid: String) -> int:
+	var tam := Itens.tamanho(item)
+	pecas.append(["*" + item, pos.x, pos.y - tam.y, tam.x, tam.y])
+	var i := pecas.size() - 1
+	uids[i] = uid
+	itens[i] = item
+	ordem_desenho()
+	if not i in ordem:
+		ordem.append(i)
+	if bool(Itens.ficha(item).get("visita", false)):
+		_visitas = true
+		set_process(is_visible_in_tree())
+	queue_redraw()
+	return i
+
+
+## Quantos itens vindos do baú estão neste cenário agora.
+func novos_aqui() -> int:
+	var n := 0
+	for i in itens:
+		if not guardadas.has(i):
+			n += 1
+	return n
+
+
+## A peça vai para o baú: some do cenário (o número dela continua o mesmo).
+func guardar_peca(i: int) -> void:
+	guardadas[i] = true
+	apoio.erase(i)
+	for j in apoio.keys():
+		if int(apoio[j]) == i:
+			apoio.erase(j)
+	queue_redraw()
+
+
+## Peças originais guardadas no baú (para o salvamento).
+func guardadas_guardar() -> Array:
+	var r := []
+	for i in guardadas:
+		if not itens.has(i):
+			r.append(chave_peca(int(i)))
+	return r
+
+
+## Itens novos que estão no cenário: [[uid, item, x, y do pé], ...] (para o salvamento).
+func novos_guardar() -> Array:
+	var r := []
+	for i in itens:
+		if guardadas.has(i):
+			continue
+		var rc := _rect_peca(int(i))
+		r.append([str(uids[i]), str(itens[i]), snappedf(rc.position.x, 0.1), snappedf(rc.end.y, 0.1)])
+	return r
 
 
 func _solta(i: int) -> bool:
@@ -313,6 +439,8 @@ func _solta(i: int) -> bool:
 		return false
 	if nome.begins_with("placa_") or nome in DECO_FIXAS.get(id, []):
 		return false
+	if nome_id(nome) in Itens.moveis()["fixas"].get(id, []):
+		return false  # revisão dos móveis: janela, céu, construção, coisas lá longe
 	return float(pecas[i][3]) <= DECO_MAX.x and float(pecas[i][4]) <= DECO_MAX.y
 
 
@@ -387,6 +515,10 @@ func carga(i: int) -> Array:
 ## Descobre em que peça está cada lugar (sofá, cama) e cada superfície (mesa, prateleira).
 ## Chamado uma vez, com as peças ainda na posição original.
 func preparar_deco() -> void:
+	for k in range(1, pecas.size()):
+		var nm := str(pecas[k][0])
+		if not nm.begins_with("@") and not nm.begins_with("*"):
+			Itens.registrar_original(id, nm, float(pecas[k][3]), float(pecas[k][4]), nome_id(nm) in Itens.moveis()["parede"].get(id, []))
 	_lugar_dono.clear()
 	_sup_dono.clear()
 	_presas.clear()
@@ -524,6 +656,8 @@ func deslocar(i: int, d: Vector2) -> void:
 
 ## Nome estável de cada peça para o salvamento: "vaso_flores#2" = o segundo vaso_flores.
 func chave_peca(i: int) -> String:
+	if uids.has(i):
+		return str(uids[i])
 	var nome := str(pecas[i][0])
 	var n := 0
 	for j in i:
@@ -537,7 +671,7 @@ func arrumacao() -> Dictionary:
 	var r := {}
 	for i in deco:
 		var d: Vector2 = deco[i]
-		if d.length() > 0.5:
+		if d.length() > 0.5 and not itens.has(i) and not guardadas.has(i):
 			r[chave_peca(i)] = [snappedf(d.x, 0.1), snappedf(d.y, 0.1)]
 	return r
 
@@ -575,6 +709,8 @@ func reordenar(grupo: Array) -> void:
 	var depois := 0                 # o bloco entra logo depois da última peça que precisa ficar atrás
 	for k in o.size():
 		var j := int(o[k])
+		if guardadas.has(j):
+			continue
 		if _de_fundo(j):
 			depois = maxi(depois, k + 1)
 			continue
@@ -610,7 +746,7 @@ func _de_fundo(i: int) -> bool:
 
 ## Peças rentes ao chão, que ficam sempre por baixo das outras.
 func _chao(i: int) -> bool:
-	var nome := str(pecas[i][0])
+	var nome := str(pecas[i][0]).trim_prefix("*")
 	return nome.begins_with("tapete") or nome.begins_with("piso")
 
 

@@ -1,0 +1,41 @@
+{
+  "_sobre": "Revisão dos móveis (15/11/2026). Cada peça dos cenários é de um de três jeitos: 'fixas' não mudam de lugar (construção, céu, coisas lá longe, bichinhos); 'so_mover' mudam de lugar no modo Decorar mas não vão para o baú (têm função ou um personagem usa); as outras mudam de lugar e podem ir para o baú. Peças interativas (@), de puxar ('moveis' do cenário) e com lugar de sentar/deitar nunca vão para o baú. 'parede': só andam na parede (o pé fica acima do chão). 'chao': altura em que o chão começa em cada cenário. 'dentro': cenários de dentro de casa (os outros são de fora). 'tamanhos': [largura, altura] de peças iguais que estavam com tamanhos diferentes (a base fica no mesmo lugar). Nomes sem o @. Móveis grandes que já andavam inteiros com as partes deles (lareira com o fogo, pia com a torneira, barraca com a lanterna, casinha por dentro e por fora) continuam mudando de lugar, sem ir para o baú.",
+  "dentro": ["sala", "cozinha", "quarto_carol", "casa_arvore_dentro"],
+  "chao": {"padrao": 590, "sala": 578, "cozinha": 578, "quarto_carol": 578, "casa_arvore_dentro": 560, "estabulo": 600, "plantacao": 600},
+  "fixas": {
+    "sala": ["janela"],
+    "cozinha": ["janela", "azulejos", "armario", "prateleira", "panelas"],
+    "quarto_carol": ["janela"],
+    "sede": ["arvore_flores", "cerca", "janela_casa", "lanterna_dir", "lanterna_esq"],
+    "entrada": ["celeiro_longe", "casinha_longe", "arvore_flores", "cerca", "pilar", "moinho_torre", "moinho_helice", "lanterna_esq", "lanterna_dir"],
+    "estabulo": ["arvore", "cerca", "flor_pendurada_lilas", "flor_pendurada_rosa", "cesto_pendurado", "ferradura", "suporte_manta", "prateleira_banho", "ganchos", "pente_pendurado", "escova_pendurada", "espelho", "trepadeira_flores", "cascata", "vitoria_regia", "vitoria_regia_flor", "flores_lago", "porteira", "lanterna"],
+    "pet_care": ["arvore_flores", "cerca", "prateleira", "gancho_toalha"],
+    "plantacao": ["sol", "cerca", "nuvem", "bica", "banca", "canteiro_flores", "flor_arco_iris", "frutinhas_magicas", "borboleta", "abelha", "minhoca"],
+    "casa_arvore": ["cerca", "tronco", "viga_esq", "viga_dir", "parede_casinha", "janela_casinha", "oitao", "telhado", "grade_varanda", "piso_varanda", "pilar", "trepadeira", "cacho_1", "cacho_2", "cacho_3", "escada_madeira", "escada_corda", "escorregador", "porta"],
+    "casa_arvore_dentro": ["janela_redonda", "passarinho"],
+    "casinha": ["arvore_flores", "cerca"],
+    "cabana": ["arvore_flores", "cerca", "passarinho"]
+  },
+  "so_mover": {
+    "sala": ["sofa", "estante", "cesto", "abajur", "lareira", "fogo"],
+    "cozinha": ["geladeira", "fogao", "vapor", "mesa", "pia", "torneira", "prato_pia", "tigela_cao", "tigela_gato", "tigela_lumi"],
+    "quarto_carol": ["cama", "cobertor", "guarda_roupa", "penteadeira", "gaveta_esq", "gaveta_dir", "abajur_esq", "abajur_dir"],
+    "sede": ["rede", "banco_varanda"],
+    "entrada": ["correio", "floreira_esq", "floreira_dir"],
+    "estabulo": ["ducha", "cocho", "banheira", "balde", "tigela_racao", "tigela_agua"],
+    "pet_care": ["chuveirinho", "banheira", "bolha", "tigela_cao", "tigela_gato", "tigela_agua", "cercadinho"],
+    "plantacao": ["cesta", "escadinha", "macieira", "laranjeira", "bananeira"],
+    "casa_arvore": ["balanco_estrutura", "balanco_assento", "cesto"],
+    "casa_arvore_dentro": ["cama", "fogaozinho", "bau"],
+    "casinha": ["casinha", "casinha_interior", "toldo", "balcao", "prateleira", "maleta", "caixa"],
+    "cabana": ["cabana", "lanterna", "fogueira", "chama", "saco_dormir"]
+  },
+  "parede": {
+    "sala": ["quadro_fazenda", "planta_pendurada"],
+    "quarto_carol": ["quadro_coracao", "quadro_flor", "quadro_ferradura"]
+  },
+  "tamanhos": {
+    "sala": {"vaso_flores": [70, 90], "porta_retrato": [60, 66]},
+    "estabulo": {"lanterna_jardim": [70, 150]}
+  }
+}

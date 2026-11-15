@@ -44,6 +44,7 @@ var porta_quarto_aberta: Sprite2D
 var fazenda: Fazendinha           # jogo de plantar, colher e vender (Plantação)
 var mapa: MapaFazenda             # botão da ferradura + mapa da fazenda
 var decoracao: Decoracao          # botão da poltrona: modo Decorar (arrumar móveis e enfeites)
+var aviso: AvisoTelaInicio        # dica para jogar pelo ícone na Tela de Início (Safari do iPad)
 var trocando := false             # durante a passagem de um cenário para outro
 var cam: Camera2D
 var toys: Array[Toy] = []
@@ -102,6 +103,9 @@ func _ready() -> void:
 	add_child(decoracao)
 	decoracao.preparar(self)
 	_show_intro()
+	aviso = AvisoTelaInicio.new()
+	add_child(aviso)
+	aviso.talvez_mostrar()
 
 
 # ---------------------------------------------------------------- montagem da cena
@@ -449,8 +453,10 @@ func _unhandled_input(event: InputEvent) -> void:
 				return  # o toque é do botão da ferradura ou do mapa
 			if fazenda and fazenda.loja and fazenda.loja.aberta():
 				return  # o toque é da lojinha
-			if decoracao and decoracao.botao.visible and decoracao.botao.get_global_rect().has_point(st.position):
-				return  # o toque é do botão do modo Decorar
+			if aviso and aviso.aberto():
+				return  # o toque fecha a dica da Tela de Início
+			if decoracao and decoracao.ui_em(st.position):
+				return  # o toque é dos botões do modo Decorar, da loja ou do baú
 			if touch_index == -1:
 				touch_index = st.index
 				_on_press(st.position)
@@ -475,7 +481,14 @@ func _on_press(sp: Vector2) -> void:
 	puxando = false
 	pan_velocity = 0.0
 	if decoracao and decoracao.ligado:
-		# modo Decorar: o toque é só das peças do cenário (ou rola, num espaço vazio)
+		# modo Decorar: o toque é só das peças do cenário (ou rola, num espaço vazio);
+		# um cartão do baú tira o item e ele já vem preso no dedo
+		var item: String = decoracao.carta_em(sp)
+		if item == "x":
+			return
+		if item != "":
+			press_ui = "d" if decoracao.colocar(item, p) else ""
+			return
 		press_ui = "d" if decoracao.pegar(p) else "rolar"
 		return
 	var t := _toy_at(p, [])

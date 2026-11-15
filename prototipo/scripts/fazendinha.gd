@@ -43,6 +43,8 @@ var txt_ferraduras: Label
 var txt_estrelas: Label
 var _tex := {}
 var _desde_salvar := 0.0
+var enfeites_antigos: Array = []  # enfeites soltos de antes do baú: o modo Decorar transforma em itens
+var vistos := {}                  # itens da loja que a criança já viu abertos (sem o selo de novo)
 
 
 func preparar(p_main: Node2D) -> void:
@@ -212,27 +214,34 @@ func loja_em(p: Vector2) -> bool:
 	return botao_loja().has_point(p) or _r(dados["banca"]).has_point(p)
 
 
-## Compra um enfeite: paga em ferradurinhas e ele cai ao lado da banca, pronto para arrastar.
+## Compra um item da loja: paga em ferradurinhas e ele vai para o baú (dá para comprar de novo).
 func comprar(tipo: String) -> bool:
-	var d: Dictionary = dados["loja"]["enfeites"][tipo]
+	if not Itens.da_loja(tipo):
+		return false
+	var d: Dictionary = Itens.ficha(tipo)
 	if nivel < int(d["nivel"]) or ferraduras < int(d["preco"]):
 		return false
 	ferraduras -= int(d["preco"])
 	_atualiza_hud()
 	_bump(txt_ferraduras)
-	var b := _r(dados["banca"])
-	var t := _enfeite(tipo, CENA, Vector2(b.position.x - 90.0 + randf_range(-40, 40), b.position.y - 40.0))
-	main._fall(t, t.global_position)
-	main._pop(t)
-	main._sparkle(t.global_position + Vector2(0, -40), 6)
 	main._log("comprou %s (-%d)" % [tipo, int(d["preco"])])
+	if main.decoracao:
+		main.decoracao.receber(tipo)
 	salvar()
 	return true
 
 
-## Enfeite comprado: um objeto solto que a criança arrasta para onde quiser (um personagem pode levar a outro cenário).
+## Algum item da loja abriu com o nível e a criança ainda não viu?
+func tem_novidade() -> bool:
+	for item in Itens.loja()["itens"]:
+		if nivel >= int(Itens.loja()["itens"][item]["nivel"]) and not vistos.has(item):
+			return true
+	return false
+
+
+## (antes do baú) Enfeite comprado: um objeto solto que a criança arrasta para onde quiser (um personagem pode levar a outro cenário).
 func _enfeite(tipo: String, cena: String, pos: Vector2) -> Toy:
-	var d: Dictionary = dados["loja"]["enfeites"][tipo]
+	var d: Dictionary = Itens.ficha(tipo)
 	var w := float(d["w"])
 	var h := float(d["h"])
 	var spr := Sprite2D.new()
@@ -522,7 +531,7 @@ func _regar(i: int, p: Vector2) -> void:
 	if not regador_cheio:
 		return
 	if i != -1 and plots[i]["estado"] == "planta" and int(plots[i]["estagio"]) < 4:
-		_crescer(i)
+		_adiantar(i)
 		_encher(false)
 		main._log("regou %s" % plots[i]["cultura"])
 		return
@@ -547,6 +556,26 @@ func _crescer(i: int) -> void:
 	queue_redraw()
 	if visible:
 		main._sparkle(rect_de(i).get_center(), 7 if int(q["estagio"]) == 4 else 3)
+
+
+## Rega: adianta metade do tempo que ainda falta para a planta ficar pronta (pelo menos 3 s).
+## Assim a primeira rega já mostra a planta crescendo, mas o último pedacinho pede uma esperinha.
+func _adiantar(i: int) -> void:
+	var q: Dictionary = plots[i]
+	var passo := float(dados["culturas"][q["cultura"]]["tempo"]) / 3.0
+	var falta := (passo - float(q["t"])) + float(3 - int(q["estagio"])) * passo
+	var anda := falta / 2.0
+	if anda < 3.0:
+		anda = falta
+	main._sparkle(rect_de(i).get_center(), 3)
+	while anda > 0.001 and int(q["estagio"]) < 4:
+		var precisa := passo - float(q["t"])
+		if anda + 0.001 >= precisa:
+			anda -= precisa
+			_crescer(i)
+		else:
+			q["t"] = float(q["t"]) + anda
+			anda = 0.0
 
 
 ## A nuvem de chuva rega todos os canteiros de uma vez.
@@ -704,7 +733,8 @@ func salvar(agora: float = -1.0) -> void:
 		"regador": {"cheio": regador_cheio, "x": regador.global_position.x, "y": regador.global_position.y},
 		"soltos": _soltos(),
 		"pedidos": pedidos,
-		"enfeites": _enfeites(),
+		"enfeites": _enfeites() + enfeites_antigos,
+		"vistos": vistos.keys(),
 	}
 	var f := FileAccess.open(arquivo, FileAccess.WRITE)
 	if f:
@@ -765,9 +795,13 @@ func carregar(agora: float = -1.0) -> bool:
 				t.holder.held_item = null
 			main.toys.erase(t)
 			t.queue_free()
+	enfeites_antigos.clear()
 	for en in d.get("enfeites", []):
-		if en is Array and en.size() == 4 and dados["loja"]["enfeites"].has(str(en[0])) and main.cenarios.has(str(en[1])):
-			_enfeite(str(en[0]), str(en[1]), Vector2(float(en[2]), float(en[3])))
+		if en is Array and en.size() == 4 and Itens.da_loja(str(en[0])) and main.cenarios.has(str(en[1])):
+			enfeites_antigos.append(en)  # o modo Decorar transforma em item do cenário
+	vistos.clear()
+	for v in d.get("vistos", []):
+		vistos[str(v)] = true
 	pedidos.clear()
 	for pd in d.get("pedidos", []):
 		if pd is Dictionary and dados["pedidos"]["quem"].has(str(pd.get("quem", ""))) and dados["vende"].has(str(pd.get("item", ""))) \
