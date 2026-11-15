@@ -372,7 +372,7 @@ def fundo_dentro():
         x = i * w / 20
         y = 70 + 22 * math.sin(i * 1.55)
         lz += circ(f"{x:.0f}", f"{y + 10:.0f}", 9, C["amarelo"], 'stroke-width="2"')
-    S2.add("luzinhas", lz, -4, 40, w + 8, 76)
+    S2.add("luzinhas", lz, -4, 40, w + 8, 66)
     # janela redonda com folhas rosa
     cx, cy, r = 800, 270, 150
     jr = circ(cx, cy, r + 18, C["madeira_esc"], 'stroke-width="4"') + circ(cx, cy, r, C["ceu"])
@@ -460,8 +460,8 @@ def xicara(cha):
     return svg(25, 25, s)
 
 
-P["xicara_vazia"] = xicara(False)
-P["xicara_cha"] = xicara(True)
+P["xicara_vazia"] = esticar(xicara(False), 24, 27)
+P["xicara_cha"] = esticar(xicara(True), 24, 27)
 
 
 def mesinha_cha():
@@ -475,6 +475,8 @@ def mesinha_cha():
 
 
 P["mesinha_cha"] = mesinha_cha()
+P["panelinha"] = esticar(P["panelinha"], 56, 30)
+P["bule"] = esticar(P["bule"], 52, 42)
 P["cadeirinha"] = svg(60, 80, rr(8, 4, 44, 46, 10, C["madeira"]) + rr(16, 12, 28, 30, 8, C["madeira_clara"], 'stroke-width="2"') +
                       rr(8, 48, 8, 30, 3, C["madeira_esc"], 'stroke-width="2.5"') + rr(44, 48, 8, 30, 3, C["madeira_esc"], 'stroke-width="2.5"') +
                       rr(2, 44, 56, 14, 6, C["rosa"]) + coracao(30, 26, 6, C["rosa_forte"], 'stroke-width="1.5"'))
@@ -515,7 +517,7 @@ def unicornio():
     return svg(90, 90, s)
 
 
-P["unicornio"] = unicornio()
+P["unicornio"] = esticar(unicornio(), 80, 100)
 
 
 def ursinho_heroi():
@@ -531,7 +533,7 @@ def ursinho_heroi():
     return svg(80, 100, s)
 
 
-P["ursinho_heroi"] = ursinho_heroi()
+P["ursinho_heroi"] = esticar(ursinho_heroi(), 110, 77)  # 3D: aranhinha de pelúcia
 
 
 def tapete():
@@ -561,8 +563,8 @@ def passarinho(voando):
     return svg(40, 35, s)
 
 
-P["passarinho_pousado"] = passarinho(False)
-P["passarinho_voando"] = passarinho(True)
+P["passarinho_pousado"] = esticar(passarinho(False), 44, 34)
+P["passarinho_voando"] = esticar(passarinho(True), 44, 34)
 
 
 # Posição das peças do pátio (C07) na prévia e no jogo. O interior (C08) está em casa_arvore_dentro.py.

@@ -6,7 +6,8 @@ Uso: python3 ferramentas/cenario2d/casa_arvore_3d.py   (depois: para_jogo.py cas
 - cacho_colhido: as folhinhas na mesma tela do cacho_com (para não pular ao colher);
 - cesto_cheio: o cesto 3D com as bolinhas rosa dentro;
 - balanco_assento: as duas cordas e a prancha numa peça só (é ela que balança);
-- fundo_patio: o céu, os morros e as nuvens 3D.
+- fundo_patio: o céu, os morros e as nuvens 3D;
+- por dentro: fundo, luzinhas (2 vezes), fogãozinho com a prateleira, baú aberto com brinquedos.
 As peças originais limpas estão em novo3d/ (ferramentas/limpar_3d.py); as que a Carol mandou, sem
 mexer, em arte/objetos3d/casa_arvore_originais/.
 """
@@ -107,7 +108,75 @@ def fundo_patio(w=2600, h=900, chao=600):
     tela.convert("RGB").save(os.path.join(N, "fundo_patio.png"))
 
 
+# ---------------------------------------------------------------- por dentro (C08)
+
+
+def fundo_dentro(w=1600, h=900):
+    im = Image.open(os.path.join(ORIG, "_fundo_dentro.png")).convert("RGB")
+    for canto in ((0, 0), (im.width - 1, 0)):   # o branco acima do teto vira madeira
+        ImageDraw.floodfill(im, canto, (222, 150, 88), thresh=40)
+    im.resize((w, h), Image.LANCZOS).save(os.path.join(N, "fundo_dentro.png"))
+
+
+def luzinhas():
+    lz = abre("_luzinhas_um") if os.path.exists(os.path.join(N, "_luzinhas_um.png")) else abre("luzinhas")
+    lz.save(os.path.join(N, "_luzinhas_um.png"))
+    tela = Image.new("RGBA", (lz.width * 2, lz.height), (0, 0, 0, 0))
+    tela.alpha_composite(lz, (0, 0))
+    tela.alpha_composite(lz, (lz.width, 0))
+    tela.save(os.path.join(N, "luzinhas.png"))
+
+
+def cozinhas():
+    """Fogãozinho embaixo e a prateleira (onde ficam panelinha, bule e xícara) em cima, como no 2D."""
+    W, H = 1320, 1200
+    prat = abre("_prateleira")
+    k = W * 0.87 / prat.width
+    prat = prat.resize((round(prat.width * k), round(prat.height * k)), Image.LANCZOS)
+    for estado in ("ligada", "desligada"):
+        fogao = abre("_cozinha_" + estado)
+        kf = W / fogao.width
+        fogao = fogao.resize((W, round(fogao.height * kf)), Image.LANCZOS)
+        tela = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        tela.alpha_composite(prat, ((W - prat.width) // 2, 30))
+        tela.alpha_composite(fogao, (0, H - fogao.height))
+        tela.save(os.path.join(N, "cozinha_" + estado + ".png"))
+
+
+def baus():
+    """Baú aberto com os brinquedos aparecendo, e o fechado na mesma tela (não pula ao abrir)."""
+    bau = abre("_bau_vazio")
+    w, h = bau.size
+    brinq = abre("_brinquedos_bau")
+    k = w * 0.84 / brinq.width
+    brinq = brinq.resize((round(brinq.width * k), round(brinq.height * k)), Image.LANCZOS)
+    borda = int(h * 0.50)
+    tela = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    tela.alpha_composite(bau)
+    tela.alpha_composite(brinq, ((w - brinq.width) // 2, borda - int(brinq.height * 0.62)))
+    tela.alpha_composite(bau.crop((0, borda, w, h)), (0, borda))
+    tela.save(os.path.join(N, "bau_aberto.png"))
+    fech = abre("bau_fechado") if not os.path.exists(os.path.join(N, "_bau_fechado_um.png")) else abre("_bau_fechado_um")
+    fech.save(os.path.join(N, "_bau_fechado_um.png"))
+    kf = w / fech.width
+    fech = fech.resize((w, round(fech.height * kf)), Image.LANCZOS)
+    tela = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    tela.alpha_composite(fech, (0, h - fech.height))
+    tela.save(os.path.join(N, "bau_fechado.png"))
+
+
+def cadeirinhas():
+    # a da esquerda da mesinha olha para a direita, e a da direita olha para a esquerda
+    abre("cadeirinha_a").save(os.path.join(N, "cadeirinha_dir.png"))
+    abre("cadeirinha_b").save(os.path.join(N, "cadeirinha_esq.png"))
+
+
 if __name__ == "__main__":
+    fundo_dentro()
+    luzinhas()
+    cozinhas()
+    baus()
+    cadeirinhas()
     porta_aberta()
     cachos()
     cesto_cheio()
