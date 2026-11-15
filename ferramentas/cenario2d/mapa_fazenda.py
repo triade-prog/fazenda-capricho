@@ -557,7 +557,7 @@ LUGARES = {
     "horta": dict(x=1190, y=105, rotulo="Horta", placa=(1350, 352), destinos=[["plantacao", ""]]),
     "casa": dict(x=300, y=330, rotulo="Casa", placa=(545, 795),
                  destinos=[["sede", "Varanda"], ["sala", "Sala"], ["cozinha", "Cozinha"],
-                           ["quarto", "Quarto"], ["quarto_carol", "Quarto da Carol"]]),
+                           ["quarto", "Quarto"], ["quarto_carol", "Quarto da mamãe"]]),
     "pet_care": dict(x=1090, y=395, rotulo="Pet Care", placa=(1282, 700), destinos=[["pet_care", ""]]),
     "cabana": dict(x=100, y=750, rotulo="Cabana", placa=(270, 1000), destinos=[["cabana", ""]]),
     "entrada": dict(x=560, y=830, rotulo="Entrada", placa=(800, 950), destinos=[["entrada", ""]]),
