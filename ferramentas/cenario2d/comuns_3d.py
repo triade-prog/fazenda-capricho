@@ -56,7 +56,15 @@ def grama(w=1100, h=300):
     base.convert("RGB").save(os.path.join(N, "grama.png"))
 
 
+def pedra_caminho():
+    """Pedra do caminho: a pedra 3D do pacote do Estábulo, achatada para ficar deitada no chão."""
+    im = Image.open(os.path.join(RAIZ, "arte/objetos3d/estabulo_originais/pacote_R01/pedra.png")).convert("RGBA")
+    im = im.crop(im.getbbox())
+    im.resize((im.width, round(im.width * 38 / 100)), Image.LANCZOS).save(os.path.join(N, "pedra_caminho.png"))
+
+
 if __name__ == "__main__":
+    pedra_caminho()
     grama()
     nomes = sorted(f[:-4] for f in os.listdir(N) if f.endswith(".png") and not f.startswith("_"))
     with open(os.path.join(N, "_enche.txt"), "w", encoding="utf-8") as f:

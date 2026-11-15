@@ -21,6 +21,24 @@ def _enche(pasta3d):
     return open(arq, encoding="utf-8").read().split() if os.path.exists(arq) else []
 
 
+def _sombra(pasta3d):
+    arq = os.path.join(pasta3d, "_sombra.txt")
+    return open(arq, encoding="utf-8").read().split() if os.path.exists(arq) else []
+
+
+def _com_sombra(final, caixa):
+    """Sombra macia embaixo da peça (apoiada no chão), dentro do próprio quadro."""
+    from PIL import ImageDraw, ImageFilter
+    x0, y0, x1, y1 = caixa
+    w, h = x1 - x0, y1 - y0
+    sh = max(4, h * 0.10)
+    sombra = Image.new("RGBA", final.size, (0, 0, 0, 0))
+    ImageDraw.Draw(sombra).ellipse([x0 + w * 0.02, y1 - sh * 0.9, x1 - w * 0.02, y1 + sh * 0.6], fill=(70, 60, 30, 110))
+    sombra = sombra.filter(ImageFilter.GaussianBlur(max(2, sh * 0.25)))
+    sombra.alpha_composite(final)
+    return sombra
+
+
 def _prefixo(nome):
     return nome.rsplit("_", 1)[0] if "_" in nome else nome
 
@@ -77,4 +95,6 @@ def montar(nome, pasta3d, pasta2d):
         oy = alvo[3] - fh * sy + (caixa[1] - fonte[1]) * sy
     final = Image.new("RGBA", base.size, (0, 0, 0, 0))
     final.paste(peca, (round(ox), round(oy)), peca)
+    if nome in _sombra(pasta3d):
+        final = _com_sombra(final, final.getbbox())
     return final

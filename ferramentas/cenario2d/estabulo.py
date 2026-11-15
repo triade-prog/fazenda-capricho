@@ -44,9 +44,9 @@ def fundo():
     s += path(f"M{div-40},{chao-40} Q2000,{chao-260} 2500,{chao-120} T{w},{chao-170} L{w},{chao} L{div-40},{chao} Z",
               C["verde_claro"])
     s += path(f"M{div-40},{chao-10} Q2300,{chao-150} 2900,{chao-40} T{w},{chao-60} L{w},{chao} L{div-40},{chao} Z", "#a8dd8f")
-    S.cerca(chao, div, w)
-    S.grama(chao, w, div)
-    for x, y in [(1960, 850), (2060, 878), (1870, 872)]:
+    S.cerca(chao, 1840, w)          # a cerca começa depois da porteira: aberta, ela dá para o jardim
+    # o chão (palha e grama) é o do fundo 3D; caminho de pedras saindo da porteira para o jardim
+    for x, y in [(1700, 650), (1745, 700), (1800, 752), (1870, 800), (1960, 850), (2060, 878)]:
         S.comum("pedra_caminho", x - 50, y - 19)
     # estábulo: parede de tábuas cor de mel, telhado e flores penduradas (peças)
     pa = rr(-5, 110, div + 5, chao - 110, 0, C["mel"], 'stroke-width="4"')

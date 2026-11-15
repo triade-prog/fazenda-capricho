@@ -11,52 +11,59 @@
   ],
   [
    "cerca",
-   1500,
+   1840,
    518,
    416,
    92
   ],
   [
    "cerca",
-   1916,
+   2256,
    518,
    416,
    92
   ],
   [
    "cerca",
-   2332,
+   2672,
    518,
    416,
    92
   ],
   [
    "cerca",
-   2748,
+   3088,
    518,
    416,
    92
   ],
   [
-   "cerca",
-   3164,
-   518,
-   416,
-   92
+   "pedra_caminho",
+   1650,
+   631,
+   100,
+   38
   ],
   [
-   "grama",
-   1500,
-   600,
-   1100,
-   300
+   "pedra_caminho",
+   1695,
+   681,
+   100,
+   38
   ],
   [
-   "grama",
-   2600,
-   600,
-   1100,
-   300
+   "pedra_caminho",
+   1750,
+   733,
+   100,
+   38
+  ],
+  [
+   "pedra_caminho",
+   1820,
+   781,
+   100,
+   38
   ],
   [
    "pedra_caminho",
@@ -69,13 +76,6 @@
    "pedra_caminho",
    2010,
    859,
-   100,
-   38
-  ],
-  [
-   "pedra_caminho",
-   1820,
-   853,
    100,
    38
   ],
@@ -717,7 +717,6 @@
  "passagens": {},
  "fundos": [
   "fechamento_telhado",
-  "grama",
   "parede_estabulo",
   "telhado_estabulo"
  ]

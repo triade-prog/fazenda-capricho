@@ -129,4 +129,10 @@ if __name__ == "__main__":
     nomes = sorted(f[:-4] for f in os.listdir(N) if f.endswith(".png"))
     with open(os.path.join(N, "_enche.txt"), "w", encoding="utf-8") as f:
         f.write("\n".join(nomes) + "\n")
+    chao = ["cocho_vazio", "cocho_feno", "cocho_cenouras", "caixote_frutas", "banheira_agua", "banheira_espuma", "balde_vazio",
+            "balde_agua", "tigela_racao", "tigela_agua", "fardo", "feno", "porteira_fechada", "porteira_aberta", "arvore",
+            "banco_tronco", "moita_flores", "moita_colhida", "pedra", "touceira", "flores_lago", "lanterna_jardim", "cascata",
+            "escova_pelo", "pente", "margarida", "ducha_ligada", "ducha_desligada"]
+    with open(os.path.join(N, "_sombra.txt"), "w", encoding="utf-8") as f:   # peças apoiadas no chão ganham sombrinha
+        f.write("\n".join(chao) + "\n")
     print(len(nomes), "peças 3D em", N)

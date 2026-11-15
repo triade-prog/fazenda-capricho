@@ -1,2 +1,3 @@
 cerca
 grama
+pedra_caminho
