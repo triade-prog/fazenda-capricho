@@ -27,6 +27,7 @@ janela_casinha
 mesa_piquenique
 morro
 nuvem
+oitao
 parede_casinha
 pilar
 piso_varanda
