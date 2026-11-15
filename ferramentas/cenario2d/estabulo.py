@@ -541,6 +541,8 @@ POS = [("fundo", 0, 0),
        ("lanterna_jardim", 2135, 610), ("moita_flores", 2850, 750), ("pedra", 3150, 820), ("pedra", 1440, 850),
        ("margarida", 1750, 760), ("@catarina", 1800, 880), ("@catarina", 640, 860)]
 POS[1:1] = S.pos
+POS.remove(("arvore", 1900, 60))
+POS.insert(1, ("arvore", 1900, 60))   # árvore atrás da cerca
 
 # Como o cenário entra no protótipo (ver para_jogo.py).
 JOGO = {
@@ -555,11 +557,11 @@ JOGO = {
         "moita_1": {"estados": ["moita_colhida", "moita_flores"], "x": 2830, "y": 510},
         "moita_2": {"estados": ["moita_colhida", "moita_flores"], "x": 3040, "y": 590},
         "moita_3": {"estados": ["moita_colhida", "moita_flores"], "x": 2850, "y": 750},
-        "seta_sede": {"estados": ["seta_casa_e"], "x": 1840, "y": 400, "leva": "sede", "chegada": 1960},
-        "seta_plantacao": {"estados": ["seta_cenoura_d"], "x": 2380, "y": 400, "leva": "plantacao", "chegada": 2440},
-        "seta_pet_care": {"estados": ["seta_pata_d"], "x": 3160, "y": 400, "leva": "pet_care", "chegada": 3180},
+        "seta_sede": {"estados": ["seta_casa_e"], "x": 1840, "y": 462, "leva": "sede", "chegada": 1960},
+        "seta_plantacao": {"estados": ["seta_cenoura_d"], "x": 2380, "y": 462, "leva": "plantacao", "chegada": 2440},
+        "seta_pet_care": {"estados": ["seta_pata_d"], "x": 3160, "y": 462, "leva": "pet_care", "chegada": 3180},
     },
-    "extras": [("seta_casa_e", 1840, 400), ("seta_cenoura_d", 2380, 400), ("seta_pata_d", 3160, 400)],
+    "extras": [("seta_casa_e", 1840, 462), ("seta_cenoura_d", 2380, 462), ("seta_pata_d", 3160, 462)],
     "objetos": ["pente", "feno", "margarida", "shampoo", "pote_creme", "vaso_flores", "toalha", "escova_pelo"],
     "lugares": [],
     "superficies": [[880, 1140, 334], [1070, 1260, 726], [1285, 1475, 736]],
