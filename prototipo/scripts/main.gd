@@ -34,7 +34,7 @@ const LIFT := 40.0          # quanto o personagem sobe acima do dedo ao ser pego
 const EDGE := 110.0         # faixa da borda da tela que faz o quarto rolar
 const EDGE_SPEED := 650.0
 ## Onde a câmera para ao chegar pelo mapa (x no cenário); sem valor, o meio do cenário.
-const MAPA_CHEGADA := {"quarto": 720.0, "sede": 1060.0, "estabulo": 1000.0, "plantacao": 800.0, "casa_arvore": 950.0}
+const MAPA_CHEGADA := {"quarto": 720.0, "sede": 1060.0, "estabulo": 2000.0, "plantacao": 800.0, "casa_arvore": 950.0}
 const QUARTO_PORTA := Rect2(1640, 250, 170, 350)   # porta do quarto: leva à Sala
 
 var castle: CastleFront

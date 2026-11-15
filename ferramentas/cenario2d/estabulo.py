@@ -14,6 +14,7 @@ from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, nuvem,
 
 P = {}
 S = Soltos(P)
+DX = 1000   # largura do jardim da esquerda: o estábulo fica no meio do cenário (referência de 15/11/2026, noite)
 
 
 def quadro(peca, w, h):
@@ -45,6 +46,9 @@ def fundo():
               C["verde_claro"])
     s += path(f"M{div-40},{chao-10} Q2300,{chao-150} 2900,{chao-40} T{w},{chao-60} L{w},{chao} L{div-40},{chao} Z", "#a8dd8f")
     S.cerca(chao, 1840, w)          # a cerca começa depois da porteira: aberta, ela dá para o jardim
+    S.cerca(chao, -DX, 0)           # jardim da esquerda (x negativo: tudo anda DX para a direita no fim)
+    for x, y in [(-640, 868), (-545, 815), (-440, 768), (-325, 728), (-205, 695), (-95, 668)]:
+        S.comum("pedra_caminho", x - 50, y - 19)
     # o chão (palha e grama) é o do fundo 3D; caminho de pedras saindo da porteira para o jardim
     for x, y in [(1700, 650), (1745, 700), (1800, 752), (1870, 800), (1960, 850), (2060, 878)]:
         S.comum("pedra_caminho", x - 50, y - 19)
@@ -56,7 +60,6 @@ def fundo():
         pa += rr(x, 120, 30, chao - 120, 4, C["madeira_esc"])
     pa += rr(-5, 150, div + 5, 22, 3, C["madeira_esc"])           # viga
     S.add("parede_estabulo", pa, -8, 106, div + 12, chao - 100)
-    S.add("fechamento_telhado", path("M20,178 L750,82 L1480,178 Z", C["madeira"], 'stroke-width="3"'), 20, 82, 1460, 96)
     S.add("telhado_estabulo", path(f"M-5,135 L750,55 L{div+40},135 L{div+40},165 L750,85 L-5,165 Z", C["vermelho_rosa"], 'stroke-width="4"'),
           -10, 30, div + 56, 177)
     for i, x in enumerate(range(80, div - 40, 120)):
@@ -520,8 +523,14 @@ for _n, _w, _h in [("cesto_pendurado", 180, 250), ("ferradura", 115, 120), ("gan
                    ("vaso_flores", 66, 92), ("flor_pendurada_rosa", 44, 80), ("flor_pendurada_lilas", 44, 80), ("cascata", 240, 160)]:
     P[_n] = quadro(P[_n], _w, _h)
 
+P["maca"] = svg(44, 42, path("M22,12 l2,-9", extra='stroke-width="3"') + circ(22, 25, 15, "#ff5f6d", 'stroke-width="2.5"') +
+                ell(31, 8, 7, 4, C["verde"], 'stroke-width="1.5"'))
+P["cenoura"] = svg(36, 54, path("M18,16 l-9,-13 M18,16 l0,-15 M18,16 l9,-13", extra=f'stroke="{C["verde_esc"]}" stroke-width="5"') +
+                   path("M6,18 L30,18 L18,52 Z", C["laranja"], 'stroke-width="2.5"'))
+
 # Posição das peças na prévia e no jogo (canto de cima à esquerda, em pixels do jogo).
-W, H, CHAO = 3300, 900, 600
+# As posições abaixo são do arranjo antigo (estábulo colado à esquerda); no fim tudo anda DX para a direita.
+W, H, CHAO = 3300 + DX, 900, 600
 POS = [("fundo", 0, 0),
        # estábulo (parede)
        ("cesto_pendurado", 80, 200), ("ferradura", 330, 250), ("suporte_manta", 500, 260),
@@ -532,17 +541,21 @@ POS = [("fundo", 0, 0),
        ("cocho_feno", 50, 450), ("banheira_espuma", 830, 500), ("toalha", 1060, 560), ("shampoo", 820, 610),
        ("balde_agua", 1250, 590), ("tapete_coracao", 760, 712), ("caixote_frutas", 30, 650), ("escova_pelo", 260, 790),
        ("tigela_racao", 430, 770), ("tigela_agua", 610, 770), ("fardo", 1060, 720), ("fardo", 1275, 730), ("feno", 640, 640),
-       ("pente", 300, 860),
+       ("pente", 300, 860), ("maca", 300, 668), ("cenoura", 345, 690), ("maca", 520, 800),
        # jardim
        ("arvore", 1900, 60), ("porteira_fechada", 1540, 420), ("banco_tronco", 2560, 520),
        ("moita_flores", 2830, 510), ("moita_colhida", 3040, 590),
        ("laguinho_ondas", 2090, 610), ("cascata", 2700, 540), ("vitoria_regia", 2330, 740), ("vitoria_regia_flor", 2410, 720),
        ("touceira", 2060, 600), ("touceira", 2460, 540), ("touceira", 2930, 650), ("flores_lago", 1960, 690), ("flores_lago", 2230, 540),
        ("lanterna_jardim", 2135, 610), ("moita_flores", 2850, 750), ("pedra", 3150, 820), ("pedra", 1440, 850),
-       ("margarida", 1750, 760), ("@catarina", 1800, 880), ("@catarina", 640, 860)]
+       ("margarida", 1750, 760), ("@catarina", 1800, 880), ("@catarina", 640, 860),
+       # jardim da esquerda
+       ("flores_lago", -520, 548), ("touceira", -250, 560), ("moita_flores", -960, 700), ("pedra", -330, 830),
+       ("flores_lago", -820, 790), ("touceira", -700, 640), ("margarida", -480, 700), ("pedra", -900, 610)]
 POS[1:1] = S.pos
 POS.remove(("arvore", 1900, 60))
-POS.insert(1, ("arvore", 1900, 60))   # árvore atrás da cerca
+POS[1:1] = [("arvore", 1900, 60), ("arvore", -820, 60)]   # árvores atrás da cerca, uma de cada lado
+POS = [p if p[0] == "fundo" else (p[0], p[1] + DX) + tuple(p[2:]) for p in POS]
 
 # Como o cenário entra no protótipo (ver para_jogo.py).
 JOGO = {
@@ -557,15 +570,22 @@ JOGO = {
         "moita_1": {"estados": ["moita_colhida", "moita_flores"], "x": 2830, "y": 510},
         "moita_2": {"estados": ["moita_colhida", "moita_flores"], "x": 3040, "y": 590},
         "moita_3": {"estados": ["moita_colhida", "moita_flores"], "x": 2850, "y": 750},
-        "seta_sede": {"estados": ["seta_casa_e"], "x": 1840, "y": 462, "leva": "sede", "chegada": 1960},
+        "seta_sede": {"estados": ["seta_casa_e"], "x": -960, "y": 462, "leva": "sede", "chegada": -840},
         "seta_plantacao": {"estados": ["seta_cenoura_d"], "x": 2380, "y": 462, "leva": "plantacao", "chegada": 2440},
         "seta_pet_care": {"estados": ["seta_pata_d"], "x": 3160, "y": 462, "leva": "pet_care", "chegada": 3180},
     },
-    "extras": [("seta_casa_e", 1840, 462), ("seta_cenoura_d", 2380, 462), ("seta_pata_d", 3160, 462)],
-    "objetos": ["pente", "feno", "margarida", "shampoo", "pote_creme", "vaso_flores", "toalha", "escova_pelo"],
+    "extras": [("seta_casa_e", -960, 462), ("seta_cenoura_d", 2380, 462), ("seta_pata_d", 3160, 462)],
+    "objetos": ["maca", "cenoura", "pente", "feno", "margarida", "shampoo", "pote_creme", "vaso_flores", "toalha", "escova_pelo"],
     "lugares": [],
     "superficies": [[880, 1140, 334], [1070, 1260, 726], [1285, 1475, 736]],
 }
+for _it in JOGO["interativos"].values():
+    _it["x"] += DX
+    if "chegada" in _it:
+        _it["chegada"] += DX
+JOGO["extras"] = [(n, x + DX, y) for n, x, y in JOGO["extras"]]
+JOGO["superficies"] = [[a + DX, b + DX, y] for a, b, y in JOGO["superficies"]]
+P["fundo"] = quadro(P["fundo"], W, H)
 
 if __name__ == "__main__":
     raiz = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

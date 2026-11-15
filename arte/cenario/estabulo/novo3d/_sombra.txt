@@ -26,3 +26,5 @@ pente
 margarida
 ducha_ligada
 ducha_desligada
+maca
+cenoura

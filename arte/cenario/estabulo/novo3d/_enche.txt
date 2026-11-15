@@ -6,6 +6,7 @@ banheira_agua
 banheira_espuma
 caixote_frutas
 cascata
+cenoura
 cesto_pendurado
 cocho_cenouras
 cocho_feno
@@ -16,7 +17,6 @@ escova_pelo
 escova_pendurada
 espelho
 fardo
-fechamento_telhado
 feno
 ferradura
 flor_pendurada_lilas
@@ -29,6 +29,7 @@ laguinho_parado
 lanterna_acesa
 lanterna_apagada
 lanterna_jardim
+maca
 margarida
 moita_colhida
 moita_flores

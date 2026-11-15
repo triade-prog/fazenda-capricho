@@ -20,6 +20,7 @@ from limpar_3d import limpar  # noqa: E402
 
 N = os.path.join(RAIZ, "arte/cenario/estabulo/novo3d")
 ORIG = os.path.join(RAIZ, "arte/objetos3d/estabulo_originais/pacote_R01")   # pacote completo da Carol (R01)
+AVULSAS = os.path.join(RAIZ, "arte/objetos3d/estabulo_originais")
 PLACAS = os.path.join(RAIZ, "arte/cenario/placas/novo3d")
 
 
@@ -54,9 +55,13 @@ def vitoria_regia():
 def parede_telhado():
     parede = limpar(Image.open(os.path.join(ORIG, "parede_estabulo.png")))
     parede.resize((round(parede.height * 1512 / 500), parede.height), Image.LANCZOS).save(os.path.join(N, "parede_estabulo.png"))
-    limpar(Image.open(os.path.join(ORIG, "telhado_estabulo.png"))).save(os.path.join(N, "telhado_estabulo.png"))
-    oitao = limpar(Image.open(os.path.join(ORIG, "fechamento_telhado.png")))     # triângulo atrás do telhado (1460 × 96 no jogo)
-    oitao.resize((oitao.width, round(oitao.width * 96 / 1460)), Image.LANCZOS).save(os.path.join(N, "fechamento_telhado.png"))
+    # telhado rosa já com o frontão de madeira (peça nova de 15/11/2026, fora do pacote)
+    limpar(Image.open(os.path.join(AVULSAS, "telhado_com_frontao.png"))).save(os.path.join(N, "telhado_estabulo.png"))
+    for n in ("maca", "cenoura"):
+        limpar(Image.open(os.path.join(AVULSAS, n + ".png")), corte=120).save(os.path.join(N, n + ".png"))
+    velho = os.path.join(N, "fechamento_telhado.png")
+    if os.path.exists(velho):
+        os.remove(velho)
 
 
 def placas():
@@ -72,20 +77,32 @@ def placas():
     open(arq, "w", encoding="utf-8").write("\n".join(nomes) + "\n")
 
 
-def fundo(W=3300, H=900, chao=600):
+def fundo(W=4300, H=900, chao=600, esq=1000):
+    """Grama à esquerda, palha embaixo do estábulo (1460 px) e grama à direita, tudo da imagem de fundo da Carol."""
     im = Image.open(os.path.join(ORIG, "fundo.png")).convert("RGB")
     k = chao / 585                                     # a linha do horizonte da imagem fica no chão do jogo
     im = im.resize((round(im.width * k * H / 900), round(im.height * k)), Image.LANCZOS)
     im = im.crop((0, im.height - H, im.width, im.height))
     w = im.width
-    palha, divisa, grama = round(w * 0.42), round(w * 0.42), round(w * 0.62)
-    tela = Image.new("RGB", (W, H))
-    tela.paste(im.crop((0, 0, palha, H)).resize((1460, H), Image.LANCZOS), (0, 0))   # palha do estábulo
-    meio = im.crop((divisa, 0, w, H))
-    tela.paste(meio, (1460, 0))
-    x = 1460 + meio.width
+    divisa, grama = round(w * 0.42), round(w * 0.62)
+    palha = im.crop((0, 0, divisa, H))
+    borda = im.crop((divisa, 0, grama, H))             # onde a palha entra na grama
     resto = im.crop((grama, 0, w, H))
-    espelho = True
+    tela = Image.new("RGB", (W, H))
+    # esquerda: grama repetida (espelhando a cada vez) até a borda espelhada
+    x = esq - borda.width
+    tela.paste(borda.transpose(Image.FLIP_LEFT_RIGHT), (x, 0))
+    espelho = True                                     # espelho exato do lado direito, para não aparecer emenda
+    while x > 0:
+        pedaco = resto.transpose(Image.FLIP_LEFT_RIGHT) if espelho else resto
+        x -= pedaco.width
+        tela.paste(pedaco, (x, 0))
+        espelho = not espelho
+    tela.paste(palha.resize((1460, H), Image.LANCZOS), (esq, 0))
+    x = esq + 1460
+    tela.paste(borda, (x, 0))
+    x += borda.width
+    espelho = False
     while x < W:
         pedaco = resto.transpose(Image.FLIP_LEFT_RIGHT) if espelho else resto
         tela.paste(pedaco, (x, 0))
@@ -132,7 +149,7 @@ if __name__ == "__main__":
     chao = ["cocho_vazio", "cocho_feno", "cocho_cenouras", "caixote_frutas", "banheira_agua", "banheira_espuma", "balde_vazio",
             "balde_agua", "tigela_racao", "tigela_agua", "fardo", "feno", "porteira_fechada", "porteira_aberta", "arvore",
             "banco_tronco", "moita_flores", "moita_colhida", "pedra", "touceira", "flores_lago", "lanterna_jardim", "cascata",
-            "escova_pelo", "pente", "margarida", "ducha_ligada", "ducha_desligada"]
+            "escova_pelo", "pente", "margarida", "ducha_ligada", "ducha_desligada", "maca", "cenoura"]
     with open(os.path.join(N, "_sombra.txt"), "w", encoding="utf-8") as f:   # peças apoiadas no chão ganham sombrinha
         f.write("\n".join(chao) + "\n")
     print(len(nomes), "peças 3D em", N)
