@@ -14,6 +14,19 @@ from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, nuvem,
 
 P = {}
 S = Soltos(P)
+NOVO3D = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "arte/cenario/casa_arvore/novo3d")
+
+
+def esticar(peca, w, h):
+    """Mesmo desenho 2D num quadro de outro tamanho (para o quadro ter a proporção da peça 3D nova)."""
+    import re
+    peca = re.sub(r'width="[^"]+" height="[^"]+"', f'width="{w}" height="{h}" preserveAspectRatio="none"', peca, count=1)
+    return peca
+
+
+def bloco(w, h, cor, r=10):
+    """Quadro 2D simples de uma peça que só existe em 3D (a arte 3D ocupa o quadro todo)."""
+    return svg(w, h, rr(2, 2, w - 4, h - 4, min(r, w / 3, h / 3), cor, 'stroke-width="3"'))
 S2 = Soltos(P)
 
 # ---------------------------------------------------------------- C07 pátio
@@ -93,7 +106,30 @@ def arvore_casinha():
     return svg(w, h, s)
 
 
-P["arvore_casinha"] = arvore_casinha()
+P["arvore_casinha"] = arvore_casinha()  # antiga, inteira (não entra mais no jogo)
+
+# 15/11/2026: Carol mandou a casa na árvore em partes 3D (arte/cenario/casa_arvore/novo3d/).
+# Cada parte vira uma peça; o quadro de cada uma tem a proporção da peça 3D (ver CASA abaixo).
+PARTES = {  # nome: (x, y, w, h, cor do quadro 2D)
+    "copa": (495, 20, 905, 448, C["rosa_chiclete"]),
+    "tronco": (779, 380, 324, 225, C["madeira_esc"]),
+    "viga_esq": (745, 410, 144, 74, C["madeira"]),
+    "viga_dir": (995, 412, 144, 47, C["madeira"]),
+    "parede_casinha": (745, 179, 410, 201, C["creme"]),
+    "janela_casinha": (1018, 213, 90, 92, C["ceu"]),
+    "telhado": (715, 95, 470, 99, C["lilas"]),
+    "grade_varanda": (735, 322, 550, 61, C["madeira_clara"]),
+    "piso_varanda": (622, 376, 668, 50, C["madeira"]),
+    "pilar": (1300, 425, 23, 180, C["madeira"]),
+    "trepadeira": (1872, 295, 49, 300, C["rosa"]),
+    "balanco_corda": (0, 0, 10, 200, C["madeira_clara"]),
+    "balanco_prancha": (0, 0, 120, 22, C["rosa_chiclete"]),
+    "mesa_piquenique": (2200, 650, 300, 83, C["madeira"]),
+    "toalha": (2195, 650, 310, 45, C["rosa_claro"]),
+    "banco_piquenique": (2185, 712, 330, 65, C["madeira"]),
+}
+for _n, (_x, _y, _w, _h, _c) in PARTES.items():
+    P[_n] = bloco(_w, _h, _c)
 
 
 def grade_varanda():
@@ -138,8 +174,8 @@ def porta(aberta, de_dentro=False):
     return svg(w, h, s)
 
 
-P["porta_fechada"] = porta(False)
-P["porta_aberta"] = porta(True)
+P["porta_fechada"] = esticar(porta(False), 103, 200)
+P["porta_aberta"] = esticar(porta(True), 103, 200)
 
 
 def escada_madeira():
@@ -150,7 +186,7 @@ def escada_madeira():
     return svg(w, h, s)
 
 
-P["escada_madeira"] = escada_madeira()
+P["escada_madeira"] = esticar(escada_madeira(), 78, 270)
 
 
 def escada_corda():
@@ -165,7 +201,7 @@ def escada_corda():
     return svg(w, h, s)
 
 
-P["escada_corda"] = escada_corda()
+P["escada_corda"] = esticar(escada_corda(), 71, 245)
 
 
 def escorregador(arco_iris):
@@ -191,8 +227,8 @@ def escorregador(arco_iris):
     return svg(w, h, s)
 
 
-P["escorregador_rosa"] = escorregador(False)
-P["escorregador_arco_iris"] = escorregador(True)
+P["escorregador_rosa"] = esticar(escorregador(False), 480, 185)
+P["escorregador_arco_iris"] = esticar(escorregador(True), 480, 185)
 
 P["brilho"] = svg(40, 40, estrela(20, 20, 18, C["branco"], 4, 'stroke-width="2"') +
                   estrela(20, 20, 8, C["rosa_chiclete"], 4, 'stroke="none"'))
@@ -213,7 +249,7 @@ def balanco_estrutura():
     return svg(w, h, s)
 
 
-P["balanco_estrutura"] = balanco_estrutura()
+P["balanco_estrutura"] = esticar(balanco_estrutura(), 281, 380)
 
 
 def balanco_assento():
@@ -226,7 +262,7 @@ def balanco_assento():
     return svg(w, h, s)
 
 
-P["balanco_assento"] = balanco_assento()
+P["balanco_assento"] = esticar(balanco_assento(), 130, 295)
 
 
 def cacho(com):
@@ -246,6 +282,7 @@ P["cacho_colhido"] = cacho(False)
 P["frutinha"] = svg(30, 30, path("M15,3 L15,8", extra='stroke-width="2"') +
                     ell(20, 6, 6, 3.5, C["rosa"], 'stroke-width="1.5"') +
                     circ(15, 18, 10, C["rosa_forte"], 'stroke-width="2.5"') + circ(11, 14, 3, C["branco"], 'stroke="none"'))
+P["frutinha"] = esticar(P["frutinha"], 28, 36)
 
 
 def mesa_piquenique():
@@ -279,8 +316,8 @@ def cesto(cheio):
     return svg(w, h, s)
 
 
-P["cesto_vazio"] = cesto(False)
-P["cesto_cheio"] = cesto(True)
+P["cesto_vazio"] = esticar(cesto(False), 90, 88)
+P["cesto_cheio"] = esticar(cesto(True), 90, 88)
 
 
 def bola():
@@ -310,8 +347,8 @@ def placa(desenho):
     return svg(w, h, s)
 
 
-P["placa_casa"] = placa("casa")
-P["placa_cabana"] = placa("cabana")
+P["placa_casa"] = esticar(placa("casa"), 136, 160)
+P["placa_cabana"] = esticar(placa("cabana"), 108, 160)
 
 # ---------------------------------------------------------------- C08 dentro
 
@@ -527,9 +564,19 @@ P["passarinho_voando"] = passarinho(True)
 
 # Posição das peças do pátio (C07) na prévia e no jogo. O interior (C08) está em casa_arvore_dentro.py.
 W, H, CHAO = 2600, 900, 600
-POS = [("fundo_patio", 0, 0), ("arvore_casinha", 450, 0), ("cacho_com", 540, 150), ("cacho_colhido", 1320, 180), ("cacho_com", 900, 40),
-       ("porta_fechada", 750, 80), ("escada_madeira", 520, 380), ("escada_corda", 1140, 380), ("escorregador_rosa", 1272, 378), ("@catarina", 1010, 380),
-       ("grade_varanda", 625, 330), ("balanco_estrutura", 1860, 250), ("balanco_assento", 1945, 262), ("mesa_piquenique", 2190, 640), ("cesto_cheio", 2290, 770),
+def _parte(n, dx=None, dy=None):
+    x, y = PARTES[n][:2]
+    return (n, x if dx is None else dx, y if dy is None else dy)
+
+
+POS = [("fundo_patio", 0, 0),
+       _parte("copa"), ("cacho_com", 560, 170), ("cacho_colhido", 1310, 200), ("cacho_com", 545, 330),
+       _parte("tronco"), _parte("viga_esq"), _parte("viga_dir"), _parte("parede_casinha"), _parte("janela_casinha"),
+       ("porta_fechada", 798, 180), _parte("telhado"), _parte("grade_varanda"), _parte("piso_varanda"),
+       ("escada_madeira", 640, 335), ("escada_corda", 1105, 360), _parte("pilar"), ("pilar", 1385, 425),
+       ("escorregador_rosa", 1268, 392), ("@catarina", 1010, 380),
+       ("balanco_estrutura", 1870, 230), _parte("trepadeira"), ("trepadeira", 2100, 295), ("balanco_assento", 1945, 255),
+       _parte("mesa_piquenique"), _parte("toalha"), _parte("banco_piquenique"), ("cesto_cheio", 2290, 752),
        ("bola", 1700, 790), ("placa_casa", 40, 520), ("placa_cabana", 2460, 470), ("@catarina", 1550, 860), ("frutinha", 1600, 820)]
 POS[1:1] = S.pos
 POS_DENTRO = [("fundo_dentro", 0, 0), ("passarinho_pousado", 830, 100), ("porta_dentro_aberta", 1440, 340), ("cama", 60, 550), ("cozinha_desligada", 470, 460),
@@ -541,12 +588,12 @@ POS_DENTRO[1:1] = S2.pos
 # Como o pátio entra no protótipo (ver para_jogo.py).
 JOGO = {
     "interativos": {
-        "porta": {"estados": ["porta_fechada", "porta_aberta"], "x": 750, "y": 80, "leva": "casa_arvore_dentro", "chegada": 815},
-        "cacho_1": {"estados": ["cacho_colhido", "cacho_com"], "x": 540, "y": 150},
-        "cacho_2": {"estados": ["cacho_colhido", "cacho_com"], "x": 1320, "y": 180},
-        "cacho_3": {"estados": ["cacho_colhido", "cacho_com"], "x": 900, "y": 40},
-        "escorregador": {"estados": ["escorregador_rosa", "escorregador_arco_iris"], "x": 1272, "y": 378},
-        "cesto": {"estados": ["cesto_vazio", "cesto_cheio"], "x": 2290, "y": 770},
+        "porta": {"estados": ["porta_fechada", "porta_aberta"], "x": 798, "y": 180, "leva": "casa_arvore_dentro", "chegada": 850},
+        "cacho_1": {"estados": ["cacho_colhido", "cacho_com"], "x": 560, "y": 170},
+        "cacho_2": {"estados": ["cacho_colhido", "cacho_com"], "x": 1310, "y": 200},
+        "cacho_3": {"estados": ["cacho_colhido", "cacho_com"], "x": 545, "y": 330},
+        "escorregador": {"estados": ["escorregador_rosa", "escorregador_arco_iris"], "x": 1268, "y": 392},
+        "cesto": {"estados": ["cesto_vazio", "cesto_cheio"], "x": 2290, "y": 752},
         "seta_sede": {"estados": ["placa_casa"], "x": 40, "y": 520, "leva": "sede", "chegada": 110},
         "seta_cabana": {"estados": ["placa_cabana"], "x": 2460, "y": 470, "leva": "cabana", "chegada": 2520},
         "seta_casinha": {"estados": ["seta_cesta_d"], "x": 2040, "y": 640, "leva": "casinha", "chegada": 2100},
