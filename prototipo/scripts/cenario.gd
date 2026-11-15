@@ -411,7 +411,7 @@ func preparar_deco() -> void:
 			if em_cima or pendurada:
 				_presas[j] = true
 	# partes de móvel: a lista DECO_PARTES, peças que mudam de estado apoiadas num móvel
-	# (vai para o menor que as segura) e duas peças do mesmo tamanho no mesmo lugar
+	# (vai para o móvel vizinho na lista) e duas peças do mesmo tamanho no mesmo lugar
 	for j in range(1, pecas.size()):
 		if not pode_decorar(j):
 			continue
@@ -422,17 +422,21 @@ func preparar_deco() -> void:
 				_partes[j] = k
 			continue
 		var nome := str(pecas[j][0])
+		var voa := str(animacoes.get(nome, {}).get("tipo", "")) == "flutua"  # bichinho que voa é solto
 		var melhor := -1
 		for i in range(1, pecas.size()):
-			if i == j or not pode_decorar(i):
+			if i == j or not pode_decorar(i) or voa:
 				continue
 			if _rect_peca(i) == _rect_peca(j):
 				if i > j:
 					melhor = i
 					break
 				continue
+			# entre as peças que a seguram, fica com a vizinha na lista (o fogo vem logo depois da lareira,
+			# o vapor logo depois do fogão), e não com a parede ou o armário que também estão ali atrás
 			if (nome.begins_with("@") or so_se.has(nome)) and _em_cima(j, i):
-				if melhor < 0 or _rect_peca(i).get_area() < _rect_peca(melhor).get_area():
+				if melhor < 0 or absi(i - j) < absi(melhor - j) or \
+						(absi(i - j) == absi(melhor - j) and _rect_peca(i).get_area() < _rect_peca(melhor).get_area()):
 					melhor = i
 		if melhor >= 0:
 			_partes[j] = melhor
