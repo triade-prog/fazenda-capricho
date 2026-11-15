@@ -40,6 +40,8 @@ def fundo():
     s += path(f"M{div-40},{chao-10} Q2300,{chao-150} 2900,{chao-40} T{w},{chao-60} L{w},{chao} L{div-40},{chao} Z", "#a8dd8f")
     S.cerca(chao, div, w)
     S.grama(chao, w, div)
+    for x, y in [(1960, 850), (2060, 878), (1870, 872)]:
+        S.comum("pedra_caminho", x - 50, y - 19)
     # estábulo: parede de tábuas cor de mel, telhado e flores penduradas (peças)
     pa = rr(-5, 110, div + 5, chao - 110, 0, C["mel"], 'stroke-width="4"')
     for x in range(0, div, 50):
@@ -89,19 +91,21 @@ P["meia_porta_aberta"] = meia_porta(True)
 
 
 def cocho(conteudo):
-    w, h = 220, 100
-    s = rr(20, 70, 16, 28, 3, C["madeira_esc"]) + rr(184, 70, 16, 28, 3, C["madeira_esc"])
+    """Cocho alto de madeira com pés (como na imagem de referência da Carol)."""
+    w, h = 300, 210
+    s = rr(20, 90, 22, 118, 5, C["madeira_esc"]) + rr(258, 90, 22, 118, 5, C["madeira_esc"])
+    s += path("M30,190 L270,110 M30,110 L270,190", extra=f'stroke-width="10" stroke="{C["madeira_esc"]}"')
     if conteudo == "feno":
-        for i in range(16):
-            x = 18 + i * 12
-            s += path(f"M{x},44 q8,-22 16,0", "#f0d27a", 'stroke-width="2.5"')
+        for i in range(22):
+            x = 14 + i * 12
+            s += path(f"M{x},64 q8,-34 16,0", "#f0d27a", 'stroke-width="2.5"')
     elif conteudo == "cenouras":
-        for x, a in [(40, -30), (70, 20), (100, -15), (130, 25), (160, -20), (182, 10)]:
-            s += path(f"M{x-20},40 L{x+18},34 L{x-16},50 Z", C["laranja"], f'stroke-width="2.5" transform="rotate({a/3} {x} 42)"')
-            s += path(f"M{x-20},44 l-10,-10 M{x-20},44 l-12,2", extra=f'stroke="{C["verde_esc"]}" stroke-width="4"')
-    s += path("M6,36 L214,36 L198,82 L22,82 Z", C["madeira"], 'stroke-width="3.5"')
-    s += path("M14,52 L206,52 M18,67 L202,67", extra='stroke-width="1.5" opacity="0.5"')
-    s += coracao(110, 60, 9, C["rosa_forte"], 'stroke-width="2"')
+        for x, a in [(50, -30), (90, 20), (130, -15), (170, 25), (210, -20), (250, 10)]:
+            s += path(f"M{x-24},58 L{x+22},50 L{x-20},70 Z", C["laranja"], f'stroke-width="2.5" transform="rotate({a/3} {x} 60)"')
+            s += path(f"M{x-24},62 l-12,-12 M{x-24},62 l-14,2", extra=f'stroke="{C["verde_esc"]}" stroke-width="4"')
+    s += rr(4, 56, 292, 64, 8, C["madeira"], 'stroke-width="3.5"')
+    s += path("M10,78 L290,78 M10,98 L290,98", extra='stroke-width="1.5" opacity="0.5"')
+    s += coracao(150, 88, 16, C["rosa_forte"], 'stroke-width="2.5"')
     return svg(w, h, s)
 
 
@@ -347,36 +351,217 @@ P["moita_colhida"] = moita(False)
 P["margarida"] = svg(30, 60, path("M15,30 Q12,45 15,58", extra=f'stroke="{C["verde_esc"]}" stroke-width="3"') +
                      ell(9, 46, 5, 2.5, C["verde"], 'stroke-width="1.5" transform="rotate(-30 9 46)"') + margarida(15, 16, 9))
 
+
+# ---------------------------------------------------------------- peças novas (referência de 15/11/2026)
+
+
+def cesto_pendurado():
+    w, h = 200, 240
+    s = path("M100,4 L36,110 M100,4 L164,110", extra='stroke-width="3"') + circ(100, 8, 6, C["madeira_esc"], 'stroke-width="2"')
+    for x, y in [(30, 150), (56, 186), (150, 160), (170, 200), (100, 210)]:
+        s += path(f"M{x},110 Q{x-6},{y-30} {x},{y}", extra=f'stroke="{C["verde_esc"]}" stroke-width="4"')
+        s += ell(x, y, 8, 5, C["verde"], 'stroke-width="1.5"')
+    s += path("M24,110 L176,110 L160,160 Q100,176 40,160 Z", C["rosa"], 'stroke-width="3"')
+    s += path("M30,124 L170,124", extra='stroke-width="2" opacity="0.5"')
+    for x, y, c in [(52, 96, C["rosa"]), (84, 84, C["lilas"]), (116, 82, C["rosa"]), (148, 94, C["lilas"]), (100, 100, C["branco"])]:
+        s += ell(x, y + 10, 18, 10, C["verde"], 'stroke-width="2"') + flor(x, y, 10, c, C["amarelo"])
+    return svg(w, h, s)
+
+
+P["cesto_pendurado"] = cesto_pendurado()
+P["prateleira_banho"] = svg(280, 50, rr(4, 4, 272, 16, 5, C["madeira"], 'stroke-width="3"') +
+                            path("M30,20 L30,44 L56,20 M250,20 L250,44 L224,20", C["madeira_esc"], 'stroke-width="3"'))
+P["shampoo"] = svg(50, 80, rr(8, 26, 34, 52, 10, C["rosa_claro"]) + rr(18, 12, 14, 16, 3, C["branco"], 'stroke-width="2"') +
+                   path("M25,12 L25,4 L38,4", extra='stroke-width="3"') + coracao(25, 52, 8, C["rosa_forte"], 'stroke-width="1.5"'))
+P["pote_creme"] = svg(64, 46, rr(4, 4, 56, 14, 6, C["rosa"], 'stroke-width="2.5"') + rr(6, 16, 52, 28, 8, C["branco"], 'stroke-width="2.5"') +
+                      coracao(32, 30, 6, C["rosa_forte"], 'stroke-width="1.5"'))
+P["vaso_flores"] = svg(90, 90, "".join(ell(x, 44, 12, 7, C["verde"], 'stroke-width="2"') for x in (22, 68)) +
+                       "".join(flor(x, y, 10, c, C["amarelo"]) for x, y, c in [(26, 26, C["rosa"]), (46, 16, C["rosa_chiclete"]), (66, 28, C["rosa"]), (46, 36, C["lilas"])]) +
+                       path("M18,50 L72,50 L64,88 L26,88 Z", C["rosa_chiclete"], 'stroke-width="3"'))
+P["ganchos"] = svg(230, 40, rr(4, 6, 222, 22, 6, C["madeira"], 'stroke-width="3"') +
+                   "".join(circ(x, 30, 6, C["dourado"], 'stroke-width="2"') for x in (40, 115, 190)))
+P["pente_pendurado"] = svg(40, 110, circ(20, 8, 6, "none", 'stroke-width="3"') + rr(8, 14, 24, 94, 6, C["rosa_chiclete"], 'stroke-width="2.5"') +
+                           "".join(path(f"M8,{y} L-2,{y}", extra='stroke-width="0"') for y in ()) +
+                           "".join(rr(20, y, 16, 3, 1, C["rosa"], 'stroke-width="1"') for y in range(20, 104, 8)))
+P["escova_pendurada"] = svg(56, 120, circ(28, 8, 6, "none", 'stroke-width="3"') + rr(22, 14, 12, 50, 5, C["rosa_forte"], 'stroke-width="2.5"') +
+                            ell(28, 88, 24, 30, C["rosa"], 'stroke-width="2.5"') +
+                            "".join(circ(x, y, 3, C["branco"], 'stroke-width="1"') for x in (18, 28, 38) for y in (76, 88, 100)))
+P["espelho"] = svg(70, 120, circ(35, 8, 6, "none", 'stroke-width="3"') + rr(29, 80, 12, 36, 5, C["rosa_forte"], 'stroke-width="2.5"') +
+                   circ(35, 50, 32, C["rosa_chiclete"], 'stroke-width="3"') + circ(35, 50, 24, C["azul"], 'stroke-width="2"') +
+                   path("M24,40 Q34,30 44,36", extra=f'stroke="{C["branco"]}" stroke-width="3"'))
+
+
+def banheira(espuma):
+    w, h = 340, 190
+    s = ""
+    if espuma:
+        for x, y, r in [(60, 46, 26), (100, 34, 32), (150, 40, 30), (200, 30, 34), (250, 40, 30), (286, 50, 24), (130, 56, 22), (220, 56, 24)]:
+            s += circ(x, y + 14, r, C["branco"], 'stroke-width="2.5"')
+    s += path("M18,64 L322,64 L300,184 L40,184 Z", C["madeira"], 'stroke-width="3.5"')
+    for x in range(70, 300, 50):
+        s += path(f"M{x},66 L{x + (x - 170) * 0.07},182", extra='stroke-width="1.5" opacity="0.45"')
+    s += rr(16, 58, 308, 14, 6, C["madeira_esc"], 'stroke-width="3"')
+    s += rr(26, 96, 288, 10, 3, C["cinza"], 'stroke-width="2"') + rr(34, 156, 272, 10, 3, C["cinza"], 'stroke-width="2"')
+    if not espuma:
+        s += ell(170, 66, 146, 8, C["agua"], 'stroke-width="2"')
+    s += coracao(170, 130, 18, C["rosa_forte"], 'stroke-width="2.5"')
+    return svg(w, h, s)
+
+
+P["banheira_agua"] = banheira(False)
+P["banheira_espuma"] = banheira(True)
+
+
+def tigela(racao):
+    w, h = 160, 70
+    s = ell(80, 20, 70, 14, "#c98c56" if racao else C["agua"], 'stroke-width="3"')
+    if racao:
+        for x, y in [(50, 16), (66, 12), (82, 18), (98, 12), (112, 18), (74, 22), (90, 24)]:
+            s += circ(x, y, 6, "#9c6236", 'stroke-width="1.5"')
+    s += path("M10,20 Q80,40 150,20 L140,64 Q80,74 20,64 Z", C["rosa_chiclete"], 'stroke-width="3"')
+    s += coracao(80, 48, 9, C["branco"], 'stroke-width="2"')
+    return svg(w, h, s)
+
+
+P["tigela_racao"] = tigela(True)
+P["tigela_agua"] = tigela(False)
+P["escova_pelo"] = svg(110, 56, rr(6, 6, 98, 26, 10, C["rosa_chiclete"], 'stroke-width="2.5"') + coracao(55, 18, 6, C["branco"], 'stroke-width="1.5"') +
+                       "".join(rr(x, 30, 5, 22, 2, C["lilas"], 'stroke-width="1.2"') for x in range(14, 98, 8)))
+P["tapete_coracao"] = svg(300, 100, ell(150, 50, 144, 44, C["rosa_claro"], 'stroke-width="3"') + ell(150, 50, 126, 34, "none", 'stroke-width="2" stroke-dasharray="6 6"') +
+                          coracao(150, 50, 26, C["rosa_forte"], 'stroke-width="2.5"'))
+
+
+def caixote_frutas():
+    w, h = 260, 170
+    s = ""
+    for x, y in [(50, 50), (84, 40), (64, 70), (110, 60)]:
+        s += circ(x, y, 22, "#ff5f6d", 'stroke-width="2.5"') + path(f"M{x},{y-22} l3,-10", extra='stroke-width="2.5"')
+    for x, a in [(150, -20), (180, -10), (205, 5), (232, 15)]:
+        s += path(f"M{x-12},76 L{x},18 L{x+12},76 Z", C["laranja"], f'stroke-width="2.5" transform="rotate({a} {x} 76)"')
+        s += path(f"M{x},18 l-10,-16 M{x},18 l0,-18 M{x},18 l10,-16", extra=f'stroke="{C["verde_esc"]}" stroke-width="4" transform="rotate({a} {x} 76)"')
+    s += rr(6, 70, 248, 96, 8, C["madeira"], 'stroke-width="3.5"')
+    s += path("M10,102 L250,102 M10,134 L250,134", extra='stroke-width="2" opacity="0.5"')
+    s += coracao(140, 118, 18, C["rosa_forte"], 'stroke-width="2.5"')
+    return svg(w, h, s)
+
+
+P["caixote_frutas"] = caixote_frutas()
+
+
+def trepadeira_flores():
+    w, h = 70, 420
+    s = path("M35,4 Q10,60 35,110 T35,210 T35,310 T35,416", extra=f'stroke="{C["verde_esc"]}" stroke-width="5"')
+    for i, y in enumerate(range(30, 410, 42)):
+        x = 35 + (18 if i % 2 else -18)
+        s += ell(x, y + 14, 10, 6, C["verde"], 'stroke-width="2"') + flor(x, y, 10, C["rosa"] if i % 3 else C["rosa_chiclete"], C["amarelo"])
+    return svg(w, h, s)
+
+
+P["trepadeira_flores"] = trepadeira_flores()
+
+
+def pedra(cx, cy, rx, ry, cor="#d8c3a6"):
+    return ell(cx, cy, rx, ry, cor, 'stroke-width="2.5"') + ell(cx - rx * 0.25, cy - ry * 0.35, rx * 0.4, ry * 0.25, "#efe2cf", 'stroke="none"')
+
+
+def laguinho(ondas):
+    """Lago grande com pedras em volta (a cascata e as vitórias-régias são peças à parte)."""
+    w, h = 760, 230
+    rnd = random.Random(8)
+    s = ""
+    for i in range(26):
+        a = 2 * math.pi * i / 26
+        s += pedra(380 + 352 * math.cos(a), 118 + 98 * math.sin(a), rnd.uniform(26, 44), rnd.uniform(16, 24), rnd.choice(["#d8c3a6", "#cdb593", "#e3d2ba"]))
+    s += ell(380, 118, 330, 84, C["agua"], 'stroke-width="3"')
+    s += ell(300, 90, 80, 10, C["branco"], 'stroke="none" opacity="0.6"')
+    if ondas:
+        for rx, ry in [(40, 10), (80, 20), (120, 30)]:
+            s += ell(420, 130, rx, ry, "none", f'stroke="{C["branco"]}" stroke-width="3"')
+    return svg(w, h, s)
+
+
+P["laguinho_parado"] = laguinho(False)
+P["laguinho_ondas"] = laguinho(True)
+P["cascata"] = svg(230, 180, pedra(60, 70, 56, 40) + pedra(176, 64, 50, 44) + pedra(40, 140, 36, 26) + pedra(196, 140, 32, 28) +
+                   path("M80,46 L150,46 L162,170 L74,170 Z", C["agua"], 'stroke-width="3"') +
+                   "".join(path(f"M{x},50 Q{x+4},110 {x+2},168", extra=f'stroke="{C["branco"]}" stroke-width="3"') for x in (92, 112, 132, 148)))
+P["vitoria_regia"] = svg(120, 50, path("M60,25 L112,20 A54,20 0 1 1 112,30 Z", C["verde"], 'stroke-width="2.5"'))
+P["vitoria_regia_flor"] = svg(170, 96, path("M85,70 L160,64 A78,24 0 1 1 160,76 Z", C["verde"], 'stroke-width="2.5"') +
+                              "".join(ell(85 + dx, 46, 12, 26, C["rosa"], f'stroke-width="2" transform="rotate({dx*1.6} {85+dx} 66)"') for dx in (-24, -12, 0, 12, 24)) +
+                              circ(85, 54, 8, C["amarelo"], 'stroke-width="2"'))
+
+
+def lanterna_jardim():
+    w, h = 120, 160
+    s = circ(60, 84, 50, "#ffe08a", 'stroke="none" opacity="0.45"')
+    s += path("M14,30 L60,4 L106,30 Z", "#8a5a3c", 'stroke-width="3"') + rr(24, 30, 72, 10, 3, "#8a5a3c", 'stroke-width="2.5"')
+    s += rr(28, 40, 64, 90, 6, "#fff1b3", 'stroke-width="3"')
+    s += path("M60,40 L60,130 M28,84 L92,84", extra='stroke="#8a5a3c" stroke-width="5"')
+    s += rr(18, 130, 84, 26, 6, "#8a5a3c", 'stroke-width="3"')
+    return svg(w, h, s)
+
+
+P["lanterna_jardim"] = lanterna_jardim()
+
+
+def flores_lago():
+    w, h = 230, 110
+    s = "".join(ell(x, 82, 40, 26, C["verde_esc"], 'stroke-width="2.5"') for x in (50, 115, 180))
+    for x, y, c in [(40, 60, C["rosa"]), (76, 44, C["branco"]), (110, 58, C["rosa_chiclete"]), (146, 42, C["rosa"]), (186, 60, C["branco"]),
+                    (60, 84, C["rosa_chiclete"]), (130, 84, C["branco"]), (170, 86, C["rosa"])]:
+        s += flor(x, y, 12, c, C["amarelo"])
+    return svg(w, h, s)
+
+
+P["flores_lago"] = flores_lago()
+P["touceira"] = svg(110, 110, "".join(path(f"M55,108 Q{55 + dx * 0.4},60 {55 + dx},{10 + abs(dx) * 0.6}", C["verde"], 'stroke-width="2.5"') +
+                                      path(f"M55,108 Q{55 + dx * 0.4},60 {55 + dx},{10 + abs(dx) * 0.6} Q{55 + dx * 0.7},70 {62},108 Z", C["verde"], 'stroke-width="2.5"')
+                                      for dx in (-44, -22, 0, 22, 44)))
+P["pedra"] = svg(110, 60, pedra(55, 34, 50, 24, "#cfc6cf"))
+
 # Posição das peças na prévia e no jogo (canto de cima à esquerda, em pixels do jogo).
 W, H, CHAO = 3300, 900, 600
-POS = [("fundo", 0, 0), ("suporte_manta", 840, 300), ("ferradura", 1000, 290), ("toalha_gancho", 1100, 270), ("ducha_ligada", 1180, 190),
-       ("lanterna_acesa", 1330, 200), ("piso_banho", 1200, 780), ("meia_porta_fechada", 380, 530), ("cocho_cenouras", 820, 600), ("balde_agua", 1060, 610),
-       ("fardo", 850, 770), ("fardo", 1040, 770), ("feno", 700, 720), ("pente", 40, 830), ("arvore", 1950, 100),
-       ("porteira_fechada", 1560, 500), ("laguinho_ondas", 2500, 750), ("banco_tronco", 2600, 620), ("moita_flores", 2850, 690), ("moita_colhida", 3060, 690),
-       ("moita_flores", 2250, 820), ("margarida", 2200, 850), ("@catarina", 2180, 880), ("@catarina", 640, 860)]
+POS = [("fundo", 0, 0),
+       # estábulo (parede)
+       ("cesto_pendurado", 80, 200), ("ferradura", 330, 250), ("suporte_manta", 500, 260),
+       ("prateleira_banho", 870, 330), ("shampoo", 910, 250), ("pote_creme", 980, 284), ("vaso_flores", 1070, 240),
+       ("ganchos", 895, 380), ("pente_pendurado", 915, 410), ("escova_pendurada", 982, 410), ("espelho", 1050, 410),
+       ("ducha_ligada", 1170, 200), ("lanterna_acesa", 1395, 150), ("trepadeira_flores", 1440, 180),
+       # estábulo (chão)
+       ("cocho_feno", 50, 450), ("banheira_espuma", 900, 500), ("toalha", 1130, 560), ("shampoo", 890, 610),
+       ("balde_agua", 1330, 600), ("tapete_coracao", 850, 710), ("caixote_frutas", 30, 650), ("escova_pelo", 260, 790),
+       ("tigela_racao", 430, 770), ("tigela_agua", 610, 770), ("fardo", 1150, 720), ("fardo", 1330, 740), ("feno", 640, 640),
+       ("pente", 300, 860),
+       # jardim
+       ("arvore", 1900, 60), ("porteira_fechada", 1540, 420), ("banco_tronco", 2560, 520),
+       ("moita_flores", 2830, 510), ("moita_colhida", 3040, 590),
+       ("laguinho_ondas", 2120, 630), ("cascata", 2700, 570), ("vitoria_regia", 2300, 720), ("vitoria_regia_flor", 2390, 730),
+       ("touceira", 2060, 600), ("touceira", 2460, 540), ("touceira", 2930, 650), ("flores_lago", 1960, 690), ("flores_lago", 2240, 590),
+       ("lanterna_jardim", 2150, 610), ("moita_flores", 2850, 750), ("pedra", 3150, 820), ("pedra", 1440, 850),
+       ("margarida", 1750, 760), ("@catarina", 1800, 880), ("@catarina", 640, 860)]
 POS[1:1] = S.pos
 
 # Como o cenário entra no protótipo (ver para_jogo.py).
 JOGO = {
     "interativos": {
-        "meia_porta": {"estados": ["meia_porta_fechada", "meia_porta_aberta"], "x": 380, "y": 530},
-        "cocho": {"estados": ["cocho_vazio", "cocho_feno", "cocho_cenouras"], "x": 820, "y": 600},
-        "balde": {"estados": ["balde_vazio", "balde_agua"], "x": 1060, "y": 610},
-        "ducha": {"estados": ["ducha_desligada", "ducha_ligada"], "x": 1180, "y": 190},
-        "lanterna": {"estados": ["lanterna_apagada", "lanterna_acesa"], "x": 1330, "y": 200},
-        "porteira": {"estados": ["porteira_fechada", "porteira_aberta"], "x": 1560, "y": 500},
-        "laguinho": {"estados": ["laguinho_parado", "laguinho_ondas"], "x": 2500, "y": 750},
-        "moita_1": {"estados": ["moita_colhida", "moita_flores"], "x": 2850, "y": 690},
-        "moita_2": {"estados": ["moita_colhida", "moita_flores"], "x": 3060, "y": 690},
-        "moita_3": {"estados": ["moita_colhida", "moita_flores"], "x": 2250, "y": 820},
-        "seta_sede": {"estados": ["seta_casa_e"], "x": 1880, "y": 470, "leva": "sede", "chegada": 1960},
-        "seta_plantacao": {"estados": ["seta_cenoura_d"], "x": 2380, "y": 470, "leva": "plantacao", "chegada": 2440},
-        "seta_pet_care": {"estados": ["seta_pata_d"], "x": 3160, "y": 470, "leva": "pet_care", "chegada": 3180},
+        "cocho": {"estados": ["cocho_vazio", "cocho_feno", "cocho_cenouras"], "x": 50, "y": 450},
+        "banheira": {"estados": ["banheira_agua", "banheira_espuma"], "x": 900, "y": 500},
+        "balde": {"estados": ["balde_vazio", "balde_agua"], "x": 1330, "y": 600},
+        "ducha": {"estados": ["ducha_desligada", "ducha_ligada"], "x": 1170, "y": 200},
+        "lanterna": {"estados": ["lanterna_apagada", "lanterna_acesa"], "x": 1395, "y": 150},
+        "porteira": {"estados": ["porteira_fechada", "porteira_aberta"], "x": 1540, "y": 420},
+        "laguinho": {"estados": ["laguinho_parado", "laguinho_ondas"], "x": 2120, "y": 630},
+        "moita_1": {"estados": ["moita_colhida", "moita_flores"], "x": 2830, "y": 510},
+        "moita_2": {"estados": ["moita_colhida", "moita_flores"], "x": 3040, "y": 590},
+        "moita_3": {"estados": ["moita_colhida", "moita_flores"], "x": 2850, "y": 750},
+        "seta_sede": {"estados": ["seta_casa_e"], "x": 1840, "y": 400, "leva": "sede", "chegada": 1960},
+        "seta_plantacao": {"estados": ["seta_cenoura_d"], "x": 2380, "y": 400, "leva": "plantacao", "chegada": 2440},
+        "seta_pet_care": {"estados": ["seta_pata_d"], "x": 3160, "y": 400, "leva": "pet_care", "chegada": 3180},
     },
-    "extras": [("seta_casa_e", 1880, 470), ("seta_cenoura_d", 2380, 470), ("seta_pata_d", 3160, 470)],
-    "objetos": ["pente", "feno", "margarida"],
+    "extras": [("seta_casa_e", 1840, 400), ("seta_cenoura_d", 2380, 400), ("seta_pata_d", 3160, 400)],
+    "objetos": ["pente", "feno", "margarida", "shampoo", "pote_creme", "vaso_flores", "toalha", "escova_pelo"],
     "lugares": [],
-    "superficies": [[860, 1010, 775], [1050, 1200, 775]],
+    "superficies": [[880, 1140, 334], [1160, 1320, 726], [1340, 1500, 746]],
 }
 
 if __name__ == "__main__":

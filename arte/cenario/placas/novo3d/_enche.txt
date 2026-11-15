@@ -1,1 +1,3 @@
 seta_cesta_d
+seta_ferradura_d
+seta_ferradura_e

@@ -95,3 +95,14 @@ Suba em `arte/cenario/estabulo/3d/` com nomes simples: `fundo.png` (ou `fundo_1.
 `porteira_aberta.png`, `arvore.png`, `laguinho_parado.png`, `laguinho_ondas.png`, `banco_tronco.png`,
 `moita_flores.png`, `moita_colhida.png`, `margarida.png`. Avise quando subir: eu monto o cenário no jogo e
 confiro se a Lumi cabe na baia, se o banho funciona e se a porteira abre no lugar certo.
+
+---
+
+## Atualização 15/11/2026: novo arranjo seguindo as imagens de referência da Carol
+
+Saíram a meia-porta e o piso de banho. Entraram (2D provisório, aguardando 3D; todas no pacote
+`arte/para_gerar_3d/por_cenario/estabulo.zip`): cesto_pendurado, prateleira_banho, shampoo, pote_creme,
+vaso_flores, ganchos, pente_pendurado, escova_pendurada, espelho, banheira_agua · banheira_espuma,
+tigela_racao, tigela_agua, escova_pelo, tapete_coracao, caixote_frutas, trepadeira_flores, cascata,
+vitoria_regia, vitoria_regia_flor, lanterna_jardim, flores_lago, touceira, pedra. O cocho virou alto, com pés
+(300 × 210), e o laguinho virou um lago grande com pedras (760 × 230).
