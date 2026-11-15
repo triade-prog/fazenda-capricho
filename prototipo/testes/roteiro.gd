@@ -36,6 +36,15 @@ func _roteiro() -> void:
 
 	await _arrasta(Vector2(480, 660), Vector2(720, 560))
 	_confere(cat.held_item != null and cat.held_item.kind == "pelucia", "Catarina segura a pelúcia")
+	var pel_t: Toy = cat.held_item
+	main._start_drag(pel_t, pel_t.global_position)
+	await get_tree().process_frame
+	_confere(pel_t.art.scale == pel_t.base_art_scale, "pegar um objeto não muda o tamanho dele")
+	main._drop(pel_t, cat.global_position + Vector2(0, -150))
+	main.dragging = false
+	main.drag_toy = null
+	pel_t.lifted = false
+	await _espera(0.4)
 	await _foto("02_segura_pelucia")
 
 	var x0: float = main.cam.position.x
@@ -545,6 +554,30 @@ func _decorar() -> void:
 	await _leva(cat.global_position + Vector2(0, -150), cat.global_position + Vector2(-300, -150))
 	_confere(cat.slot == slot_sofa or cat.global_position.distance_to(cat1) < 1.0 or not main.dragging, "no modo Decorar não se pega personagem")
 
+	# uma peça solta em cima de outra não gruda: dá para pegar e levar embora de novo
+	var i_abajur := sala.indice_da_chave("@abajur#0")
+	var sofa_r: Rect2 = sala._rect_peca(i_sofa)
+	var ab0: Rect2 = sala._rect_peca(i_abajur)
+	var pega_ab := ab0.position + Vector2(ab0.size.x / 2.0, 12.0)   # o alto do abajur (o resto pode estar atrás do sofá)
+	await _leva(pega_ab, pega_ab + Vector2(sofa_r.get_center().x - ab0.get_center().x, sofa_r.position.y + 60.0 - ab0.position.y))
+	_confere(sala._rect_peca(i_abajur).intersects(sofa_r), "o abajur foi parar em cima do sofá")
+	var sofa_antes: Vector2 = sala._rect_peca(i_sofa).position
+	var ab1: Rect2 = sala._rect_peca(i_abajur)
+	await _leva(ab1.get_center(), ab1.get_center() + Vector2(0, 180))
+	_confere(sala._rect_peca(i_sofa).position == sofa_antes and sala._rect_peca(i_abajur).position.distance_to(ab1.position + Vector2(0, 180)) < 2.0,
+		"pegar o abajur de novo leva só o abajur (não gruda no sofá)")
+	_confere(sala.ordem_desenho().find(i_abajur) > sala.ordem_desenho().find(i_sofa), "o abajur, mais para a frente, fica desenhado na frente do sofá")
+	# um móvel solto na frente de um enfeite mais para o fundo não leva o enfeite junto
+	var i_cesto := sala.indice_da_chave("@cesto#0")
+	var ce: Rect2 = sala._rect_peca(i_cesto)
+	var sofa2: Rect2 = sala._rect_peca(i_sofa)
+	await _leva(sofa2.position + Vector2(30, 60), ce.get_center() + Vector2(30 - sofa2.size.x / 2.0, 100 - sofa2.size.y / 2.0))
+	_confere(sala.ordem_desenho().find(i_sofa) > sala.ordem_desenho().find(i_cesto), "o sofá solto mais para a frente fica na frente do cesto")
+	var ce_pos: Vector2 = sala._rect_peca(i_cesto).position
+	var sofa3: Rect2 = sala._rect_peca(i_sofa)
+	await _leva(sofa3.position + Vector2(30, 60), sofa3.position + Vector2(530, 60))
+	_confere(sala._rect_peca(i_cesto).position == ce_pos, "tirar o sofá de lá deixa o cesto no lugar")
+
 	dc.botao.pressed.emit()
 	await _espera(0.2)
 	_confere(not dc.ligado and not sala.decorando, "o certinho verde sai do modo Decorar")
@@ -552,7 +585,7 @@ func _decorar() -> void:
 	var s_sala: Dictionary = salvo["cenarios"]["sala"] if salvo is Dictionary and salvo["cenarios"].has("sala") else {}
 	_confere(s_sala.has("mesa_centro#0") and s_sala.has("vaso_flores#2") and s_sala.has("sofa#0") and s_sala.has("@fogo#0"),
 		"a arrumação fica guardada no aparelho")
-	_confere(absf(float(s_sala.get("sofa#0", [0, 0])[1]) - ds.y) < 1.0, "guarda o lugar certo do sofá")
+	_confere(absf(float(s_sala.get("sofa#0", [0, 0])[1]) - sala.deco[i_sofa].y) < 1.0, "guarda o lugar certo do sofá")
 
 	# o que foi guardado volta quando o jogo abre de novo (um segundo jogo, aberto do zero)
 	var main2: Node2D = load("res://main.tscn").instantiate()
@@ -564,6 +597,7 @@ func _decorar() -> void:
 		and sala2._rect_peca(i_mesa).position.distance_to(sala._rect_peca(i_mesa).position) < 1.0
 		and sala2.rect_de("fogo").position.distance_to(sala.rect_de("fogo").position) < 1.0,
 		"ao abrir o jogo de novo, as peças voltam para onde ficaram")
+	_confere(sala2.ordem_desenho() == sala.ordem_desenho(), "ao abrir de novo, quem está na frente continua na frente")
 	main2.queue_free()
 	await get_tree().process_frame
 	main._leave_slot(cat)

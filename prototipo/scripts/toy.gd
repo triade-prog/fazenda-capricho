@@ -201,9 +201,12 @@ func _process(delta: float) -> void:
 	queue_redraw()
 	_advance_anim(delta)
 	_t += delta * _breath_speed
-	var lift := 1.08 if lifted else 1.0
-	var b := sin(_t) * 0.012
-	art.scale = base_art_scale * squash * Vector2(lift * (1.0 - b * 0.5), lift * (1.0 + b))
+	# Tamanho sempre fixo, na escala do cenário (pedido da Carol): pegar, soltar, comer ou aparecer
+	# não aumentam nem encolhem a figura. As animações que "encolhem" (comer, sumir, aparecer)
+	# viram um esmaecer; as de esticar/amassar ficam só no tempo, sem mudar o tamanho.
+	art.scale = base_art_scale
+	var menor := minf(absf(squash.x), absf(squash.y))
+	art.modulate.a = clampf(menor / 0.6, 0.0, 1.0)
 	if holder != null:
 		# acompanha a mão (ou o colo) e o giro de quem segura: deitada, o objeto deita junto
 		global_position = holder.to_global(Vector2(holder.hand_offset.x * holder._facing(),

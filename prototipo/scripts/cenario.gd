@@ -76,7 +76,7 @@ func _textura(nome: String) -> Texture2D:
 
 
 func _draw() -> void:
-	for i in pecas.size():
+	for i in ordem_desenho():
 		var p: Array = pecas[i]
 		var chave := str(p[0])
 		var nome := chave
@@ -189,8 +189,8 @@ func _rect_peca(i: int) -> Rect2:
 ## Peça parada (enfeite) que está no ponto: a de cima. -1 se não há (o fundo não conta).
 func peca_em(p: Vector2) -> int:
 	var achou := -1
-	for i in range(1, pecas.size()):
-		if str(pecas[i][0]).begins_with("@") or not _rect_peca(i).has_point(p) or not _aparece(str(pecas[i][0])):
+	for i in ordem_desenho():
+		if i == 0 or str(pecas[i][0]).begins_with("@") or not _rect_peca(i).has_point(p) or not _aparece(str(pecas[i][0])):
 			continue
 		# só enfeites pequenos balançam (um móvel grande balançando deixaria para trás o que está em cima dele)
 		if eh_movel(i) or (float(pecas[i][3]) <= 330.0 and float(pecas[i][4]) <= 300.0):
@@ -289,6 +289,15 @@ const DECO_MAX := Vector2(700.0, 560.0)
 const DECO_PARTES := {"pet_care": {"bolha": "@banheira"}, "cabana": {"@lanterna": "@cabana"}}
 
 var _presas := {}                 # peças grudadas numa peça fixa (escada e escorregador da casa na árvore)
+var _partes := {}                 # parte de um móvel -> o móvel (fogo -> lareira); decidido uma vez, no lugar original
+var ordem: Array = []             # ordem de desenho (índices); muda quando uma peça é solta na frente de outra
+var apoio := {}                   # peça -> peça em que ela foi posta (vaso -> mesa); só muda quando ela é solta
+
+
+func ordem_desenho() -> Array:
+	if ordem.size() != pecas.size():
+		ordem = range(pecas.size())
+	return ordem
 
 
 ## Peça que pode mudar de lugar no modo Decorar.
@@ -311,18 +320,25 @@ func _solta(i: int) -> bool:
 ## o cobertor da cama, a torneira da pia), quem vai é o móvel inteiro. -1 se não há.
 func peca_deco_em(p: Vector2) -> int:
 	var achou := -1
-	for i in range(1, pecas.size()):
-		if pode_decorar(i) and _aparece(str(pecas[i][0])) and _rect_peca(i).has_point(p):
+	for i in ordem_desenho():
+		if i > 0 and pode_decorar(i) and _aparece(str(pecas[i][0])) and _rect_peca(i).has_point(p):
 			achou = i
-	while achou >= 0 and eh_parte(achou):
+	var voltas := 0
+	while achou >= 0 and eh_parte(achou) and voltas < 8:
 		achou = _pai(achou)
+		voltas += 1
 	return achou
 
 
-## Parte de um móvel: peça que muda de estado (ou só aparece num estado) apoiada em outra peça.
+## Parte de um móvel (o fogo da lareira, a torneira da pia, o lado de dentro da casinha): decidido
+## uma vez, com tudo no lugar original. Uma peça solta em cima de outra nunca vira parte dela,
+## então sempre dá para separar de novo.
 func eh_parte(i: int) -> bool:
-	var nome := str(pecas[i][0])
-	return (nome.begins_with("@") or so_se.has(nome) or _dono_fixo(i) != "") and _pai(i) >= 0
+	return _partes.has(i)
+
+
+func _pai(i: int) -> int:
+	return int(_partes.get(i, -1))
 
 
 ## Nome do móvel de que a peça i é parte pela lista DECO_PARTES ("" se não está na lista).
@@ -330,36 +346,40 @@ func _dono_fixo(i: int) -> String:
 	return str(DECO_PARTES.get(id, {}).get(str(pecas[i][0]), ""))
 
 
-## A menor peça que leva a peça i em cima dela (-1 se nenhuma).
-func _pai(i: int) -> int:
-	var dono := _dono_fixo(i)
-	if dono != "":
-		return indice_da_chave(dono + "#0")
+## true se a peça j está apoiada (ou pendurada) na peça i: é menor e o pé fica dentro dela, acima da base.
+## folga: quanto da base da peça i (fração da altura) não conta como "em cima" (o que está
+## rente à base está na frente dela, no chão, e não em cima).
+func _em_cima(j: int, i: int, folga := 0.0) -> bool:
+	var r := _rect_peca(i)
+	var rj := _rect_peca(j)
+	var pe := Vector2(rj.get_center().x, rj.end.y)
+	return rj.get_area() < r.get_area() and r.has_point(pe) and pe.y <= r.end.y - maxf(1.0, folga * r.size.y)
+
+
+## Em que peça a peça j está apoiada agora (a menor que a segura, desenhada atrás dela). -1 se nenhuma.
+func _achar_apoio(j: int, fora := []) -> int:
 	var melhor := -1
-	for j in range(1, pecas.size()):
-		if j != i and pode_decorar(j) and i in carga(j):
-			if melhor < 0 or _rect_peca(j).get_area() < _rect_peca(melhor).get_area():
-				melhor = j
+	var pos_j := _pos_ordem(j)
+	for i in range(1, pecas.size()):
+		if i == j or i in fora or not pode_decorar(i) or _partes.has(i) or _pos_ordem(i) > pos_j:
+			continue
+		if _em_cima(j, i, 0.12) and (melhor < 0 or _rect_peca(i).get_area() < _rect_peca(melhor).get_area()):
+			melhor = i
 	return melhor
 
 
-## O que está em cima da peça i e vai junto com ela (enfeite na estante, vaso na mesa, fogo na lareira).
+func _pos_ordem(i: int) -> int:
+	return ordem_desenho().find(i)
+
+
+## O que vai junto com a peça i: as partes dela e o que está em cima dela, desenhado na frente
+## (enfeite na estante, vaso na mesa). O que ficou escondido atrás não vai.
 func carga(i: int) -> Array:
-	var r := _rect_peca(i)
 	var leva := []
 	for j in range(1, pecas.size()):
 		if j == i or not pode_decorar(j):
 			continue
-		var dono := _dono_fixo(j)
-		if dono != "":
-			if dono == str(pecas[i][0]):
-				leva.append(j)
-			continue
-		var rj := _rect_peca(j)
-		var pe := Vector2(rj.get_center().x, rj.end.y)
-		# está em cima (ou pendurado) se é menor e o pé fica dentro da peça, acima da base dela;
-		# duas peças do mesmo tamanho no mesmo lugar (a casinha e o lado de dentro dela) andam juntas
-		if (rj.get_area() < r.get_area() and r.has_point(pe) and pe.y <= r.end.y - 1.0) or rj == r:
+		if int(_partes.get(j, -1)) == i or (not _partes.has(j) and int(apoio.get(j, -1)) == i):
 			leva.append(j)
 	return leva
 
@@ -370,6 +390,8 @@ func preparar_deco() -> void:
 	_lugar_dono.clear()
 	_sup_dono.clear()
 	_presas.clear()
+	_partes.clear()
+	ordem = range(pecas.size())
 	# o que está grudado numa peça grande que não muda de lugar (a árvore da casinha) também fica
 	for k in range(1, pecas.size()):
 		if _solta(k):
@@ -388,6 +410,39 @@ func preparar_deco() -> void:
 			var pendurada := (rk.has_point(rj.position) or rk.has_point(Vector2(rj.end.x, rj.position.y)))
 			if em_cima or pendurada:
 				_presas[j] = true
+	# partes de móvel: a lista DECO_PARTES, peças que mudam de estado apoiadas num móvel
+	# (vai para o menor que as segura) e duas peças do mesmo tamanho no mesmo lugar
+	for j in range(1, pecas.size()):
+		if not pode_decorar(j):
+			continue
+		var dono := _dono_fixo(j)
+		if dono != "":
+			var k := indice_da_chave(dono + "#0")
+			if k >= 0:
+				_partes[j] = k
+			continue
+		var nome := str(pecas[j][0])
+		var melhor := -1
+		for i in range(1, pecas.size()):
+			if i == j or not pode_decorar(i):
+				continue
+			if _rect_peca(i) == _rect_peca(j):
+				if i > j:
+					melhor = i
+					break
+				continue
+			if (nome.begins_with("@") or so_se.has(nome)) and _em_cima(j, i):
+				if melhor < 0 or _rect_peca(i).get_area() < _rect_peca(melhor).get_area():
+					melhor = i
+		if melhor >= 0:
+			_partes[j] = melhor
+	# o que está em cima do quê no começo (enfeites na estante, vaso na mesa, mesa no tapete)
+	apoio.clear()
+	for j in range(1, pecas.size()):
+		if pode_decorar(j) and not _partes.has(j):
+			var k := _achar_apoio(j)
+			if k >= 0:
+				apoio[j] = k
 	for k in lugares.size():
 		var a: Array = lugares[k]["area"]
 		var ra := Rect2(a[0], a[1], a[2], a[3])
@@ -483,6 +538,125 @@ func arrumacao() -> Dictionary:
 	return r
 
 
+## A peça solta (com o que vai junto) entra na ordem de desenho no lugar certo: na frente do que
+## ela cobre e está mais para o fundo da sala (pé mais alto) ou que a segura (mesa sob o vaso),
+## e atrás do que está mais para a frente. Tapetes ficam sempre por baixo.
+func reordenar(grupo: Array) -> void:
+	var lead := int(grupo[0])
+	var o := ordem_desenho().duplicate()
+	var bloco := []
+	for i in o:
+		if i in grupo:
+			bloco.append(i)
+	for i in bloco:
+		o.erase(i)
+	var r := _rect_peca(lead)
+	var pe := r.end.y
+	# onde a peça foi posta: a menor peça (fora do grupo) em que ela ficou em cima
+	var novo := -1
+	for i in o:
+		if i == 0 or not pode_decorar(i) or _partes.has(i):
+			continue
+		if _em_cima(lead, i, 0.12) and (novo < 0 or _rect_peca(i).get_area() < _rect_peca(novo).get_area()):
+			novo = i
+	if novo >= 0:
+		apoio[lead] = novo
+	else:
+		apoio.erase(lead)
+	var p0 := ordem_desenho().find(bloco[0])
+	for i in ordem_desenho().slice(0, p0):
+		if i in bloco:
+			p0 -= 1
+	var antes := o.size()           # e antes da primeira que precisa ficar na frente
+	var depois := 0                 # o bloco entra logo depois da última peça que precisa ficar atrás
+	for k in o.size():
+		var j := int(o[k])
+		if _de_fundo(j):
+			depois = maxi(depois, k + 1)
+			continue
+		var rj := _rect_peca(j)
+		if not rj.intersects(r):
+			continue
+		var atras := _chao(j) or j == novo or (rj.end.y <= pe and int(apoio.get(j, -1)) != lead)
+		if _chao(lead) and not _chao(j):
+			atras = false
+		if atras:
+			depois = maxi(depois, k + 1)
+		else:
+			antes = mini(antes, k)
+	# sem conflito, fica onde estava; senão, vai para logo depois do que tem que ficar atrás
+	depois = clampi(p0, depois, maxi(depois, antes))
+	if _chao(lead):
+		# tapete: logo depois do fundo e dos outros tapetes, por baixo de tudo
+		depois = 0
+		while depois < o.size() and (_de_fundo(int(o[depois])) or _chao(int(o[depois]))):
+			depois += 1
+	for k in bloco.size():
+		o.insert(depois + k, bloco[k])
+	ordem = o
+	queue_redraw()
+
+
+## Fundo e peças enormes que não mudam de lugar (chão, gramado, cerca comprida): sempre por trás.
+func _de_fundo(i: int) -> bool:
+	if i == 0:
+		return true
+	return not _solta(i) and (float(pecas[i][3]) > DECO_MAX.x or float(pecas[i][4]) > DECO_MAX.y)
+
+
+## Peças rentes ao chão, que ficam sempre por baixo das outras.
+func _chao(i: int) -> bool:
+	var nome := str(pecas[i][0])
+	return nome.begins_with("tapete") or nome.begins_with("piso")
+
+
+## Ordem de desenho para guardar (só quando mudou).
+func ordem_guardar() -> Array:
+	var o := ordem_desenho()
+	var mudou := false
+	for k in o.size():
+		mudou = mudou or int(o[k]) != k
+	var r := []
+	if mudou:
+		for i in o:
+			r.append(chave_peca(int(i)))
+	return r
+
+
+## Apoios para guardar: {peça: peça em que ela está}.
+func apoios_guardar() -> Dictionary:
+	var r := {}
+	for j in apoio:
+		r[chave_peca(int(j))] = chave_peca(int(apoio[j]))
+	return r
+
+
+func usar_apoios(d: Dictionary) -> void:
+	apoio.clear()
+	for ch in d:
+		var j := indice_da_chave(str(ch))
+		var i := indice_da_chave(str(d[ch]))
+		if j >= 0 and i >= 0 and j != i and not _partes.has(j):
+			apoio[j] = i
+
+
+## Volta uma ordem guardada; peças novas (que não estavam na lista) entram logo depois da anterior.
+func usar_ordem(chaves: Array) -> void:
+	var o := []
+	for ch in chaves:
+		var i := indice_da_chave(str(ch))
+		if i >= 0 and not i in o:
+			o.append(i)
+	if not 0 in o:
+		o.push_front(0)
+	for i in pecas.size():
+		if not i in o:
+			var k := o.find(i - 1)
+			o.insert(k + 1 if k >= 0 else o.size(), i)
+	ordem = o
+	queue_redraw()
+
+
 func indice_da_chave(chave: String) -> int:
 	for i in pecas.size():
 		if chave_peca(i) == chave:
@@ -493,7 +667,7 @@ func indice_da_chave(chave: String) -> int:
 ## Contorno tracejado nas peças que mudam de lugar; a que está sendo levada fica dourada.
 func _contornos() -> void:
 	for i in range(1, pecas.size()):
-		if not pode_decorar(i) or eh_parte(i) or not _aparece(str(pecas[i][0])):
+		if i == 0 or not pode_decorar(i) or eh_parte(i) or not _aparece(str(pecas[i][0])):
 			continue
 		var r := _rect_peca(i).grow(4.0)
 		if i == deco_ativa:

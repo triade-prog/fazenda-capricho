@@ -150,6 +150,7 @@ func soltar() -> void:
 	c.deco_ativa = -1
 	c.queue_redraw()
 	if r.position.distance_to(_antes) > 2.0:
+		c.reordenar(_grupo)
 		main._sparkle(Vector2(r.get_center().x, r.end.y - 10.0), 4)
 		main._log("decorou: %s foi para (%d, %d)" % [c.chave_peca(i), r.position.x, r.position.y])
 		_cen = null
@@ -251,14 +252,21 @@ func _peca_movida(i: int, d: Vector2, c: Cenario) -> void:
 
 func _salvar() -> void:
 	var tudo := {}
+	var ordens := {}
+	var apoios := {}
 	for id in main.cenarios:
 		if main.cenarios[id] is Cenario:
 			var a := (main.cenarios[id] as Cenario).arrumacao()
 			if not a.is_empty():
 				tudo[id] = a
+			var o := (main.cenarios[id] as Cenario).ordem_guardar()
+			if not o.is_empty():
+				ordens[id] = o
+			if not o.is_empty() or not a.is_empty():
+				apoios[id] = (main.cenarios[id] as Cenario).apoios_guardar()
 	var f := FileAccess.open(arquivo, FileAccess.WRITE)
 	if f:
-		f.store_string(JSON.stringify({"versao": 1, "cenarios": tudo}))
+		f.store_string(JSON.stringify({"versao": 2, "cenarios": tudo, "ordens": ordens, "apoios": apoios}))
 
 
 func _carregar() -> void:
@@ -277,3 +285,11 @@ func _carregar() -> void:
 			var v: Array = cens[id][chave]
 			if i >= 0 and c.pode_decorar(i) and v.size() == 2:
 				_mover_grupo(c, [i], Vector2(float(v[0]), float(v[1])))
+	var ordens: Dictionary = (d as Dictionary).get("ordens", {})
+	for id in ordens:
+		if main.cenarios.get(id) is Cenario:
+			(main.cenarios[id] as Cenario).usar_ordem(ordens[id])
+	var apoios: Dictionary = (d as Dictionary).get("apoios", {})
+	for id in apoios:
+		if main.cenarios.get(id) is Cenario:
+			(main.cenarios[id] as Cenario).usar_apoios(apoios[id])
