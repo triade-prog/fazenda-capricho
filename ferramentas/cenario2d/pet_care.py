@@ -8,7 +8,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, gerar_cenario, textos  # noqa: E402
-from moveis import plaquinha, planta_vaso, ceu_morros, cerca, grama_fundo, arvore_simples  # noqa: E402
+from moveis import Soltos, plaquinha, planta_vaso, ceu_morros, cerca, grama_fundo, arvore_simples  # noqa: E402
 
 W, H, CHAO = 2600, 900, 600
 P = {}
@@ -21,33 +21,40 @@ def pata(cx, cy, k, cor):
     return s
 
 
+S = Soltos(P)
+
+
 def fundo():
     rnd = random.Random(31)
+    S.limpar()
     s, defs = ceu_morros(W, H, CHAO, rnd)
-    s += f'<g transform="translate(60,170)">{arvore_simples(380, 440, C["verde"], C["rosa"], 2)}</g>'
-    s += f'<g transform="translate(2200,190)">{arvore_simples(340, 420, C["verde_esc"], C["branco"], 3)}</g>'
-    s += cerca(W, CHAO)
+    S.grama(CHAO, W)
+    S.arvore(60, 170, 380, 440)
+    S.arvore(2200, 190, 340, 420)
+    S.cerca(CHAO, 0, W)
+    g = ""
     # pérgola de madeira com flores (fundo)
     x0, x1, top = 700, 1500, 170
     for x in (x0, x0 + 260, x1 - 260, x1):
-        s += rr(x - 14, top, 28, CHAO - top + 8, 5, C["madeira"], 'stroke-width="3.5"')
-    s += rr(x0 - 60, top - 26, x1 - x0 + 120, 30, 8, C["madeira_esc"], 'stroke-width="3.5"')
+        g += rr(x - 14, top, 28, CHAO - top + 8, 5, C["madeira"], 'stroke-width="3.5"')
+    g += rr(x0 - 60, top - 26, x1 - x0 + 120, 30, 8, C["madeira_esc"], 'stroke-width="3.5"')
     for x in range(x0 - 40, x1 + 60, 60):
-        s += rr(x, top - 46, 18, 28, 4, C["madeira"], 'stroke-width="2.5"')
+        g += rr(x, top - 46, 18, 28, 4, C["madeira"], 'stroke-width="2.5"')
     for x in range(x0 - 50, x1 + 60, 36):
-        s += circ(x, top - 20 + (x % 3) * 6, 16, C["verde"], 'stroke-width="2.5"')
+        g += circ(x, top - 20 + (x % 3) * 6, 16, C["verde"], 'stroke-width="2.5"')
     for x in range(x0 - 40, x1 + 60, 46):
-        s += flor(x, top - 26 + (x % 4) * 5, 8, C["rosa"] if x % 2 else C["rosa_chiclete"], C["amarelo"])
+        g += flor(x, top - 26 + (x % 4) * 5, 8, C["rosa"] if x % 2 else C["rosa_chiclete"], C["amarelo"])
     for x in (x0, x1):
         for y in range(top + 30, CHAO - 40, 70):
-            s += flor(x + (8 if y % 140 else -8), y, 7, C["rosa"], C["amarelo"])
+            g += flor(x + (8 if y % 140 else -8), y, 7, C["rosa"], C["amarelo"])
+    S.add("pergola", g, x0 - 64, top - 50, x1 - x0 + 128, CHAO - top + 62)
     # piso de pedrinhas sob a pérgola
-    s += grama_fundo(W, H, CHAO, rnd)
-    s += ell(1100, 700, 470, 70, "#e9e0d6", 'stroke-width="3"')
+    pd = ell(1100, 700, 470, 70, "#e9e0d6", 'stroke-width="3"')
     for _ in range(40):
         x, y = rnd.uniform(700, 1500), rnd.uniform(660, 745)
         if ((x - 1100) / 450) ** 2 + ((y - 700) / 62) ** 2 < 1:
-            s += ell(round(x), round(y), rnd.uniform(14, 24), rnd.uniform(7, 10), rnd.choice(["#d8cfc5", "#f3ece4"]), 'stroke-width="1.5"')
+            pd += ell(round(x), round(y), rnd.uniform(14, 24), rnd.uniform(7, 10), rnd.choice(["#d8cfc5", "#f3ece4"]), 'stroke-width="1.5"')
+    S.add("piso_pedrinhas", pd, 626, 626, 948, 148)
     return svg(W, H, s, defs)
 
 
@@ -186,6 +193,7 @@ POS = [("fundo", 0, 0), ("placa_pata", 1060, 60),
        ("biscoito", 1600, 600), ("peixinho", 1700, 606),
        ("cercadinho", 1900, 520), ("vaso_flores", 620, 520), ("vaso_flores", 1530, 520),
        ("@catarina", 1150, 860), ("@catarina", 500, 820)]
+POS[1:1] = S.pos
 
 TABELA = [
     ("Fundo do Pet Care", "2600 × 900", None, "Céu claro, morros verdes, duas árvores floridas, cerca branca, grama com florzinhas e, no centro, uma pérgola de madeira coberta de flores rosa com piso de pedrinhas claras. SEM banheira, chuveiro, tigelas ou cercadinho.", ["fundo"]),

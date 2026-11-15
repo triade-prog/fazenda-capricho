@@ -28,6 +28,7 @@ var lugares: Array = []
 var superficies: Array[Vector3] = []
 var animacoes := {}
 var passagens := {}
+var fundos: Array = []  # peças grandes tiradas do fundo (chão, gramado, casa): fixas e não seguram nada
 var _passando := {}  # id -> [lista de peças, instante em que começou]
 const PASSO := 0.14  # segundos de cada imagem da passagem
 var moveis: Array = []
@@ -58,6 +59,7 @@ func carregar(cena: String) -> Cenario:
 	objetos = data.get("objetos", [])
 	animacoes = data.get("animacoes", {})
 	passagens = data.get("passagens", {})
+	fundos = data.get("fundos", [])
 	moveis = data.get("moveis", [])
 	so_se = data.get("so_se", {})
 	set_process(false)
@@ -374,7 +376,7 @@ func preparar_deco() -> void:
 			continue
 		var rk := _rect_peca(k)
 		var grande := rk.size.x > DECO_MAX.x or rk.size.y > DECO_MAX.y
-		if not grande:
+		if not grande or str(pecas[k][0]) in fundos:  # chão, gramado, parede: são fundo, não seguram nada
 			continue
 		for j in range(1, pecas.size()):
 			var rj := _rect_peca(j)

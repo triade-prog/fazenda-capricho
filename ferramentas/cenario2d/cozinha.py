@@ -6,8 +6,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, gerar_cenario, textos  # noqa: E402
-from moveis import porta_casa, plaquinha, planta_vaso, janela_paisagem, parede_interna  # noqa: E402
+from comum import C, L, solto, svg, rr, circ, ell, path, coracao, estrela, flor, gerar_cenario, textos  # noqa: E402
+from moveis import Soltos, porta_casa, plaquinha, planta_vaso, janela_paisagem, parede_interna  # noqa: E402
 
 W, H, CHAO = 2200, 900, 600
 P = {}
@@ -15,27 +15,39 @@ XADREZ = C["vermelho_rosa"]
 
 
 def fundo():
-    s = parede_interna(W, H, CHAO, "#ffe9e2", "#ffe0ea", listras=False)
-    # azulejinhos atrás da bancada
-    for x in range(560, 1460, 40):
-        for y in range(330, 440, 40):
+    # só parede e chão; o resto da cozinha são peças soltas (dá para mover no modo Decorar)
+    return svg(W, H, parede_interna(W, H, CHAO, "#ffe9e2", "#ffe0ea", listras=False, so_parede=True))
+
+
+def azulejos():  # painel de 8 × 3 azulejinhos, atrás da bancada
+    s = ""
+    for x in range(0, 320, 40):
+        for y in range(0, 120, 40):
             s += rr(x, y, 40, 40, 0, "#fff6f9" if (x // 40 + y // 40) % 2 else "#ffe1ec", 'stroke-width="1" stroke-opacity="0.4"')
-    # armários de madeira (fundo, sem interação)
-    s += rr(560, 440, 900, 160, 6, C["madeira"], 'stroke-width="3.5"')
-    for x in range(570, 1450, 150):
-        s += rr(x, 456, 136, 132, 6, C["madeira_clara"], 'stroke-width="2.5"') + circ(x + 120, 520, 5, C["dourado"], 'stroke-width="2"')
-    s += rr(550, 424, 920, 22, 6, C["branco"], 'stroke-width="3"')
-    # prateleira com potes e panelas penduradas
-    s += rr(560, 120, 540, 16, 5, C["madeira"], 'stroke-width="3"')
-    for i, (x, c) in enumerate([(590, C["rosa"]), (650, C["lilas"]), (710, C["azul"]), (770, C["rosa_chiclete"])]):
+    return svg(320, 120, s)
+
+
+def armario():  # módulo de armário com tampo branco (a bancada é feita de vários)
+    s = rr(5, 20, 150, 160, 6, C["madeira"], 'stroke-width="3.5"')
+    s += rr(12, 36, 136, 132, 6, C["madeira_clara"], 'stroke-width="2.5"') + circ(132, 100, 5, C["dourado"], 'stroke-width="2"')
+    s += rr(2, 4, 156, 22, 6, C["branco"], 'stroke-width="3"')
+    return svg(160, 184, s)
+
+
+def prateleira():
+    s = rr(560, 120, 540, 16, 5, C["madeira"], 'stroke-width="3"')
+    for x, c in [(590, C["rosa"]), (650, C["lilas"]), (710, C["azul"]), (770, C["rosa_chiclete"])]:
         s += rr(x, 72, 46, 48, 10, c, 'stroke-width="2.5"') + rr(x + 4, 64, 38, 10, 4, C["branco"], 'stroke-width="2"')
     s += planta_vaso_inline(860, 50)
-    s += path("M560,200 L1100,200", extra='stroke-width="6"') + path("M560,200 L1100,200", extra=f'stroke-width="3" stroke="{C["madeira_esc"]}"')
+    return solto(s, 552, 40, 556, 104)
+
+
+def panelas():
+    s = path("M560,200 L1100,200", extra='stroke-width="6"') + path("M560,200 L1100,200", extra=f'stroke-width="3" stroke="{C["madeira_esc"]}"')
     for x, r in [(620, 34), (720, 28), (810, 32), (910, 26), (1000, 30)]:
         s += path(f"M{x},200 L{x},{214}", extra='stroke-width="2.5"')
-        s += path(f"M{x},{214} L{x},{230}", extra='stroke-width="6"') + circ(x, 230 + r, r, "#d99a64", 'stroke-width="3"') + circ(x, 230 + r, r - 8, "#c98454", 'stroke="none"')
-    s += janela_paisagem(1180, 150, 230, 180, C["rosa_chiclete"])
-    return svg(W, H, s)
+        s += path(f"M{x},{214} L{x},{230}", extra='stroke-width="6"') + circ(x, 230 + r, r, "#d99a64", 'stroke="none"') + circ(x, 230 + r, r, "none", 'stroke-width="3"') + circ(x, 230 + r, r - 8, "#c98454", 'stroke="none"')
+    return solto(s, 552, 192, 556, 112)
 
 
 def planta_vaso_inline(x, y):
@@ -47,6 +59,13 @@ def planta_vaso_inline(x, y):
 
 
 P["fundo"] = fundo()
+P["azulejos"] = azulejos()
+P["armario"] = armario()
+P["prateleira"] = prateleira()
+P["panelas"] = panelas()
+S = Soltos(P)
+S.comum("piso", 0, CHAO - 22)
+S.comum("janela", 1156, 128)
 
 
 def geladeira(aberta):
@@ -180,7 +199,9 @@ P["porta_fechada"] = porta_casa(False)
 P["porta_aberta"] = porta_casa(True)
 P["placa_casa"] = plaquinha("casa")
 
-POS = [("fundo", 0, 0), ("porta_aberta", 60, 250), ("placa_casa", 110, 180),
+POS = [("fundo", 0, 0), ("azulejos", 540, 320), ("azulejos", 860, 320), ("azulejos", 1180, 320),
+       ("armario", 555, 420), ("armario", 705, 420), ("armario", 855, 420), ("armario", 1005, 420), ("armario", 1155, 420), ("armario", 1305, 420),
+       ("prateleira", 552, 40), ("panelas", 552, 192), ("porta_aberta", 60, 250), ("placa_casa", 110, 180),
        ("geladeira_fechada", 300, 170),
        ("fogao_aceso", 600, 340), ("vapor", 665, 234), ("torneira_fechada", 1318, 404), ("pia", 1200, 400), ("prato_sujo", 1240, 420),
        ("xicara", 940, 400), ("vaso_flores", 1000, 350),
@@ -188,9 +209,14 @@ POS = [("fundo", 0, 0), ("porta_aberta", 60, 250), ("placa_casa", 110, 180),
        ("prato_limpo", 1640, 528), ("sanduiche", 1700, 520), ("vaso_flores", 1910, 468),
        ("tigela_cao_cheia", 700, 760), ("tigela_gato_cheia", 800, 760), ("tigela_lumi_cheia", 900, 760),
        ("@catarina", 1100, 860), ("@catarina", 1650, 790)]
+POS[1:1] = S.pos
 
 TABELA = [
     ("Fundo da cozinha", "2200 × 900", None, "Parede rosa-pêssego com vigas, azulejinhos rosa e branco, armários de madeira embutidos atrás da bancada, prateleira com potes coloridos e uma plantinha, panelas de cobre penduradas e janela com cortina rosa. SEM geladeira, fogão, pia, mesa e porta.", ["fundo"]),
+    ("Azulejos", "320 × 120", None, "Painel de azulejinhos rosa e branco (8 × 3), pendurado na parede atrás da bancada. O jogo usa três lado a lado.", ["azulejos"]),
+    ("Armário da bancada", "160 × 184", None, "Módulo de armário de madeira com uma porta e puxador dourado, tampo branco em cima. Encaixa lado a lado com outros iguais (o jogo usa seis).", ["armario"]),
+    ("Prateleira com potes", "556 × 104", None, "Prateleira de madeira na parede com quatro potes coloridos (rosa, lilás, azul, rosa-chiclete) e um vasinho com planta.", ["prateleira"]),
+    ("Panelas penduradas", "556 × 112", None, "Barra de madeira com cinco panelas de cobre penduradas, de tamanhos diferentes.", ["panelas"]),
     ("Geladeira lilás", "238 × 430", "fechada · aberta", "Geladeira retrô lilás com cantos bem arredondados e ímãs de coração. Aberta: prateleiras com frutas, leite, cenoura e maçã (para a Lumi), peixinho (gatos) e biscoito de coração (cães); a porta aberta aparece fina do lado direito.", ["geladeira_fechada", "geladeira_aberta"]),
     ("Fogão com panela", "240 × 260", "normal · com vapor", "Fogãozinho branco e rosa com forno e botões lilás, panela rosa em cima. Vapor: fiozinhos de vapor e um coração subindo. Sem chama.", ["fogao", "fogao_aceso"]),
     ("Pia", "260 × 200", None, "Bancada de madeira com cuba branca e torneira prateada com registro de coração. Tampo PLANO.", ["pia"]),
@@ -221,7 +247,7 @@ JOGO = {
     "dentro": {"geladeira": [["maca", 365, 300], ["banana", 445, 300], ["copo_leite", 365, 400], ["queijo", 450, 400], ["cenoura", 410, 490]]},
     "moveis": ["cadeira"],
     "lugares": [],
-    "superficies": [[850, 1190, 438], [1590, 1960, 556]],
+    "superficies": [[860, 1008, 438], [1010, 1158, 438], [1160, 1190, 438], [1590, 1960, 556]],
 }
 
 if __name__ == "__main__":

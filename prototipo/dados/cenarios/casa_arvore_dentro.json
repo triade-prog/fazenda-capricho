@@ -10,6 +10,20 @@
    900
   ],
   [
+   "luzinhas",
+   -4,
+   40,
+   1608,
+   76
+  ],
+  [
+   "janela_redonda",
+   628,
+   98,
+   344,
+   344
+  ],
+  [
    "@passarinho",
    830,
    100,
@@ -208,5 +222,8 @@
   "cadeirinha_esq"
  ],
  "so_se": {},
- "passagens": {}
+ "passagens": {},
+ "fundos": [
+  "luzinhas"
+ ]
 }

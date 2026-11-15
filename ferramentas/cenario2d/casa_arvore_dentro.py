@@ -1,5 +1,5 @@
 """C08 Dentro da casa na árvore: como o interior entra no protótipo (as peças são as de casa_arvore.py)."""
-from casa_arvore import P, POS_DENTRO as POS  # noqa: F401
+from casa_arvore import P, POS_DENTRO as POS, S2 as S  # noqa: F401
 
 PASTA = "casa_arvore"
 W, H, CHAO = 1600, 900, 600

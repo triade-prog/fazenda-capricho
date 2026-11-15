@@ -9,27 +9,32 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, gerar_cenario, textos  # noqa: E402
-from moveis import ceu_morros, cerca, grama_fundo, arvore_simples  # noqa: E402
+from moveis import Soltos, ceu_morros, cerca, grama_fundo, arvore_simples  # noqa: E402
 
 W, H, CHAO = 2200, 900, 600
 P = {}
 
 
+S = Soltos(P)
+
+
 def fundo():
     rnd = random.Random(61)
+    S.limpar()
     s, defs = ceu_morros(W, H, CHAO, rnd)
-    s += f'<g transform="translate(40,120)">{arvore_simples(420, 500, C["verde"], C["rosa"], 8)}</g>'
-    s += f'<g transform="translate(1780,140)">{arvore_simples(380, 480, C["verde_esc"], C["branco"], 9)}</g>'
-    s += cerca(W, CHAO)
+    S.grama(CHAO, W)
+    S.arvore(40, 120, 420, 500)
+    S.arvore(1780, 140, 380, 480)
+    S.cerca(CHAO, 0, W)
     # varal de bandeirinhas entre as árvores
-    s += path("M250,250 Q1100,380 1960,250", extra='stroke-width="3"')
+    v = path("M250,250 Q1100,380 1960,250", extra='stroke-width="3"')
     cores = [C["rosa_chiclete"], C["lilas"], C["amarelo"], C["azul"], C["verde"]]
     for i in range(26):
         t = (i + 0.5) / 26
         x = 250 + t * 1710
         y = 250 + 4 * 130 * t * (1 - t) * 1.0
-        s += path(f"M{x-16:.0f},{y:.0f} L{x+16:.0f},{y+3:.0f} L{x:.0f},{y+40:.0f} Z", cores[i % 5], 'stroke-width="2.5"')
-    s += grama_fundo(W, H, CHAO, rnd)
+        v += path(f"M{x-16:.0f},{y:.0f} L{x+16:.0f},{y+3:.0f} L{x:.0f},{y+40:.0f} Z", cores[i % 5], 'stroke-width="2.5"')
+    S.add("varal_bandeirinhas", v, 240, 240, 1730, 180)
     return svg(W, H, s, defs)
 
 
@@ -145,6 +150,7 @@ POS = [("fundo", 0, 0), ("cabana_aberta", 820, 230), ("saco_dormir", 890, 500), 
        ("fogueira_brilho", 1400, 560), ("chama", 1450, 580), ("tronco_banco", 1560, 600), ("tronco_banco", 1180, 690),
        ("livro_aberto", 640, 690), ("livro_fechado", 560, 700), ("binoculo", 1700, 560), ("passarinho", 1880, 300),
        ("@catarina", 700, 860), ("@catarina", 1640, 880)]
+POS[1:1] = S.pos
 
 TABELA = [
     ("Fundo do quintal", "2200 × 900", None, "Quintal com duas árvores grandes, céu claro, morros, cerca branca e um varal de bandeirinhas coloridas entre as árvores, grama com florzinhas. SEM a cabana e os objetos.", ["fundo"]),

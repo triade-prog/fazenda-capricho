@@ -9,9 +9,12 @@ import random
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
+from moveis import Soltos  # noqa: E402
 from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, nuvem, salvar  # noqa: E402
 
 P = {}
+S = Soltos(P)
+S2 = Soltos(P)
 TERRA, TERRA_FOFA, TERRA_ESC = "#c99a6b", "#a8784f", "#8d6342"
 
 
@@ -566,16 +569,14 @@ def fundo():
     rnd = random.Random(21)
     defs = (f'<linearGradient id="ceu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{C["ceu"]}"/>'
             f'<stop offset="1" stop-color="{C["ceu_claro"]}"/></linearGradient>')
+    S.limpar()
     s = f'<rect width="{w}" height="{h}" fill="url(#ceu)" stroke="none"/>'
-    s += circ(2700, 120, 60, C["amarelo"], 'stroke-width="3"')
+    S.add("sol", circ(2700, 120, 60, C["amarelo"], 'stroke-width="3"'), 2636, 56, 128, 128)
     for cx, cy, k in [(300, 110, 40), (1100, 80, 34), (1800, 140, 44), (2300, 70, 32), (3100, 130, 38)]:
         s += nuvem(cx, cy, k)
     s += path(f"M0,{chao-50} Q500,{chao-260} 1100,{chao-90} T2200,{chao-110} T{w},{chao-180} L{w},{chao} L0,{chao} Z", C["verde_claro"])
     s += path(f"M0,{chao-10} Q700,{chao-160} 1500,{chao-30} T{w},{chao-50} L{w},{chao} L0,{chao} Z", "#a8dd8f")
-    y0 = chao - 70
-    s += rr(0, y0 + 14, w, 12, 4, C["branco"]) + rr(0, y0 + 42, w, 12, 4, C["branco"])
-    for x in range(10, w, 52):
-        s += path(f"M{x},{chao+6} L{x},{y0+6} L{x+11},{y0-6} L{x+22},{y0+6} L{x+22},{chao+6} Z", C["branco"], 'stroke-width="2.5"')
+    S.cerca(chao, 0, w)
     s += rr(-5, chao, w + 10, h - chao + 5, 0, "#dcb98d")
     for _ in range(120):
         x, y = rnd.uniform(10, w - 10), rnd.uniform(chao + 15, h - 8)
@@ -598,6 +599,7 @@ POS = [("fundo", 0, 0), ("nuvem_chovendo", 560, 150), ("bica", 30, 570), ("regad
        ("canteiro_flores", 1890, 700), ("borboleta_aberta", 1960, 560), ("abelha_aberta", 2050, 600), ("flor_arco_iris_rosa", 2180, 640), ("frutinhas_magicas_com", 2350, 530),
        ("arbusto_coracoes", 2160, 450), ("macieira_com_macas", 2540, 140), ("laranjeira_com", 2800, 170), ("bananeira_com", 3040, 140), ("escadinha", 2740, 610),
        ("banca", 2530, 770), ("maca", 2700, 860), ("minhoca", 3000, 860), ("matinho", 3150, 850), ("quadro_pedidos", 3130, 620)]
+POS[1:1] = S.pos
 
 
 def _c(nome, x, y, estados):

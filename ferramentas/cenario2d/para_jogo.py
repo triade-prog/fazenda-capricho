@@ -13,6 +13,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from comum import _tamanho  # noqa: E402
+import comuns  # noqa: E402
 import pecas3d  # noqa: E402
 import placas  # noqa: E402
 import vida  # noqa: E402
@@ -25,6 +26,7 @@ mod = importlib.import_module(cena)
 raiz = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 origem = os.path.join(raiz, "arte/cenario", getattr(mod, "PASTA", cena), "2d")
 origem_placas = os.path.join(raiz, "arte/cenario", placas.PASTA, "2d")
+origem_comuns = os.path.join(raiz, "arte/cenario", comuns.PASTA, "2d")
 P = dict(placas.P)
 P.update(mod.P)
 destino = os.path.join(raiz, "prototipo/assets/cenario", cena)
@@ -35,10 +37,12 @@ inter = mod.JOGO["interativos"]
 soltos = mod.JOGO.get("objetos", [])
 pecas, usadas, objetos = [], set(), []
 vistos = set()
-for nome, x, y in list(mod.POS) + list(mod.JOGO.get("extras", [])):
+for nome, x, y, *esc in list(mod.POS) + list(mod.JOGO.get("extras", [])):
     if nome.startswith("@") or nome in mod.JOGO.get("omitir", []):
         continue
     w, h = _tamanho(P[nome])
+    if esc:  # peça comum em outro tamanho (4º valor do POS)
+        w, h = round(w * esc[0]), round(h * esc[0])
     alvo = next((i for i, d in inter.items() if nome in d["estados"] and d["x"] == x and d["y"] == y), None)
     if nome in soltos:  # objeto que dá para pegar: posição = centro da base
         objetos.append({"tipo": nome, "x": x + w / 2, "y": y + h, "w": w, "h": h})
@@ -65,7 +69,7 @@ for d in inter.values():
         continue
     d["w"], d["h"] = _tamanho(P[d["estados"][0]])
 for nome in sorted(usadas):
-    pasta = origem if nome in mod.P else origem_placas
+    pasta = origem_comuns if nome in comuns.P else origem if nome in mod.P else origem_placas
     de, para = os.path.join(pasta, nome + ".png"), os.path.join(destino, nome + ".png")
     im = pecas3d.montar(nome, os.path.join(os.path.dirname(pasta), "png3d"), pasta)
     if im is not None:  # peça 3D encaixada no quadro da peça 2D
@@ -79,10 +83,19 @@ for nome in sorted(usadas):
     else:
         shutil.copyfile(de, para)
 inter = {k: {a: b for a, b in d.items()} for k, d in inter.items()}
+
+
+def pecas3d_cabe(nome):
+    """Peça tirada do fundo que ainda cabe no modo Decorar (até 700 × 560, como no jogo)."""
+    w, h = _tamanho(P[nome])
+    return w <= 700 and h <= 560
+
+
 dados = {"id": cena, "largura": mod.W, "pecas": pecas, "interativos": inter, "objetos": objetos,
          "lugares": mod.JOGO["lugares"], "superficies": mod.JOGO["superficies"],
          "animacoes": mod.JOGO.get("animacoes", {}), "moveis": mod.JOGO.get("moveis", []),
-         "so_se": mod.JOGO.get("so_se", {}), "passagens": mod.JOGO.get("passagens", {})}
+         "so_se": mod.JOGO.get("so_se", {}), "passagens": mod.JOGO.get("passagens", {}),
+         "fundos": sorted({p[0] for p in getattr(mod, "S", None).pos if not pecas3d_cabe(p[0])} if hasattr(mod, "S") else [])}
 os.makedirs(os.path.join(raiz, "prototipo/dados/cenarios"), exist_ok=True)
 with open(os.path.join(raiz, "prototipo/dados/cenarios", cena + ".json"), "w", encoding="utf-8") as f:
     json.dump(dados, f, ensure_ascii=False, indent=1)

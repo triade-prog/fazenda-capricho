@@ -7,25 +7,31 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, gerar_cenario, textos  # noqa: E402
-from moveis import porta_casa, plaquinha, planta_vaso, janela_paisagem, parede_interna  # noqa: E402
+from moveis import Soltos, porta_casa, plaquinha, planta_vaso, janela_paisagem, parede_interna  # noqa: E402
 
 W, H, CHAO = 2200, 900, 600
 P = {}
 
 
+S = Soltos(P)
+
+
 def fundo():
-    s = parede_interna(W, H, CHAO, "#fbe6f0", "#f4e4fb", listras=True, vigas=True)
-    s += janela_paisagem(1500, 130, 280, 200, C["lilas"])
+    S.limpar()
+    s = parede_interna(W, H, CHAO, "#fbe6f0", "#f4e4fb", listras=True, vigas=True, so_parede=True)
+    S.comum("piso", 0, CHAO - 22)
+    S.comum("janela", 1476, 108, 1.15)
     # quadros da família (só desenhos: corações, flor, ferradura)
     for x, y, w, h, des in [(520, 150, 110, 130, "coracao"), (660, 180, 90, 90, "flor"), (1960, 160, 120, 100, "ferradura")]:
-        s += rr(x, y, w, h, 6, C["madeira"], 'stroke-width="3.5"') + rr(x + 10, y + 10, w - 20, h - 20, 3, C["creme"], 'stroke-width="2"')
+        q = rr(x, y, w, h, 6, C["madeira"], 'stroke-width="3.5"') + rr(x + 10, y + 10, w - 20, h - 20, 3, C["creme"], 'stroke-width="2"')
         cx, cy = x + w / 2, y + h / 2
         if des == "coracao":
-            s += coracao(cx, cy, 22, C["rosa_chiclete"])
+            q += coracao(cx, cy, 22, C["rosa_chiclete"])
         elif des == "flor":
-            s += flor(cx, cy, 12, C["lilas"], C["rosa_forte"])
+            q += flor(cx, cy, 12, C["lilas"], C["rosa_forte"])
         else:
-            s += path(f"M{cx-18},{cy+22} L{cx-21},{cy} A21,21 0 0 1 {cx+21},{cy} L{cx+18},{cy+22} L{cx+8},{cy+22} L{cx+9},{cy} A9,9 0 0 0 {cx-9},{cy} L{cx-8},{cy+22} Z", C["dourado"], 'stroke-width="2.5"')
+            q += path(f"M{cx-18},{cy+22} L{cx-21},{cy} A21,21 0 0 1 {cx+21},{cy} L{cx+18},{cy+22} L{cx+8},{cy+22} L{cx+9},{cy} A9,9 0 0 0 {cx-9},{cy} L{cx-8},{cy+22} Z", C["dourado"], 'stroke-width="2.5"')
+        S.add("quadro_" + des, q, x - 4, y - 4, w + 8, h + 8)
     return svg(W, H, s)
 
 
@@ -191,6 +197,7 @@ POS = [("fundo", 0, 0), ("porta_fechada", 50, 250), ("placa_casa", 100, 180),
        ("criado_mudo", 1490, 470), ("abajur_apagado", 1515, 372), ("porta_retrato_paisagem", 1590, 410),
        ("penteadeira", 1790, 260), ("escova_cabelo", 1830, 430), ("banquinho", 1870, 560),
        ("tapete", 900, 720), ("@catarina", 1100, 520), ("@catarina", 1640, 860)]
+POS[1:1] = S.pos
 
 TABELA = [
     ("Fundo do quarto", "2200 × 900", None, "Parede rosa-clara com listras lilás bem suaves, vigas de madeira no alto, janela com cortina lilás e vista da fazenda, três quadrinhos da família (coração, flor e ferradura), rodapé e piso de madeira. SEM porta e sem móveis.", ["fundo"]),

@@ -9,7 +9,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, gerar_cenario, textos  # noqa: E402
-from moveis import ceu_morros, cerca, grama_fundo, arvore_simples  # noqa: E402
+from moveis import Soltos, ceu_morros, cerca, grama_fundo, arvore_simples  # noqa: E402
 
 W, H, CHAO = 2200, 900, 600
 P = {}
@@ -25,24 +25,31 @@ def pilar(x, topo, base, w=80):
     return s
 
 
+S = Soltos(P)
+
+
 def fundo():
     rnd = random.Random(51)
+    S.limpar()
     s, defs = ceu_morros(W, H, CHAO, rnd)
     # celeiro rosa e casinhas ao longe
-    s += path("M1650,470 L1650,400 L1720,350 L1790,400 L1790,470 Z", C["vermelho_rosa"], 'stroke-width="3"')
-    s += path("M1690,470 L1690,425 L1750,425 L1750,470 M1690,425 L1750,470 M1750,425 L1690,470", C["branco"], 'stroke-width="2.5"')
-    s += path("M1840,480 L1840,440 L1880,412 L1920,440 L1920,480 Z", C["rosa"], 'stroke-width="2.5"')
-    s += path("M380,486 L380,446 L420,418 L460,446 L460,486 Z", C["lilas"], 'stroke-width="2.5"')
-    s += f'<g transform="translate(60,250)">{arvore_simples(240, 300, C["verde"], C["rosa"], 6)}</g>'
-    s += f'<g transform="translate(1960,240)">{arvore_simples(220, 300, C["verde"], C["rosa"], 7)}</g>'
-    s += cerca(W, CHAO, 0, 740) + cerca(W, CHAO, 1460, W)
-    s += grama_fundo(W, H, CHAO, rnd)
+    c = path("M1650,470 L1650,400 L1720,350 L1790,400 L1790,470 Z", C["vermelho_rosa"], 'stroke-width="3"')
+    c += path("M1690,470 L1690,425 L1750,425 L1750,470 M1690,425 L1750,470 M1750,425 L1690,470", C["branco"], 'stroke-width="2.5"')
+    S.add("celeiro_longe", c, 1644, 344, 152, 132)
+    S.add("casinha_longe", path("M1840,480 L1840,440 L1880,412 L1920,440 L1920,480 Z", C["rosa"], 'stroke-width="2.5"'),
+          1836, 408, 88, 76, [(1836, 408), (376, 414)])
+    S.arvore(60, 250, 240, 300)
+    S.arvore(1960, 240, 220, 300)
+    S.cerca(CHAO, 0, 740)
+    S.cerca(CHAO, 1460, W)
+    S.grama(CHAO, W)
     # estrada de terra
-    s += path(f"M900,{CHAO} L1300,{CHAO} L1520,{H+5} L680,{H+5} Z", "#dcb98d", 'stroke-width="3"')
+    e = path(f"M900,{CHAO} L1300,{CHAO} L1520,{H+5} L680,{H+5} Z", "#dcb98d", 'stroke-width="3"')
     for _ in range(40):
         x, y = rnd.uniform(800, 1400), rnd.uniform(CHAO + 20, H - 10)
-        s += ell(round(x), round(y), rnd.uniform(4, 8), 3, "#c9a376", 'stroke="none"')
-    s += pilar(740, 300, CHAO + 10) + pilar(1380, 300, CHAO + 10)
+        e += ell(round(x), round(y), rnd.uniform(4, 8), 3, "#c9a376", 'stroke="none"')
+    S.add("estrada", e, 676, CHAO - 4, 848, H - CHAO + 8)
+    S.add("pilar", pilar(740, 300, CHAO + 10), 728, 280, 104, CHAO - 270, [(728, 280), (1368, 280)])
     return svg(W, H, s, defs)
 
 
@@ -185,6 +192,7 @@ POS = [("fundo", 0, 0),
        ("floreira", 520, 560), ("floreira_colhida", 1490, 560),
        ("correio_aberto", 1660, 450), ("cartinha", 1800, 560),
        ("banco", 220, 540), ("flor", 1530, 760), ("@catarina", 1080, 860), ("@catarina", 1880, 820)]
+POS[1:1] = S.pos
 
 TABELA = [
     ("Fundo da Entrada", "2200 × 900", None, "Céu claro, morros, ao longe um celeiro ROSA e casinhas em tons rosados, árvores floridas, cerca branca, estrada de terra subindo para o portal e os dois pilares de pedra do portal. SEM portão, arco, logo, moinho, lanternas, caixa de correio, floreiras e banco. SEM cactos.", ["fundo"]),

@@ -10,6 +10,41 @@
    900
   ],
   [
+   "piso",
+   0,
+   578,
+   2200,
+   324
+  ],
+  [
+   "janela",
+   1476,
+   108,
+   320,
+   246
+  ],
+  [
+   "quadro_coracao",
+   516,
+   146,
+   118,
+   138
+  ],
+  [
+   "quadro_flor",
+   656,
+   176,
+   98,
+   98
+  ],
+  [
+   "quadro_ferradura",
+   1956,
+   156,
+   128,
+   108
+  ],
+  [
    "@porta_sala",
    50,
    250,
@@ -299,5 +334,8 @@
   "banquinho"
  ],
  "so_se": {},
- "passagens": {}
+ "passagens": {},
+ "fundos": [
+  "piso"
+ ]
 }

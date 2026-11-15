@@ -49,16 +49,20 @@ Tamanhos em pixels do jogo. Para cada pedido, anexe também o PNG da peça em `2
 | # | Peça | Tamanho | Estados | Pedido |
 |---|---|---|---|---|
 | 1 | Fundo da cozinha | 2200 × 900 | — | Parede rosa-pêssego com vigas, azulejinhos rosa e branco, armários de madeira embutidos atrás da bancada, prateleira com potes coloridos e uma plantinha, panelas de cobre penduradas e janela com cortina rosa. SEM geladeira, fogão, pia, mesa e porta. |
-| 2 | Geladeira lilás | 238 × 430 | fechada · aberta | Geladeira retrô lilás com cantos bem arredondados e ímãs de coração. Aberta: prateleiras com frutas, leite, cenoura e maçã (para a Lumi), peixinho (gatos) e biscoito de coração (cães); a porta aberta aparece fina do lado direito. |
-| 3 | Fogão com panela | 240 × 260 | normal · com vapor | Fogãozinho branco e rosa com forno e botões lilás, panela rosa em cima. Vapor: fiozinhos de vapor e um coração subindo. Sem chama. |
-| 4 | Pia | 260 × 200 | — | Bancada de madeira com cuba branca e torneira prateada com registro de coração. Tampo PLANO. |
-| 5 | Mesa com toalha xadrez | 420 × 200 | — | Mesa de madeira com toalha xadrez vermelho-rosado e branca. Tampo PLANO para pratos e comidinhas. |
-| 6 | Cadeira de coração | 110 × 230 | — | Cadeira de madeira com coração vazado no encosto; o jogo usa quatro. |
-| 7 | Pratos | 60 × 30 | sujo · limpo | Prato branco. Sujo: manchinhas de comida. Limpo: brilha. |
-| 8 | Comidinhas de gente | xícara 40 × 36 · maçã 30 × 32 · banana 50 × 30 · leite 30 × 44 · sanduíche 50 × 34 | — | Só para a Catarina e a Carol (GDD, seção 9). |
-| 9 | Tigelas dos bichos | 80 × 40 | vazia · cheia (cão, gato, Lumi) | Tigela rosa com biscoitos de coração, lilás com peixinho e cor de mel com cenoura e maçã. |
-| 10 | Vaso de flores | 70 × 90 | — | Vaso rosa com flores amarelas, para enfeitar a mesa. |
-| 11 | Porta e plaquinha | porta 170 × 350 · placa 70 × 60 | fechada · aberta | A mesma porta da sala; plaquinha com a casinha (volta para a sala). |
+| 2 | Azulejos | 320 × 120 | — | Painel de azulejinhos rosa e branco (8 × 3), pendurado na parede atrás da bancada. O jogo usa três lado a lado. |
+| 3 | Armário da bancada | 160 × 184 | — | Módulo de armário de madeira com uma porta e puxador dourado, tampo branco em cima. Encaixa lado a lado com outros iguais (o jogo usa seis). |
+| 4 | Prateleira com potes | 556 × 104 | — | Prateleira de madeira na parede com quatro potes coloridos (rosa, lilás, azul, rosa-chiclete) e um vasinho com planta. |
+| 5 | Panelas penduradas | 556 × 112 | — | Barra de madeira com cinco panelas de cobre penduradas, de tamanhos diferentes. |
+| 6 | Geladeira lilás | 238 × 430 | fechada · aberta | Geladeira retrô lilás com cantos bem arredondados e ímãs de coração. Aberta: prateleiras com frutas, leite, cenoura e maçã (para a Lumi), peixinho (gatos) e biscoito de coração (cães); a porta aberta aparece fina do lado direito. |
+| 7 | Fogão com panela | 240 × 260 | normal · com vapor | Fogãozinho branco e rosa com forno e botões lilás, panela rosa em cima. Vapor: fiozinhos de vapor e um coração subindo. Sem chama. |
+| 8 | Pia | 260 × 200 | — | Bancada de madeira com cuba branca e torneira prateada com registro de coração. Tampo PLANO. |
+| 9 | Mesa com toalha xadrez | 420 × 200 | — | Mesa de madeira com toalha xadrez vermelho-rosado e branca. Tampo PLANO para pratos e comidinhas. |
+| 10 | Cadeira de coração | 110 × 230 | — | Cadeira de madeira com coração vazado no encosto; o jogo usa quatro. |
+| 11 | Pratos | 60 × 30 | sujo · limpo | Prato branco. Sujo: manchinhas de comida. Limpo: brilha. |
+| 12 | Comidinhas de gente | xícara 40 × 36 · maçã 30 × 32 · banana 50 × 30 · leite 30 × 44 · sanduíche 50 × 34 | — | Só para a Catarina e a Carol (GDD, seção 9). |
+| 13 | Tigelas dos bichos | 80 × 40 | vazia · cheia (cão, gato, Lumi) | Tigela rosa com biscoitos de coração, lilás com peixinho e cor de mel com cenoura e maçã. |
+| 14 | Vaso de flores | 70 × 90 | — | Vaso rosa com flores amarelas, para enfeitar a mesa. |
+| 15 | Porta e plaquinha | porta 170 × 350 · placa 70 × 60 | fechada · aberta | A mesma porta da sala; plaquinha com a casinha (volta para a sala). |
 
 Gere primeiro a geladeira (os dois estados), a mesa e a cadeira.
 Comida de gente só para a Catarina e a Carol; bichos só com o petisco deles. Fogão sem fogo.
@@ -70,6 +74,10 @@ Comida de gente só para a Catarina e a Carol; bichos só com o petisco deles. F
 Suba os arquivos em `arte/cenario/cozinha/3d/` com estes nomes (os mesmos da pasta `2d/`):
 
 - Fundo da cozinha: `fundo.png`
+- Azulejos: `azulejos.png`
+- Armário da bancada: `armario.png`
+- Prateleira com potes: `prateleira.png`
+- Panelas penduradas: `panelas.png`
 - Geladeira lilás: `geladeira_fechada.png`, `geladeira_aberta.png`
 - Fogão com panela: `fogao.png`, `fogao_aceso.png`
 - Pia: `pia.png`

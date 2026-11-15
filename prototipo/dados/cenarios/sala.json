@@ -10,6 +10,41 @@
    900
   ],
   [
+   "piso",
+   0,
+   578,
+   2200,
+   324
+  ],
+  [
+   "janela",
+   1326,
+   88,
+   314,
+   242
+  ],
+  [
+   "planta_pendurada",
+   1220,
+   36,
+   80,
+   172
+  ],
+  [
+   "planta_pendurada",
+   1660,
+   36,
+   86,
+   184
+  ],
+  [
+   "quadro_fazenda",
+   274,
+   114,
+   212,
+   152
+  ],
+  [
    "@porta_frente",
    40,
    250,
@@ -366,5 +401,8 @@
  },
  "moveis": [],
  "so_se": {},
- "passagens": {}
+ "passagens": {},
+ "fundos": [
+  "piso"
+ ]
 }

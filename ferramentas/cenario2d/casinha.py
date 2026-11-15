@@ -8,18 +8,22 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, gerar_cenario, textos  # noqa: E402
-from moveis import ceu_morros, cerca, grama_fundo, arvore_simples, plaquinha  # noqa: E402
+from moveis import Soltos, ceu_morros, cerca, grama_fundo, arvore_simples, plaquinha  # noqa: E402
 
 W, H, CHAO = 2200, 900, 600
 P = {}
 
 
+S = Soltos(P)
+
+
 def fundo():
     rnd = random.Random(71)
+    S.limpar()
     s, defs = ceu_morros(W, H, CHAO, rnd)
-    s += f'<g transform="translate(1820,160)">{arvore_simples(340, 460, C["verde"], C["rosa"], 10)}</g>'
-    s += cerca(W, CHAO)
-    s += grama_fundo(W, H, CHAO, rnd, n_flores=90)
+    S.grama(CHAO, W)
+    S.arvore(1820, 160, 340, 460)
+    S.cerca(CHAO, 0, W)
     return svg(W, H, s, defs)
 
 
@@ -147,6 +151,7 @@ POS = [("fundo", 0, 0), ("casinha_interior", 780, 130), ("prateleira", 910, 300)
        ("toldo_aberto", 840, 222), ("balcao", 870, 480), ("caixa_registradora_plim", 920, 410),
        ("estetoscopio", 1060, 430), ("placa_pata", 1015, 150), ("cadeirinha", 1400, 480),
        ("@catarina", 1560, 860)]
+POS[1:1] = S.pos
 
 TABELA = [
     ("Fundo do gramado", "2200 × 900", None, "Gramado com muitas flores, cerca branca, uma árvore florida, céu e morros. SEM a casinha.", ["fundo"]),

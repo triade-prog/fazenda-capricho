@@ -102,11 +102,13 @@ def montar(pasta, pecas, W, H, pos, saida, rotulos=False, legenda=""):
     cat = cat.resize((round(cat.width * 300 / cat.height), 300), Image.LANCZOS)
     tela = Image.new("RGBA", (W, H), (255, 255, 255, 255))
     caixas = []
-    for nome, x, y in pos:
+    for nome, x, y, *esc in pos:
         if nome == "@catarina":
             tela.alpha_composite(cat, (round(x - cat.width / 2), round(y - 300)))
             continue
         w, h = _tamanho(pecas[nome])
+        if esc:
+            w, h = round(w * esc[0]), round(h * esc[0])
         im = Image.open(os.path.join(pasta, nome + ".png")).convert("RGBA").resize((w, h), Image.LANCZOS)
         tela.alpha_composite(im, (round(x), round(y)))
         if not nome.startswith("fundo"):
@@ -227,3 +229,9 @@ substituir o arquivo.
 - `svg/`: o desenho vetorial de cada peça. Para refazer: `python3 ferramentas/cenario2d/{pasta}.py`.
 """
     return prompts, leia
+
+
+def solto(corpo, x, y, w, h):
+    """Pedaço que estava desenhado no fundo, virado peça própria: o desenho em coordenadas do cenário
+    (x, y = canto de cima à esquerda da peça; w × h = tamanho). Assim dá para movê-lo no modo Decorar."""
+    return svg(w, h, f'<g transform="translate({-x},{-y})">{corpo}</g>')

@@ -9,23 +9,30 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, gerar_cenario, textos  # noqa: E402
-from moveis import porta_casa, plaquinha, planta_vaso, planta_pendurada, janela_paisagem, parede_interna  # noqa: E402
+from moveis import Soltos, porta_casa, plaquinha, planta_vaso, planta_pendurada, janela_paisagem, parede_interna  # noqa: E402
 
 W, H, CHAO = 2200, 900, 600
 P = {}
 
 
+S = Soltos(P)
+
+
 def fundo():
-    s = parede_interna(W, H, CHAO, "#ffe4ee", "#ffd9e8")
-    s += janela_paisagem(1350, 110, 260, 190, C["rosa_chiclete"])
-    s += planta_pendurada(1260, 40, 150) + planta_pendurada(1700, 40, 160)
+    S.limpar()
+    s = parede_interna(W, H, CHAO, "#ffe4ee", "#ffd9e8", so_parede=True)
+    S.comum("piso", 0, CHAO - 22)
+    S.comum("janela", 1326, 88, 1.13)
+    S.comum("planta_pendurada", 1220, 36)
+    S.comum("planta_pendurada", 1660, 36, 1.07)
     # quadro da fazenda (acima da estante)
-    s += f'<g transform="translate(-1600,0)">'
-    s += rr(1880, 120, 200, 140, 6, C["madeira"], 'stroke-width="4"') + rr(1894, 134, 172, 112, 2, C["ceu"])
-    s += path("M1894,220 Q1960,190 2066,215 L2066,246 L1894,246 Z", C["verde"], 'stroke-width="2"')
-    s += path("M1950,215 L1950,180 L1975,160 L2000,180 L2000,215 Z", C["vermelho_rosa"], 'stroke-width="2.5"')
-    s += path("M1964,215 L1964,195 L1986,195 L1986,215", extra='stroke-width="2"')
-    s += '</g>'
+    q = f'<g transform="translate(-1600,0)">'
+    q += rr(1880, 120, 200, 140, 6, C["madeira"], 'stroke-width="4"') + rr(1894, 134, 172, 112, 2, C["ceu"])
+    q += path("M1894,220 Q1960,190 2066,215 L2066,246 L1894,246 Z", C["verde"], 'stroke-width="2"')
+    q += path("M1950,215 L1950,180 L1975,160 L2000,180 L2000,215 Z", C["vermelho_rosa"], 'stroke-width="2.5"')
+    q += path("M1964,215 L1964,195 L1986,195 L1986,215", extra='stroke-width="2"')
+    q += '</g>'
+    S.add("quadro_fazenda", q, 274, 114, 212, 152)
     return svg(W, H, s)
 
 
@@ -193,6 +200,7 @@ POS = [("fundo", 0, 0),
        ("porta_fechada", 2010, 250), ("placa_flor", 2060, 180),
        ("tapete", 900, 700), ("mesa_centro", 1070, 660), ("vaso_flores", 1170, 600),
        ("cesto_brinquedos", 520, 690), ("@catarina", 700, 860), ("@catarina", 1460, 600)]
+POS[1:1] = S.pos
 
 TABELA = [
     ("Fundo da sala", "2200 × 900", None, "Parede rosa-clara com listras suaves e vigas de madeira no alto, janela com cortina rosa e vista da fazenda, três plantas penduradas, quadro de um celeiro rosa, rodapé e piso de madeira clara. SEM lareira, portas ou móveis.", ["fundo"]),

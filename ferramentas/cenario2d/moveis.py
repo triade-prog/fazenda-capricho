@@ -93,7 +93,7 @@ def janela_paisagem(x, y, w, h, cortina=None):
     return s
 
 
-def parede_interna(w, h, chao, cor_a, cor_b, piso="#e7bb87", listras=True, vigas=True):
+def parede_interna(w, h, chao, cor_a, cor_b, piso="#e7bb87", listras=True, vigas=True, so_parede=False):
     s = rr(-5, -5, w + 10, chao + 10, 0, cor_a, 'stroke="none"')
     if listras:
         for x in range(0, w, 80):
@@ -102,6 +102,8 @@ def parede_interna(w, h, chao, cor_a, cor_b, piso="#e7bb87", listras=True, vigas
         s += rr(-5, -5, w + 10, 46, 0, C["madeira"], 'stroke-width="3"')
         for x in range(40, w, 340):
             s += rr(x, 30, 26, 26, 4, C["madeira_esc"], 'stroke-width="2.5"')
+    if so_parede:  # o chão é a peça comum "piso"
+        return s
     s += rr(-5, chao - 22, w + 10, 24, 0, C["madeira_esc"], 'stroke-width="3"')
     s += rr(-5, chao, w + 10, h - chao + 5, 0, piso, 'stroke-width="3"')
     for y in range(chao + 45, h, 55):
@@ -161,3 +163,44 @@ def arvore_simples(w, h, copa=None, flores=None, seed=1):
             if any((x - a) ** 2 + (y - b) ** 2 < (c - 12) ** 2 for a, b, c in bl):
                 s += flor(round(x), round(y), max(5, w * 0.018), flores, C["rosa_forte"])
     return s
+
+
+CERCA_W = 416  # módulo de cerca: 8 estacas; vários lado a lado fazem a cerca toda
+
+
+class Soltos:
+    """Pedaços do fundo que viram peças próprias (dá para mover no modo Decorar e gerar em 3D à parte).
+
+    No fundo(): S.add(nome, desenho, x, y, w, h) no lugar de somar o desenho ao fundo; depois do POS:
+    POS[1:1] = S.pos (as peças soltas ficam logo atrás de todas as outras, como quando eram fundo)."""
+
+    def __init__(self, P):
+        self.P, self.pos = P, []
+
+    def limpar(self):
+        self.pos = []
+
+    def add(self, nome, corpo, x, y, w, h, onde=None):
+        """corpo desenhado em coordenadas do cenário, ocupando (x, y, w, h); onde: outras posições da mesma peça."""
+        from comum import solto
+        self.P.setdefault(nome, solto(corpo, x, y, w, h))
+        self.pos += [(nome, px, py) for px, py in (onde or [(x, y)])]
+
+    def comum(self, nome, x, y, esc=1.0):
+        """Peça de comuns.py (feita uma vez para todos os cenários), com escala opcional."""
+        import comuns
+        self.P.setdefault(nome, comuns.P[nome])
+        self.pos.append((nome, x, y, esc) if esc != 1.0 else (nome, x, y))
+
+    def cerca(self, chao, x0, x1):
+        for x in range(x0, x1, CERCA_W):
+            self.comum("cerca", x, chao - 82)
+
+    def arvore(self, tx, ty, w, h):
+        """No lugar de uma árvore w × h desenhada em (tx, ty): a árvore comum, mesma altura e mesmo meio."""
+        esc = h / 440
+        self.comum("arvore_flores", round(tx + w / 2 - 180 * esc), ty, round(esc, 3))
+
+    def grama(self, chao, w, x0=0):
+        for x in range(x0, w, 1100):
+            self.comum("grama", x, chao)

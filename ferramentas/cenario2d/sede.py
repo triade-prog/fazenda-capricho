@@ -8,7 +8,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, gerar_cenario, textos  # noqa: E402
-from moveis import porta_casa, ceu_morros, grama_fundo, arvore_simples, cerca  # noqa: E402
+from moveis import Soltos, porta_casa, ceu_morros, grama_fundo, arvore_simples, cerca  # noqa: E402
 
 W, H, CHAO = 3000, 900, 600
 P = {}
@@ -24,49 +24,56 @@ def janela_lilas(x, y, w=150, h=170):
     return s
 
 
+S = Soltos(P)
+
+
 def fundo():
     rnd = random.Random(41)
+    S.limpar()
     s, defs = ceu_morros(W, H, CHAO, rnd)
-    s += f'<g transform="translate(40,160)">{arvore_simples(360, 440, C["verde"], C["rosa"], 4)}</g>'
-    s += f'<g transform="translate(2790,300)">{arvore_simples(210, 300, C["verde"], C["rosa"], 5)}</g>'
-    s += cerca(W, CHAO, 0, 400) + cerca(W, CHAO, 2830, W)
+    S.grama(CHAO + 4, W)
+    S.arvore(40, 160, 360, 440)
+    S.arvore(2790, 300, 210, 300)
+    S.cerca(CHAO, 0, 400)
+    S.cerca(CHAO, 2830, W)
     # casa rosa (fachada) de x 420 a 1700
     x0, x1, base, topo = 420, 1700, CHAO, 170
-    s += rr(x0, topo, x1 - x0, base - topo, 6, "#ffc6dc", 'stroke-width="4"')
+    c = rr(x0, topo, x1 - x0, base - topo, 6, "#ffc6dc", 'stroke-width="4"')
     for y in range(topo + 40, base, 40):
-        s += path(f"M{x0+4},{y} L{x1-4},{y}", extra='stroke-width="1.5" opacity="0.2"')
-    s += path(f"M{x0-70},{topo+10} L{(x0+x1)/2},{topo-150} L{x1+70},{topo+10} Z", C["roxo"], 'stroke-width="4"')
-    s += path(f"M{x0-70},{topo+10} L{(x0+x1)/2},{topo-150} L{x1+70},{topo+10}", extra=f'stroke-width="12" stroke="{C["madeira_esc"]}"')
-    s += circ((x0 + x1) / 2, topo - 50, 36, C["madeira"], 'stroke-width="3.5"') + coracao((x0 + x1) / 2, topo - 48, 18, C["rosa_forte"])
-    s += rr(1480, topo - 160, 70, 120, 4, C["vermelho_rosa"], 'stroke-width="3.5"')   # chaminé
-    s += janela_lilas(500, 250) + janela_lilas(1440, 250)
+        c += path(f"M{x0+4},{y} L{x1-4},{y}", extra='stroke-width="1.5" opacity="0.2"')
+    c += rr(1480, topo - 160, 70, 120, 4, C["vermelho_rosa"], 'stroke-width="3.5"')   # chaminé
+    c += path(f"M{x0-70},{topo+10} L{(x0+x1)/2},{topo-150} L{x1+70},{topo+10} Z", C["roxo"], 'stroke-width="4"')
+    c += path(f"M{x0-70},{topo+10} L{(x0+x1)/2},{topo-150} L{x1+70},{topo+10}", extra=f'stroke-width="12" stroke="{C["madeira_esc"]}"')
+    c += circ((x0 + x1) / 2, topo - 50, 36, C["madeira"], 'stroke-width="3.5"') + coracao((x0 + x1) / 2, topo - 48, 18, C["rosa_forte"])
     # varanda: piso, telhadinho e colunas
-    s += rr(x0 + 120, base - 30, 1040, 34, 6, C["madeira"], 'stroke-width="3.5"')
-    s += rr(x0 + 100, 205, 1080, 26, 8, C["madeira_esc"], 'stroke-width="3.5"')
+    c += rr(x0 + 120, base - 30, 1040, 34, 6, C["madeira"], 'stroke-width="3.5"')
+    c += rr(x0 + 100, 205, 1080, 26, 8, C["madeira_esc"], 'stroke-width="3.5"')
     for x in (x0 + 140, x0 + 560, x0 + 720, x0 + 1140):
-        s += rr(x - 12, 230, 24, base - 260, 5, C["madeira"], 'stroke-width="3"')
-        s += flor(x, 260, 9, C["rosa"], C["amarelo"]) + flor(x + 4, 330, 8, C["lilas"], C["amarelo"])
+        c += rr(x - 12, 230, 24, base - 260, 5, C["madeira"], 'stroke-width="3"')
+        c += flor(x, 260, 9, C["rosa"], C["amarelo"]) + flor(x + 4, 330, 8, C["lilas"], C["amarelo"])
+    S.add("casa_fachada", c, x0 - 80, 0, x1 - x0 + 160, base + 8)
+    S.add("janela_casa", janela_lilas(500, 250), 466, 238, 218, 232, [(466, 238), (1406, 238)])
     # deck à direita (de dia)
     dx0, dx1 = 1820, 2830
-    s += rr(dx0, base - 50, dx1 - dx0, 54, 6, C["mel"], 'stroke-width="3.5"')
+    d = rr(dx0, base - 50, dx1 - dx0, 54, 6, C["mel"], 'stroke-width="3.5"')
     for x in range(dx0 + 40, dx1, 50):
-        s += path(f"M{x},{base-46} L{x},{base}", extra='stroke-width="1.5" opacity="0.4"')
+        d += path(f"M{x},{base-46} L{x},{base}", extra='stroke-width="1.5" opacity="0.4"')
     for x in (dx0 + 30, dx1 - 30):
-        s += rr(x - 14, 180, 28, base - 230, 5, C["madeira"], 'stroke-width="3"')
-    s += rr(dx0 - 20, 160, dx1 - dx0 + 40, 26, 8, C["madeira_esc"], 'stroke-width="3.5"')
+        d += rr(x - 14, 180, 28, base - 230, 5, C["madeira"], 'stroke-width="3"')
+    d += rr(dx0 - 20, 160, dx1 - dx0 + 40, 26, 8, C["madeira_esc"], 'stroke-width="3.5"')
     for x in range(dx0, dx1, 34):
-        s += circ(x, 160 + (x % 3) * 5, 14, C["verde"], 'stroke-width="2.5"')
+        d += circ(x, 160 + (x % 3) * 5, 14, C["verde"], 'stroke-width="2.5"')
     for x in range(dx0 + 10, dx1, 44):
-        s += flor(x, 156 + (x % 4) * 4, 8, C["rosa_chiclete"], C["amarelo"])
-    # grade baixa do deck (fundo)
-    s += rr(dx0, base - 120, dx1 - dx0, 12, 4, C["madeira"], 'stroke-width="2.5"')
+        d += flor(x, 156 + (x % 4) * 4, 8, C["rosa_chiclete"], C["amarelo"])
+    # grade baixa do deck
+    d += rr(dx0, base - 120, dx1 - dx0, 12, 4, C["madeira"], 'stroke-width="2.5"')
     for x in range(dx0 + 10, dx1, 36):
-        s += rr(x, base - 116, 10, 66, 3, C["madeira_clara"], 'stroke-width="2"')
-    # grama e caminho de pedras
-    s += grama_fundo(W, H, CHAO + 4, rnd)
+        d += rr(x, base - 116, 10, 66, 3, C["madeira_clara"], 'stroke-width="2"')
+    S.add("deck", d, dx0 - 40, 136, dx1 - dx0 + 80, base - 128)
+    # caminho de pedras
     for i in range(7):
         x, y = 1060 - i * 18 + (i % 2) * 40, 640 + i * 38
-        s += ell(x, y, 46, 15, "#e9e0d6", 'stroke-width="2.5"')
+        S.comum("pedra_caminho", x - 50, y - 19)
     return svg(W, H, s, defs)
 
 
@@ -193,6 +200,7 @@ POS = [("fundo", 0, 0),
        ("rede", 1845, 290), ("cadeira_deck", 2340, 362), ("cadeira_deck", 2690, 362), ("mesa_deck", 2420, 410),
        ("vaso_1", 1700, 590), ("regador_cheio", 1640, 720), ("bola", 1450, 760),
        ("@catarina", 760, 570), ("@catarina", 1300, 860)]
+POS[1:1] = S.pos
 
 TABELA = [
     ("Fundo da Sede", "3000 × 900", None, "Fachada da casa grande ROSA com telhado lilás, coração no frontão, duas janelas lilás com floreiras, varanda de madeira com colunas floridas; à direita, o deck de madeira com pergolado florido e gradinha (de DIA). Árvores, morros, céu, cerca e caminho de pedras. SEM porta, rede, banco, mesa, vasos e luzinhas.", ["fundo"]),

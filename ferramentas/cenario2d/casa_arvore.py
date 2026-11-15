@@ -9,9 +9,12 @@ import random
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
+from moveis import Soltos  # noqa: E402
 from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, nuvem, salvar  # noqa: E402
 
 P = {}
+S = Soltos(P)
+S2 = Soltos(P)
 
 # ---------------------------------------------------------------- C07 pátio
 
@@ -22,6 +25,7 @@ def fundo_patio(w=2600, h=900, chao=600):
             f'<stop offset="1" stop-color="{C["ceu_claro"]}"/></linearGradient>'
             f'<linearGradient id="grama" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ad884"/>'
             f'<stop offset="1" stop-color="#84c96f"/></linearGradient>')
+    S.limpar()
     s = f'<rect width="{w}" height="{h}" fill="url(#ceu)" stroke="none"/>'
     for cx, cy, k in [(260, 120, 46), (900, 80, 36), (1500, 140, 50), (2100, 90, 40), (2450, 170, 30)]:
         s += nuvem(cx, cy, k)
@@ -30,22 +34,8 @@ def fundo_patio(w=2600, h=900, chao=600):
               f"L{w},{chao} L0,{chao} Z", C["verde_claro"], 'stroke-width="3"')
     s += path(f"M0,{chao-10} Q500,{chao-170} 1100,{chao-30} T2100,{chao-60} T{w},{chao-40} L{w},{chao} L0,{chao} Z",
               "#a8dd8f", 'stroke-width="3"')
-    # cerca branca
-    y0 = chao - 70
-    s += rr(0, y0 + 14, w, 12, 4, C["branco"]) + rr(0, y0 + 42, w, 12, 4, C["branco"])
-    for x in range(10, w, 52):
-        s += path(f"M{x},{chao+6} L{x},{y0+6} L{x+11},{y0-6} L{x+22},{y0+6} L{x+22},{chao+6} Z", C["branco"],
-                  'stroke-width="2.5"')
-    # grama
-    s += f'<rect x="-5" y="{chao}" width="{w+10}" height="{h-chao+5}" fill="url(#grama)" stroke="{L}"/>'
-    for _ in range(140):
-        x, y = rnd.uniform(10, w - 10), rnd.uniform(chao + 20, h - 10)
-        s += path(f"M{x:.0f},{y:.0f} l-5,-12 M{x:.0f},{y:.0f} l0,-15 M{x:.0f},{y:.0f} l6,-12",
-                  extra=f'stroke="{C["verde_esc"]}" stroke-width="2.5"')
-    for _ in range(70):
-        x, y = rnd.uniform(15, w - 15), rnd.uniform(chao + 25, h - 15)
-        cor = rnd.choice([C["rosa"], C["branco"], C["lilas"], C["amarelo"]])
-        s += flor(round(x), round(y), 5, cor)
+    S.cerca(chao, 0, w)
+    S.grama(chao, w)
     return svg(w, h, s, defs)
 
 
@@ -328,6 +318,7 @@ P["placa_cabana"] = placa("cabana")
 
 def fundo_dentro():
     w, h, chao = 1600, 900, 640
+    S2.limpar()
     s = rr(-5, -5, w + 10, h + 10, 0, C["creme"], 'stroke="none"')
     for x in range(0, w, 56):
         s += rr(x, 60, 56, chao - 60, 0, "#ffe9c7" if (x // 56) % 2 else C["creme"], 'stroke-width="1.5" stroke-opacity="0.45"')
@@ -336,21 +327,23 @@ def fundo_dentro():
     s += path(f"M-5,90 L800,20 L{w+5},90", extra='stroke-width="10"')
     s += path(f"M-5,90 L800,20 L{w+5},90", extra=f'stroke-width="5" stroke="{C["madeira_esc"]}"')
     # luzinhas
-    s += path(f"M0,70 Q200,110 400,60 T800,60 T1200,60 T{w},70", extra='stroke-width="2"')
+    lz = path(f"M0,70 Q200,110 400,60 T800,60 T1200,60 T{w},70", extra='stroke-width="2"')
     for i in range(1, 20):
         x = i * w / 20
         y = 70 + 22 * math.sin(i * 1.55)
-        s += circ(f"{x:.0f}", f"{y + 10:.0f}", 9, C["amarelo"], 'stroke-width="2"')
+        lz += circ(f"{x:.0f}", f"{y + 10:.0f}", 9, C["amarelo"], 'stroke-width="2"')
+    S2.add("luzinhas", lz, -4, 40, w + 8, 76)
     # janela redonda com folhas rosa
     cx, cy, r = 800, 270, 150
-    s += circ(cx, cy, r + 18, C["madeira_esc"], 'stroke-width="4"') + circ(cx, cy, r, C["ceu"])
-    s += f'<clipPath id="jan"><circle cx="{cx}" cy="{cy}" r="{r}"/></clipPath>'
-    s += f'<g clip-path="url(#jan)" stroke="none">'
+    jr = circ(cx, cy, r + 18, C["madeira_esc"], 'stroke-width="4"') + circ(cx, cy, r, C["ceu"])
+    jr += f'<clipPath id="jan"><circle cx="{cx}" cy="{cy}" r="{r}"/></clipPath>'
+    jr += f'<g clip-path="url(#jan)" stroke="none">'
     for fx, fy, fr in [(680, 180, 70), (900, 160, 80), (700, 400, 60), (930, 390, 75), (800, 130, 50)]:
-        s += circ(fx, fy, fr, C["rosa_chiclete"])
-    s += '</g>'
-    s += path(f"M{cx-r},{cy} L{cx+r},{cy} M{cx},{cy-r} L{cx},{cy+r}", extra='stroke-width="8"')
-    s += path(f"M{cx-r},{cy} L{cx+r},{cy} M{cx},{cy-r} L{cx},{cy+r}", extra=f'stroke-width="4" stroke="{C["madeira_esc"]}"')
+        jr += circ(fx, fy, fr, C["rosa_chiclete"])
+    jr += '</g>'
+    jr += path(f"M{cx-r},{cy} L{cx+r},{cy} M{cx},{cy-r} L{cx},{cy+r}", extra='stroke-width="8"')
+    jr += path(f"M{cx-r},{cy} L{cx+r},{cy} M{cx},{cy-r} L{cx},{cy+r}", extra=f'stroke-width="4" stroke="{C["madeira_esc"]}"')
+    S2.add("janela_redonda", jr, cx - r - 22, cy - r - 22, 2 * r + 44, 2 * r + 44)
     # rodapé e chão
     s += rr(-5, chao - 16, w + 10, 18, 0, C["madeira_esc"], 'stroke-width="3"')
     s += rr(-5, chao, w + 10, h - chao + 5, 0, "#e7bb87", 'stroke-width="3"')
@@ -538,10 +531,12 @@ POS = [("fundo_patio", 0, 0), ("arvore_casinha", 450, 0), ("cacho_com", 540, 150
        ("porta_fechada", 750, 80), ("escada_madeira", 520, 380), ("escada_corda", 1140, 380), ("escorregador_rosa", 1272, 378), ("@catarina", 1010, 380),
        ("grade_varanda", 625, 330), ("balanco_estrutura", 1860, 250), ("balanco_assento", 1945, 262), ("mesa_piquenique", 2190, 640), ("cesto_cheio", 2290, 770),
        ("bola", 1700, 790), ("placa_casa", 40, 520), ("placa_cabana", 2460, 470), ("@catarina", 1550, 860), ("frutinha", 1600, 820)]
+POS[1:1] = S.pos
 POS_DENTRO = [("fundo_dentro", 0, 0), ("passarinho_pousado", 830, 100), ("porta_dentro_aberta", 1440, 340), ("cama", 60, 550), ("cozinha_desligada", 470, 460),
        ("panelinha", 480, 425), ("bule", 560, 415), ("xicara_cha", 640, 435), ("tapete", 520, 790), ("cadeirinha", 840, 620),
        ("mesinha_cha", 780, 680), ("cadeirinha_dir", 720, 720), ("cadeirinha_esq", 960, 720), ("bau_aberto", 1040, 500), ("unicornio", 1210, 580),
        ("ursinho_heroi", 1100, 740), ("@catarina", 1330, 880)]
+POS_DENTRO[1:1] = S2.pos
 
 # Como o pátio entra no protótipo (ver para_jogo.py).
 JOGO = {

@@ -9,9 +9,11 @@ import random
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
+from moveis import Soltos  # noqa: E402
 from comum import C, L, svg, rr, circ, ell, path, coracao, estrela, flor, nuvem, salvar  # noqa: E402
 
 P = {}
+S = Soltos(P)
 
 
 def margarida(cx, cy, r):
@@ -28,6 +30,7 @@ def fundo():
     rnd = random.Random(11)
     defs = (f'<linearGradient id="ceu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{C["ceu"]}"/>'
             f'<stop offset="1" stop-color="{C["ceu_claro"]}"/></linearGradient>')
+    S.limpar()
     s = f'<rect width="{w}" height="{h}" fill="url(#ceu)" stroke="none"/>'
     for cx, cy, k in [(1800, 110, 44), (2400, 70, 36), (3000, 140, 46), (600, 60, 30)]:
         s += nuvem(cx, cy, k)
@@ -35,31 +38,22 @@ def fundo():
     s += path(f"M{div-40},{chao-40} Q2000,{chao-260} 2500,{chao-120} T{w},{chao-170} L{w},{chao} L{div-40},{chao} Z",
               C["verde_claro"])
     s += path(f"M{div-40},{chao-10} Q2300,{chao-150} 2900,{chao-40} T{w},{chao-60} L{w},{chao} L{div-40},{chao} Z", "#a8dd8f")
-    y0 = chao - 70
-    s += rr(div, y0 + 14, w - div, 12, 4, C["branco"]) + rr(div, y0 + 42, w - div, 12, 4, C["branco"])
-    for x in range(div + 10, w, 52):
-        s += path(f"M{x},{chao+6} L{x},{y0+6} L{x+11},{y0-6} L{x+22},{y0+6} L{x+22},{chao+6} Z", C["branco"], 'stroke-width="2.5"')
-    s += rr(div - 20, chao, w - div + 30, h - chao + 5, 0, "#8fd17a")
-    for _ in range(90):
-        x, y = rnd.uniform(div + 20, w - 10), rnd.uniform(chao + 20, h - 10)
-        s += path(f"M{x:.0f},{y:.0f} l-5,-12 M{x:.0f},{y:.0f} l0,-15 M{x:.0f},{y:.0f} l6,-12",
-                  extra=f'stroke="{C["verde_esc"]}" stroke-width="2.5"')
-    for _ in range(45):
-        x, y = rnd.uniform(div + 20, w - 15), rnd.uniform(chao + 25, h - 15)
-        s += flor(round(x), round(y), 5, rnd.choice([C["rosa"], C["branco"], C["lilas"], C["amarelo"]]))
-    # estábulo: parede de tábuas cor de mel
-    s += rr(-5, 110, div + 5, chao - 110, 0, C["mel"], 'stroke-width="4"')
+    S.cerca(chao, div, w)
+    S.grama(chao, w, div)
+    # estábulo: parede de tábuas cor de mel, telhado e flores penduradas (peças)
+    pa = rr(-5, 110, div + 5, chao - 110, 0, C["mel"], 'stroke-width="4"')
     for x in range(0, div, 50):
-        s += rr(x, 110, 50, chao - 110, 0, "#e3a257" if (x // 50) % 2 else C["mel"], 'stroke-width="1.5" stroke-opacity="0.5"')
+        pa += rr(x, 110, 50, chao - 110, 0, "#e3a257" if (x // 50) % 2 else C["mel"], 'stroke-width="1.5" stroke-opacity="0.5"')
     for x in (20, 740, 1460):
-        s += rr(x, 120, 30, chao - 120, 4, C["madeira_esc"])
-    s += rr(-5, 150, div + 5, 22, 3, C["madeira_esc"])           # viga
-    # telhado vermelho-rosado
-    s += path(f"M-5,135 L750,55 L{div+40},135 L{div+40},165 L750,85 L-5,165 Z", C["vermelho_rosa"], 'stroke-width="4"')
-    # flores penduradas
+        pa += rr(x, 120, 30, chao - 120, 4, C["madeira_esc"])
+    pa += rr(-5, 150, div + 5, 22, 3, C["madeira_esc"])           # viga
+    S.add("parede_estabulo", pa, -8, 106, div + 12, chao - 100)
+    S.add("telhado_estabulo", path(f"M-5,135 L750,55 L{div+40},135 L{div+40},165 L750,85 L-5,165 Z", C["vermelho_rosa"], 'stroke-width="4"'),
+          -10, 50, div + 56, 120)
     for i, x in enumerate(range(80, div - 40, 120)):
-        s += path(f"M{x},172 L{x},{196 + (i % 2) * 14}", extra='stroke-width="2"')
-        s += flor(x, 206 + (i % 2) * 14, 10, C["rosa"] if i % 2 else C["lilas"], C["rosa_forte"])
+        nome = "flor_pendurada_" + ("rosa" if i % 2 else "lilas")
+        fp = path(f"M{x},172 L{x},{196 + (i % 2) * 14}", extra='stroke-width="2"') + flor(x, 206 + (i % 2) * 14, 10, C["rosa"] if i % 2 else C["lilas"], C["rosa_forte"])
+        S.add(nome, fp, x - 22, 168, 44, 64, [(x - 22, 168)])
     # chão de palha
     s += rr(-5, chao, div + 5, h - chao + 5, 0, "#f0d27a")
     for _ in range(260):
@@ -360,6 +354,7 @@ POS = [("fundo", 0, 0), ("suporte_manta", 840, 300), ("ferradura", 1000, 290), (
        ("fardo", 850, 770), ("fardo", 1040, 770), ("feno", 700, 720), ("pente", 40, 830), ("arvore", 1950, 100),
        ("porteira_fechada", 1560, 500), ("laguinho_ondas", 2500, 750), ("banco_tronco", 2600, 620), ("moita_flores", 2850, 690), ("moita_colhida", 3060, 690),
        ("moita_flores", 2250, 820), ("margarida", 2200, 850), ("@catarina", 2180, 880), ("@catarina", 640, 860)]
+POS[1:1] = S.pos
 
 # Como o cenário entra no protótipo (ver para_jogo.py).
 JOGO = {
