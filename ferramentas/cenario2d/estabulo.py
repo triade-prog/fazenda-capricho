@@ -16,6 +16,12 @@ P = {}
 S = Soltos(P)
 
 
+def quadro(peca, w, h):
+    """Mesmo desenho 2D num quadro com a proporção da peça 3D nova."""
+    import re
+    return re.sub(r'width="[^"]+" height="[^"]+"', f'width="{w}" height="{h}" preserveAspectRatio="none"', peca, count=1)
+
+
 def margarida(cx, cy, r):
     s = ""
     for i in range(8):
@@ -51,7 +57,7 @@ def fundo():
     pa += rr(-5, 150, div + 5, 22, 3, C["madeira_esc"])           # viga
     S.add("parede_estabulo", pa, -8, 106, div + 12, chao - 100)
     S.add("telhado_estabulo", path(f"M-5,135 L750,55 L{div+40},135 L{div+40},165 L750,85 L-5,165 Z", C["vermelho_rosa"], 'stroke-width="4"'),
-          -10, 50, div + 56, 120)
+          -10, 30, div + 56, 177)
     for i, x in enumerate(range(80, div - 40, 120)):
         nome = "flor_pendurada_" + ("rosa" if i % 2 else "lilas")
         fp = path(f"M{x},172 L{x},{196 + (i % 2) * 14}", extra='stroke-width="2"') + flor(x, 206 + (i % 2) * 14, 10, C["rosa"] if i % 2 else C["lilas"], C["rosa_forte"])
@@ -504,6 +510,14 @@ P["touceira"] = svg(110, 110, "".join(path(f"M55,108 Q{55 + dx * 0.4},60 {55 + d
                                       for dx in (-44, -22, 0, 22, 44)))
 P["pedra"] = svg(110, 60, pedra(55, 34, 50, 24, "#cfc6cf"))
 
+# quadros na proporção das peças 3D da Carol (15/11/2026)
+for _n, _w, _h in [("cesto_pendurado", 180, 250), ("ferradura", 115, 120), ("ganchos", 230, 45), ("lanterna_apagada", 52, 110),
+                   ("lanterna_acesa", 52, 110), ("lanterna_jardim", 90, 170), ("pente_pendurado", 32, 118),
+                   ("prateleira_banho", 280, 44), ("escova_pendurada", 50, 125),
+                   ("balde_vazio", 110, 136), ("balde_agua", 110, 136), ("ducha_ligada", 240, 430), ("ducha_desligada", 240, 430),
+                   ("feno", 70, 36), ("shampoo", 40, 85)]:
+    P[_n] = quadro(P[_n], _w, _h)
+
 # Posição das peças na prévia e no jogo (canto de cima à esquerda, em pixels do jogo).
 W, H, CHAO = 3300, 900, 600
 POS = [("fundo", 0, 0),
@@ -511,7 +525,7 @@ POS = [("fundo", 0, 0),
        ("cesto_pendurado", 80, 200), ("ferradura", 330, 250), ("suporte_manta", 500, 260),
        ("prateleira_banho", 870, 330), ("shampoo", 910, 250), ("pote_creme", 980, 284), ("vaso_flores", 1070, 240),
        ("ganchos", 895, 380), ("pente_pendurado", 915, 410), ("escova_pendurada", 982, 410), ("espelho", 1050, 410),
-       ("ducha_ligada", 1120, 190), ("lanterna_acesa", 1395, 150), ("trepadeira_flores", 1440, 180),
+       ("ducha_ligada", 1170, 190), ("lanterna_acesa", 1395, 150), ("trepadeira_flores", 1440, 180),
        # estábulo (chão)
        ("cocho_feno", 50, 450), ("banheira_espuma", 830, 500), ("toalha", 1060, 560), ("shampoo", 820, 610),
        ("balde_agua", 1250, 590), ("tapete_coracao", 760, 712), ("caixote_frutas", 30, 650), ("escova_pelo", 260, 790),
@@ -522,7 +536,7 @@ POS = [("fundo", 0, 0),
        ("moita_flores", 2830, 510), ("moita_colhida", 3040, 590),
        ("laguinho_ondas", 2090, 610), ("cascata", 2700, 540), ("vitoria_regia", 2330, 740), ("vitoria_regia_flor", 2410, 720),
        ("touceira", 2060, 600), ("touceira", 2460, 540), ("touceira", 2930, 650), ("flores_lago", 1960, 690), ("flores_lago", 2230, 540),
-       ("lanterna_jardim", 2120, 620), ("moita_flores", 2850, 750), ("pedra", 3150, 820), ("pedra", 1440, 850),
+       ("lanterna_jardim", 2135, 610), ("moita_flores", 2850, 750), ("pedra", 3150, 820), ("pedra", 1440, 850),
        ("margarida", 1750, 760), ("@catarina", 1800, 880), ("@catarina", 640, 860)]
 POS[1:1] = S.pos
 
@@ -532,7 +546,7 @@ JOGO = {
         "cocho": {"estados": ["cocho_vazio", "cocho_feno", "cocho_cenouras"], "x": 50, "y": 450},
         "banheira": {"estados": ["banheira_agua", "banheira_espuma"], "x": 830, "y": 500},
         "balde": {"estados": ["balde_vazio", "balde_agua"], "x": 1250, "y": 590},
-        "ducha": {"estados": ["ducha_desligada", "ducha_ligada"], "x": 1120, "y": 190},
+        "ducha": {"estados": ["ducha_desligada", "ducha_ligada"], "x": 1170, "y": 190},
         "lanterna": {"estados": ["lanterna_apagada", "lanterna_acesa"], "x": 1395, "y": 150},
         "porteira": {"estados": ["porteira_fechada", "porteira_aberta"], "x": 1540, "y": 420},
         "laguinho": {"estados": ["laguinho_parado", "laguinho_ondas"], "x": 2090, "y": 610},

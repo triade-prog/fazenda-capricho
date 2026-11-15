@@ -15,7 +15,7 @@ from PIL import Image
 from scipy import ndimage
 
 
-def limpar(im, minimo=0.02, corte=40):
+def limpar(im, minimo=0.02, corte=40, recortar=True):
     a = np.array(im.convert("RGBA"))
     alfa = a[..., 3].astype(float)
     alfa[alfa < corte] = 0
@@ -33,7 +33,7 @@ def limpar(im, minimo=0.02, corte=40):
         a[..., :3][borda] = a[..., :3][iy[borda], ix[borda]]
     a[..., 3] = alfa.astype(np.uint8)
     out = Image.fromarray(a)
-    return out.crop(out.getbbox())
+    return out.crop(out.getbbox()) if recortar else out
 
 
 if __name__ == "__main__":
