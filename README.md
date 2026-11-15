@@ -21,6 +21,7 @@ manipula objetos, explora ambientes e cria suas próprias histórias, sem missõ
 - `arte/cenario/plantacao/` — layout e prompts das peças da Plantação (horta, pomar, jardim, canteiro mágico).
 - `arte/cenario/entrada/`, `sede/`, `sala/`, `cozinha/`, `quarto_carol/`, `pet_care/`, `cabana/` e `casinha/` — layout na escala (`<cenário>_layout.png`), prompts das peças 3D (`PROMPTS.md`) e peças 2D provisórias (`2d/`) dos cenários C01 a C04, C06, C10, C12 e C13. Quarto da Carol, Cabana e Casinha são propostas que aguardam as criadoras.
 - `arte/cenario/<cenário>/2d/` — peças 2D provisórias da casa na árvore, do estábulo e da plantação, com os mesmos nomes e tamanhos das 3D (para montar no jogo agora e trocar depois). Geradas por `ferramentas/cenario2d/`.
+- `arte/interface/mapa_fazenda/` — mapa da fazenda ilustrado (visto de cima): peças 2D separadas, prévia e layout com tamanhos, gerados por `ferramentas/cenario2d/mapa_fazenda.py` (posições em `prototipo/dados/mapa_fazenda.json`). Pacote para gerar em 3D: `arte/para_gerar_3d/Fazenda_Capricho_mapa_2d_para_3d.zip`.
 - `arte/cenario/referencias_provisorias/` — cada elemento do quarto e cada objeto em PNG separado, com tamanhos o guia `GUIA.md` e os prompts prontos em `PROMPTS.md` para gerar a arte 3D.
 - `arte/personagens/` — imagens oficiais dos personagens (versão final; prevalecem sobre o texto do GDD).
 

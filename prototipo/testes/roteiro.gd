@@ -407,6 +407,13 @@ func _roteiro() -> void:
 	await _espera(0.3)
 	_confere(main.mapa.aberto() and main.mapa.cena_atual == "sede", "o botão da ferradura abre o mapa, com o coração na Sede")
 	await _foto("50_mapa")
+	main.mapa.lugares["casa"].pressed.emit()
+	await _espera(0.3)
+	_confere(main.mapa.aberto() and main.mapa.balao.visible and main.mapa.balao_de == "casa",
+		"tocar na Casa do mapa abre o balão para escolher o cômodo")
+	await _foto("50b_mapa_casa")
+	main.mapa.lugares["casa"].pressed.emit()
+	_confere(not main.mapa.balao.visible, "tocar de novo na Casa fecha o balão")
 	main.mapa.figurinhas["pet_care"].pressed.emit()
 	await _espera(0.8)
 	_confere(not main.mapa.aberto() and main.cena == "pet_care", "tocar na figurinha do Pet Care leva para lá e fecha o mapa")

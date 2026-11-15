@@ -1,0 +1,431 @@
+{
+ "tela": [
+  1600,
+  1200
+ ],
+ "fundo": [
+  -300,
+  -150,
+  2200,
+  1500
+ ],
+ "decoracao": [
+  [
+   "arvore",
+   540,
+   -40,
+   200,
+   210
+  ],
+  [
+   "arvore",
+   1060,
+   -30,
+   200,
+   210
+  ],
+  [
+   "arvore_rosa",
+   1450,
+   -10,
+   200,
+   210
+  ],
+  [
+   "cerca",
+   470,
+   120,
+   300,
+   62
+  ],
+  [
+   "cerca",
+   770,
+   120,
+   300,
+   62
+  ],
+  [
+   "cerca",
+   1170,
+   140,
+   300,
+   62
+  ],
+  [
+   "cerca",
+   1440,
+   150,
+   300,
+   62
+  ],
+  [
+   "arvore",
+   1470,
+   330,
+   200,
+   210
+  ],
+  [
+   "arvore",
+   1480,
+   640,
+   200,
+   210
+  ],
+  [
+   "pinheiro",
+   -10,
+   520,
+   130,
+   210
+  ],
+  [
+   "pinheiro",
+   70,
+   600,
+   130,
+   210
+  ],
+  [
+   "pinheiro",
+   -20,
+   700,
+   130,
+   210
+  ],
+  [
+   "arbusto",
+   380,
+   330,
+   110,
+   70
+  ],
+  [
+   "flores",
+   980,
+   380,
+   120,
+   60
+  ],
+  [
+   "flores",
+   1110,
+   340,
+   120,
+   60
+  ],
+  [
+   "flores",
+   250,
+   600,
+   120,
+   60
+  ],
+  [
+   "flores",
+   600,
+   1060,
+   120,
+   60
+  ],
+  [
+   "flores",
+   930,
+   1070,
+   120,
+   60
+  ],
+  [
+   "arbusto",
+   1060,
+   870,
+   110,
+   70
+  ],
+  [
+   "arbusto",
+   440,
+   1000,
+   110,
+   70
+  ],
+  [
+   "pedras",
+   690,
+   780,
+   90,
+   120
+  ],
+  [
+   "lago",
+   850,
+   730,
+   200,
+   100
+  ],
+  [
+   "cerca",
+   -40,
+   1060,
+   300,
+   62
+  ],
+  [
+   "cerca",
+   250,
+   1040,
+   300,
+   62
+  ],
+  [
+   "cerca",
+   1010,
+   1050,
+   300,
+   62
+  ],
+  [
+   "cerca",
+   1310,
+   1060,
+   300,
+   62
+  ],
+  [
+   "flores",
+   -10,
+   1140,
+   120,
+   60
+  ],
+  [
+   "flores",
+   1500,
+   1130,
+   120,
+   60
+  ]
+ ],
+ "lugares": {
+  "casa_arvore": {
+   "rect": [
+    -10,
+    40,
+    520,
+    480
+   ],
+   "rotulo": "Casa na Árvore",
+   "placa": [
+    200,
+    496
+   ],
+   "destinos": [
+    [
+     "casa_arvore",
+     "Pátio"
+    ],
+    [
+     "casa_arvore_dentro",
+     "Dentro"
+    ]
+   ]
+  },
+  "estabulo": {
+   "rect": [
+    630,
+    40,
+    540,
+    280
+   ],
+   "rotulo": "Estábulo",
+   "placa": [
+    960,
+    330
+   ],
+   "destinos": [
+    [
+     "estabulo",
+     ""
+    ]
+   ]
+  },
+  "horta": {
+   "rect": [
+    1190,
+    105,
+    380,
+    250
+   ],
+   "rotulo": "Horta",
+   "placa": [
+    1350,
+    352
+   ],
+   "destinos": [
+    [
+     "plantacao",
+     ""
+    ]
+   ]
+  },
+  "casa": {
+   "rect": [
+    300,
+    330,
+    660,
+    450
+   ],
+   "rotulo": "Casa",
+   "placa": [
+    545,
+    795
+   ],
+   "destinos": [
+    [
+     "sede",
+     "Varanda"
+    ],
+    [
+     "sala",
+     "Sala"
+    ],
+    [
+     "cozinha",
+     "Cozinha"
+    ],
+    [
+     "quarto",
+     "Quarto"
+    ],
+    [
+     "quarto_carol",
+     "Quarto da Carol"
+    ]
+   ]
+  },
+  "pet_care": {
+   "rect": [
+    1090,
+    395,
+    420,
+    300
+   ],
+   "rotulo": "Pet Care",
+   "placa": [
+    1282,
+    700
+   ],
+   "destinos": [
+    [
+     "pet_care",
+     ""
+    ]
+   ]
+  },
+  "cabana": {
+   "rect": [
+    100,
+    750,
+    300,
+    230
+   ],
+   "rotulo": "Cabana",
+   "placa": [
+    270,
+    1000
+   ],
+   "destinos": [
+    [
+     "cabana",
+     ""
+    ]
+   ]
+  },
+  "entrada": {
+   "rect": [
+    560,
+    830,
+    480,
+    280
+   ],
+   "rotulo": "Entrada",
+   "placa": [
+    800,
+    950
+   ],
+   "destinos": [
+    [
+     "entrada",
+     ""
+    ]
+   ]
+  },
+  "casinha": {
+   "rect": [
+    1150,
+    730,
+    380,
+    280
+   ],
+   "rotulo": "Casinha",
+   "placa": [
+    1320,
+    1010
+   ],
+   "destinos": [
+    [
+     "casinha",
+     ""
+    ]
+   ]
+  }
+ },
+ "ordem": [
+  "casa_arvore",
+  "estabulo",
+  "horta",
+  "pet_care",
+  "casa",
+  "cabana",
+  "casinha",
+  "entrada"
+ ],
+ "ui": {
+  "titulo": [
+   10,
+   10,
+   380,
+   200
+  ],
+  "titulo_texto": [
+   "Fazenda",
+   "Capricho"
+  ],
+  "fechar": [
+   1470,
+   20,
+   110,
+   110
+  ],
+  "faixa": [
+   450,
+   1100,
+   700,
+   84
+  ],
+  "faixa_texto": "Toque em um lugar para brincar",
+  "marcador": [
+   130,
+   150
+  ],
+  "marcador_ponta": [
+   0.5,
+   0.22
+  ],
+  "placa_nome": [
+   240,
+   64
+  ]
+ }
+}
