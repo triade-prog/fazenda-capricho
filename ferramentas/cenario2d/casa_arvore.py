@@ -127,6 +127,8 @@ PARTES = {  # nome: (x, y, w, h, cor do quadro 2D)
     "mesa_piquenique": (2200, 650, 300, 83, C["madeira"]),
     "toalha": (2195, 650, 310, 45, C["rosa_claro"]),
     "banco_piquenique": (2185, 712, 330, 65, C["madeira"]),
+    "arbusto": (200, 515, 300, 99, C["verde"]),
+    "tufo": (915, 572, 56, 48, C["verde"]),
 }
 for _n, (_x, _y, _w, _h, _c) in PARTES.items():
     P[_n] = bloco(_w, _h, _c)
@@ -569,9 +571,9 @@ def _parte(n, dx=None, dy=None):
     return (n, x if dx is None else dx, y if dy is None else dy)
 
 
-POS = [("fundo_patio", 0, 0),
+POS = [("fundo_patio", 0, 0), _parte("arbusto"), ("arbusto", 2130, 515),
        _parte("copa"), ("cacho_com", 560, 170), ("cacho_colhido", 1310, 200), ("cacho_com", 545, 330),
-       _parte("tronco"), _parte("viga_esq"), _parte("viga_dir"), _parte("parede_casinha"), _parte("janela_casinha"),
+       _parte("tronco"), _parte("tufo"), _parte("viga_esq"), _parte("viga_dir"), _parte("parede_casinha"), _parte("janela_casinha"),
        ("porta_fechada", 798, 180), _parte("telhado"), _parte("grade_varanda"), _parte("piso_varanda"),
        ("escada_madeira", 640, 335), ("escada_corda", 1105, 360), _parte("pilar"), ("pilar", 1385, 425),
        ("escorregador_rosa", 1268, 392), ("@catarina", 1010, 380),

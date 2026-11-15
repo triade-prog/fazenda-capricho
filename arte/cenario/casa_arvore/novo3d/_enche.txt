@@ -1,3 +1,4 @@
+arbusto
 balanco_assento
 balanco_corda
 balanco_estrutura
@@ -15,12 +16,17 @@ escada_corda
 escada_madeira
 escorregador_arco_iris
 escorregador_rosa
+flor_amarela
+flor_branca
+flor_lilas
+flor_rosa
 frutinha
 fundo_patio
 grade_varanda
 janela_casinha
 mesa_piquenique
 morro
+nuvem
 parede_casinha
 pilar
 piso_varanda
@@ -32,5 +38,6 @@ telhado
 toalha
 trepadeira
 tronco
+tufo
 viga_dir
 viga_esq

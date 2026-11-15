@@ -6,7 +6,7 @@ Uso: python3 ferramentas/cenario2d/casa_arvore_3d.py   (depois: para_jogo.py cas
 - cacho_colhido: as folhinhas na mesma tela do cacho_com (para não pular ao colher);
 - cesto_cheio: o cesto 3D com as bolinhas rosa dentro;
 - balanco_assento: as duas cordas e a prancha numa peça só (é ela que balança);
-- fundo_patio: o céu e os morros 3D.
+- fundo_patio: o céu, os morros e as nuvens 3D.
 As peças originais limpas estão em novo3d/ (ferramentas/limpar_3d.py); as que a Carol mandou, sem
 mexer, em arte/objetos3d/casa_arvore_originais/.
 """
@@ -100,6 +100,10 @@ def fundo_patio(w=2600, h=900, chao=600):
     for x, larg in [(-200, 1500), (1150, 1650)]:
         m = morro.resize((larg, round(morro.height * larg / morro.width)), Image.LANCZOS)
         tela.alpha_composite(m, (x, chao + 20 - m.height))
+    nuvem = abre("nuvem")
+    for x, y, larg in [(180, 70, 230), (880, 40, 170), (1500, 110, 250), (2120, 55, 190), (2430, 160, 130)]:
+        n = nuvem.resize((larg, round(nuvem.height * larg / nuvem.width)), Image.LANCZOS)
+        tela.alpha_composite(n, (x, y))
     tela.convert("RGB").save(os.path.join(N, "fundo_patio.png"))
 
 
