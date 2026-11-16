@@ -120,7 +120,7 @@ CAMINHOS = [
     "M520,850 C430,880 360,920 330,960",
     # para o Estábulo (sobe pela direita da Casa)
     "M760,905 C1000,900 1080,780 1045,640 C1015,520 900,470 880,330",
-    # para a Horta
+    # para a Plantação
     "M1010,520 C1100,440 1170,400 1290,370",
     # para o Pet Care
     "M1052,700 C1100,700 1150,690 1200,690",
@@ -554,7 +554,7 @@ LUGARES = {
     "casa_arvore": dict(x=-10, y=40, rotulo="Casa na Árvore", placa=(200, 496),
                         destinos=[["casa_arvore", "Pátio"], ["casa_arvore_dentro", "Dentro"]]),
     "estabulo": dict(x=630, y=40, rotulo="Estábulo", placa=(960, 330), destinos=[["estabulo", ""]]),
-    "horta": dict(x=1190, y=105, rotulo="Horta", placa=(1350, 352), destinos=[["plantacao", ""]]),
+    "horta": dict(x=1190, y=105, rotulo="Plantação", placa=(1350, 352), destinos=[["plantacao", ""]]),
     "casa": dict(x=300, y=330, rotulo="Casa", placa=(545, 795),
                  destinos=[["sede", "Varanda"], ["sala", "Sala"], ["cozinha", "Cozinha"],
                            ["quarto", "Quarto"], ["quarto_carol", "Quarto da mamãe"]]),

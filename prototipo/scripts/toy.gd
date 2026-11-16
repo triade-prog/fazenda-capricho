@@ -251,6 +251,12 @@ func face_left(left: bool) -> void:
 
 ## Toque generoso: alguns pixels de folga ao redor do desenho, pensando em dedos pequenos.
 ## `slack` = folga em pixels: pequena para tocar, maior para soltar algo em cima.
+## Folga extra do toque (unidades do cenário), usada só quando o dedo não acertou nada com a folga normal
+## (main._toy_at): deixa a maçã, a xícara e os potinhos com ~60 pontos de área no iPad, sem roubar o toque
+## de quem está do lado.
+const FOLGA_TOQUE := 28.0
+
+
 func hit(p: Vector2, slack: float = 14.0) -> bool:
 	if sprite == null:
 		var c := to_global(Vector2(0, -hit_radius))

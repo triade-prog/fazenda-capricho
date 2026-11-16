@@ -20,3 +20,9 @@ func _draw() -> void:
 			draw_colored_polygon(Shapes.heart(size), color)
 		"estrela":
 			draw_colored_polygon(Shapes.star(size), color)
+		"nao":  # bolinha com um X: "não deu"
+			draw_circle(Vector2.ZERO, size, Color.WHITE)
+			draw_arc(Vector2.ZERO, size, 0.0, TAU, 32, color, size * 0.22, true)
+			var k := size * 0.45
+			draw_line(Vector2(-k, -k), Vector2(k, k), color, size * 0.24, true)
+			draw_line(Vector2(-k, k), Vector2(k, -k), color, size * 0.24, true)

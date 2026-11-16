@@ -1,0 +1,10 @@
+{
+  "_sobre": "Peças de chão cuja imagem veio sem sombra de contato: o jogo desenha uma sombrinha oval embaixo delas (cenario.gd). Lista tirada do inventário de design (ferramentas/analise_design/inventario.py). Peça 3D nova que já vier com sombra sai daqui.",
+  "casa_arvore_dentro": ["cama"],
+  "casinha": ["casinha"],
+  "cozinha": ["fogao", "pia"],
+  "estabulo": ["caixote_frutas", "lanterna_jardim"],
+  "plantacao": ["canteiro_flores", "banca"],
+  "sala": ["lareira"],
+  "sede": ["rede", "cadeira_deck", "vaso_1"]
+}

@@ -126,7 +126,8 @@ func _atualiza_nivel(festa: bool) -> void:
 			if int(plots[i]["nivel"]) > antes and aberto(i):
 				main._sparkle(rect_de(i).get_center(), 8)
 				main._hearts(rect_de(i).get_center() + Vector2(0, -40), 3)
-		main._float_text(main.cam.position + Vector2(-90, -160), "Nível %d!" % nivel, 60)
+		main._float_text(main.cam.position + Vector2(-90, -160), "Nível %d!" % nivel, 60, "estrela")
+		Sons.tocar("nivel")
 		main._log("nível %d" % nivel)
 	queue_redraw()
 
@@ -222,6 +223,7 @@ func comprar(tipo: String) -> bool:
 	if nivel < int(d["nivel"]) or ferraduras < int(d["preco"]):
 		return false
 	ferraduras -= int(d["preco"])
+	Sons.tocar("moeda")
 	_atualiza_hud()
 	_bump(txt_ferraduras)
 	main._log("comprou %s (-%d)" % [tipo, int(d["preco"])])
@@ -359,7 +361,8 @@ func _pedido_pronto(k: int) -> void:
 	ferraduras += premio
 	main._hearts(onde, 6)
 	_voa("ferradurinha", onde)
-	main._float_text(onde + Vector2(0, -90), "+%d" % premio, 40)
+	main._float_text(onde + Vector2(0, -90), "+%d" % premio, 40, "ferradurinha")
+	Sons.tocar("moeda")
 	_atualiza_hud()
 	_bump(txt_ferraduras)
 	_ganhar_estrelas(int(dados["pedidos"]["estrelas"]), onde)
@@ -406,7 +409,8 @@ func alvo_em(p: Vector2) -> int:
 # ---------------------------------------------------------------- toque
 
 func _falta(onde: Vector2, n: int) -> void:
-	main._float_text(onde + Vector2(0, -50), "Faltam %d estrelinhas" % faltam_para(n), 30)
+	main._float_text(onde + Vector2(0, -50), "Faltam %d estrelinhas" % faltam_para(n), 30, "estrela")
+	Sons.tocar("nao")
 	_bump(txt_estrelas)
 
 
@@ -504,7 +508,8 @@ func _plantar(i: int, cultura: String) -> void:
 	var preco := int(dados["culturas"][cultura]["semente"])
 	if ferraduras < preco:
 		if cultura != "cenoura":
-			main._float_text(rect_de(i).get_center() + Vector2(0, -50), "Faltam ferradurinhas", 30)
+			main._float_text(rect_de(i).get_center() + Vector2(0, -50), "Faltam ferradurinhas", 30, "ferradurinha")
+			Sons.tocar("nao")
 			_bump(txt_ferraduras)
 			_dica(pacotes.get("cenoura"))
 			return
@@ -642,7 +647,8 @@ func _vender(t: Toy, onde: Vector2) -> void:
 	cen.set_estado("cesta", 1)
 	main._sparkle(onde + Vector2(0, -40), 5)
 	_voa("ferradurinha", onde + Vector2(0, -50))
-	main._float_text(onde + Vector2(0, -110), "+%d" % preco, 36)
+	main._float_text(onde + Vector2(0, -110), "+%d" % preco, 36, "ferradurinha")
+	Sons.tocar("moeda")
 	_atualiza_hud()
 	_bump(txt_ferraduras)
 

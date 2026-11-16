@@ -20,8 +20,9 @@ extends CanvasLayer
 
 static var arquivo := "user://decoracao.json"
 
-const BOTAO_POS := Vector2(18, 172)
 const BOTAO_TAM := Vector2(140, 140)
+const BOTAO_VAO := 40.0            # espaço entre um botão e o outro na coluna da esquerda (~27 pontos no iPad)
+const BOTAO_POS := Vector2(18, 18 + 140 + BOTAO_VAO)   # embaixo da ferradura do mapa (18, 18)
 const ALTURA := 900.0              # altura dos cenários (main.H)
 const BORDA := 110.0               # faixa da borda da tela que rola o cenário (BORDA)
 const ROLAGEM := 650.0             # velocidade dessa rolagem (ROLAGEM)
@@ -48,6 +49,8 @@ var gaveta: Control                # cartões do baú, embaixo da tela
 var seta_esq: TextureButton
 var seta_dir: TextureButton
 var balao: TextureButton           # balãozinho "guardar no baú" em cima de uma peça tocada
+var camada_frente: TextureButton  # passa a peça tocada para a frente da vizinha
+var camada_tras: TextureButton    # e para trás
 var _balao_i := -1
 var _balao_t := 0.0
 var _pagina := 0
@@ -99,7 +102,9 @@ func _ready() -> void:
 	seta_esq = _botao(Itens.icone("seta_esq"), Vector2(72, 72), func() -> void: _virar(-1))
 	seta_dir = _botao(Itens.icone("seta_dir"), Vector2(72, 72), func() -> void: _virar(1))
 	balao = _botao(Itens.icone("balao_guardar"), Vector2(100, 110), func() -> void: _guardar_balao())
-	for b in [botao_bau, seta_esq, seta_dir, balao]:
+	camada_frente = _botao(load("res://assets/decorar/camada_frente.png"), Vector2(100, 100), func() -> void: _camada(1))
+	camada_tras = _botao(load("res://assets/decorar/camada_tras.png"), Vector2(100, 100), func() -> void: _camada(-1))
+	for b in [botao_bau, seta_esq, seta_dir, balao, camada_frente, camada_tras]:
 		b.visible = false
 
 
@@ -110,7 +115,9 @@ func _botao(tex: Texture2D, tam: Vector2, acao: Callable) -> TextureButton:
 	b.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
 	b.size = tam
 	b.pivot_offset = tam / 2.0
-	b.button_down.connect(func() -> void: b.scale = Vector2(0.92, 0.92))
+	b.button_down.connect(func() -> void:
+		b.scale = Vector2(0.92, 0.92)
+		Sons.tocar("toque"))
 	b.button_up.connect(func() -> void: b.scale = Vector2.ONE)
 	b.pressed.connect(acao)
 	add_child(b)
@@ -119,7 +126,7 @@ func _botao(tex: Texture2D, tam: Vector2, acao: Callable) -> TextureButton:
 
 ## O toque foi num botão desta camada (decorar, loja, baú, setas, balão, gaveta)?
 func ui_em(sp: Vector2) -> bool:
-	for b in [botao, botao_loja, botao_bau, seta_esq, seta_dir, balao]:
+	for b in [botao, botao_loja, botao_bau, seta_esq, seta_dir, balao, camada_frente, camada_tras]:
 		if b.visible and (b as Control).get_global_rect().has_point(sp):
 			return true
 	return false
@@ -147,6 +154,15 @@ func pode() -> bool:
 
 
 func alternar() -> void:
+	if not ligado and not pode():
+		# quarto da Catarina: ainda não dá para decorar; o botão balança dizendo "aqui não"
+		Sons.tocar("nao")
+		var tw := botao.create_tween()
+		for k in 4:
+			tw.tween_property(botao, "rotation", 0.18 if k % 2 == 0 else -0.18, 0.06)
+		tw.tween_property(botao, "rotation", 0.0, 0.06)
+		return
+	Sons.tocar("toque")
 	if ligado:
 		desligar()
 	else:
@@ -274,10 +290,9 @@ func soltar() -> void:
 		_cen = null
 		_salvar()
 	else:
-		c.sacudir(i)  # só tocou: dá uma balançadinha
+		c.sacudir(i)  # só tocou: dá uma balançadinha e mostra os botões (trás, guardar, frente)
 		_cen = null
-		if c.pode_guardar(i):
-			_mostrar_balao(c, i)
+		_mostrar_balao(c, i)
 	_novo = false
 	_grupo = []
 
@@ -303,10 +318,13 @@ func _lugar_certo(c: Cenario, i: int) -> bool:
 func _process(delta: float) -> void:
 	if main == null:
 		return
-	var mostra: bool = pode() and not (main.mapa and main.mapa.aberto())
-	botao.visible = mostra
+	# sempre no mesmo lugar (no quarto também, onde só balança): botão que some parece quebrado
+	var loja_aberta: bool = main.fazenda != null and main.fazenda.loja != null and main.fazenda.loja.aberta()
+	botao.visible = not (main.mapa and main.mapa.aberto()) and not loja_aberta
+	if main.mapa and main.mapa.botao:
+		main.mapa.botao.visible = not loja_aberta and not main.mapa.aberto()  # loja aberta: só o X dela
 	_arruma_ui()
-	if balao.visible:
+	if _balao_i >= 0:
 		_balao_t -= delta
 		if _balao_t <= 0.0 or _balao_i < 0:
 			_esconder_balao()
@@ -505,7 +523,7 @@ func _arruma_ui() -> void:
 	var vis: Vector2 = main.get_viewport().get_visible_rect().size
 	var mapa_aberto: bool = main.mapa != null and main.mapa.aberto()
 	botao_loja.visible = not mapa_aberto and not (main.fazenda and main.fazenda.loja and main.fazenda.loja.aberta())
-	botao_loja.position = BOTAO_POS + Vector2(0, BOTAO_TAM.y + 16.0)
+	botao_loja.position = BOTAO_POS + Vector2(0, BOTAO_TAM.y + BOTAO_VAO)
 	selo_loja.visible = main.fazenda != null and main.fazenda.tem_novidade()
 	botao_bau.visible = ligado and not mapa_aberto
 	botao_bau.position = Vector2(BOTAO_POS.x, vis.y - BOTAO_TAM.y - 18.0)
@@ -716,7 +734,9 @@ func _tirar_lugar(c: Cenario, i: int) -> void:
 func _mostrar_balao(c: Cenario, i: int) -> void:
 	_balao_i = i
 	_balao_t = 4.0
-	balao.visible = true
+	balao.visible = c.pode_guardar(i)
+	camada_frente.visible = true
+	camada_tras.visible = true
 	_pos_balao()
 
 
@@ -727,13 +747,45 @@ func _pos_balao() -> void:
 		return
 	var r := c._rect_peca(_balao_i)
 	var sp: Vector2 = main.world_to_screen(Vector2(r.get_center().x, r.position.y))
-	balao.position = sp - Vector2(balao.size.x / 2.0, balao.size.y + 6.0)
+	# [trás] [guardar] [frente] em cima da peça; sem o balão, as duas setas lado a lado
+	var meio := balao.size.x + 16.0 if balao.visible else 16.0
+	var base := sp.y - 6.0
+	balao.position = Vector2(sp.x - balao.size.x / 2.0, base - balao.size.y)
+	camada_tras.position = Vector2(sp.x - meio / 2.0 - camada_tras.size.x, base - camada_tras.size.y)
+	camada_frente.position = Vector2(sp.x + meio / 2.0, base - camada_frente.size.y)
+	# não deixa sair da tela (peça alta: os botões descem para dentro dela)
+	var tela: Vector2 = get_viewport().get_visible_rect().size
+	var dy := maxf(0.0, 8.0 - minf(balao.position.y, camada_tras.position.y))
+	var dx := maxf(0.0, 8.0 - camada_tras.position.x) - maxf(0.0, camada_frente.position.x + camada_frente.size.x - (tela.x - 8.0))
+	for b in [balao, camada_tras, camada_frente]:
+		b.position += Vector2(dx, dy)
 
 
 func _esconder_balao() -> void:
 	_balao_i = -1
-	if balao:
-		balao.visible = false
+	for b in [balao, camada_frente, camada_tras]:
+		if b:
+			b.visible = false
+
+
+## Botões de camada: a peça tocada passa para a frente (1) ou para trás (-1) da vizinha que ela encosta.
+func _camada(dir: int) -> void:
+	var i := _balao_i
+	if i < 0 or not pode():
+		return
+	var c := _cenario()
+	_balao_t = 4.0
+	if c.trocar_camada(i, dir):
+		c.sacudir(i)
+		Sons.tocar("soltar", 1.15 if dir > 0 else 0.9)
+		main._log("decorou: %s foi para %s" % [c.chave_peca(i), "a frente" if dir > 0 else "trás"])
+		_salvar()
+	else:
+		var b := camada_frente if dir > 0 else camada_tras
+		var t := create_tween()
+		for x in [10.0, -10.0, 6.0, 0.0]:
+			t.tween_property(b, "rotation_degrees", x, 0.06)
+		Sons.tocar("nao")
 
 
 func _guardar_balao() -> void:

@@ -74,6 +74,7 @@ func _botao_img(tex: Texture2D, tam: Vector2) -> TextureButton:
 	b.size = tam
 	b.pivot_offset = tam / 2.0
 	b.focus_mode = Control.FOCUS_NONE
+	b.button_down.connect(func() -> void: Sons.tocar("toque"))
 	return b
 
 
@@ -246,6 +247,7 @@ func _toque(tipo: String) -> void:
 		comprou.emit(tipo)
 		fechar_loja()  # o item vai para o baú, e o modo Decorar abre com o baú aberto
 	else:  # ainda não dá: o cartão só balança
+		Sons.tocar("nao")
 		var tw := b.create_tween()
 		for a in [-0.06, 0.06, -0.04, 0.0]:
 			tw.tween_property(b, "rotation", a, 0.06)
