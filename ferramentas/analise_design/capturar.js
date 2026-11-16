@@ -70,7 +70,10 @@ const servidor = http.createServer((req, res) => {
     await page.mouse.up(); await page.waitForTimeout(1500);
   };
   const ferradura = ui(18 + 70, 18 + 70);
-  const poltrona = ui(18 + 70, 172 + 70);
+  // poltrona do Decorar: embaixo da ferradura, com o vão definido em decoracao.gd (antes de 16/11/2026: y = 172)
+  const deco = fs.readFileSync(path.join(RAIZ, 'prototipo', 'scripts', 'decoracao.gd'), 'utf8');
+  const vao = deco.match(/BOTAO_VAO := ([\d.]+)/);
+  const poltrona = ui(18 + 70, (vao ? 18 + 140 + Number(vao[1]) : 172) + 70);
 
   // Abertura e tempo até o primeiro quadro do quarto.
   const t0 = Date.now();
