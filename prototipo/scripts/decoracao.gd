@@ -49,6 +49,8 @@ var gaveta: Control                # cartões do baú, embaixo da tela
 var seta_esq: TextureButton
 var seta_dir: TextureButton
 var balao: TextureButton           # balãozinho "guardar no baú" em cima de uma peça tocada
+var camada_frente: TextureButton  # passa a peça tocada para a frente da vizinha
+var camada_tras: TextureButton    # e para trás
 var _balao_i := -1
 var _balao_t := 0.0
 var _pagina := 0
@@ -100,7 +102,9 @@ func _ready() -> void:
 	seta_esq = _botao(Itens.icone("seta_esq"), Vector2(72, 72), func() -> void: _virar(-1))
 	seta_dir = _botao(Itens.icone("seta_dir"), Vector2(72, 72), func() -> void: _virar(1))
 	balao = _botao(Itens.icone("balao_guardar"), Vector2(100, 110), func() -> void: _guardar_balao())
-	for b in [botao_bau, seta_esq, seta_dir, balao]:
+	camada_frente = _botao(load("res://assets/decorar/camada_frente.png"), Vector2(100, 100), func() -> void: _camada(1))
+	camada_tras = _botao(load("res://assets/decorar/camada_tras.png"), Vector2(100, 100), func() -> void: _camada(-1))
+	for b in [botao_bau, seta_esq, seta_dir, balao, camada_frente, camada_tras]:
 		b.visible = false
 
 
@@ -122,7 +126,7 @@ func _botao(tex: Texture2D, tam: Vector2, acao: Callable) -> TextureButton:
 
 ## O toque foi num botão desta camada (decorar, loja, baú, setas, balão, gaveta)?
 func ui_em(sp: Vector2) -> bool:
-	for b in [botao, botao_loja, botao_bau, seta_esq, seta_dir, balao]:
+	for b in [botao, botao_loja, botao_bau, seta_esq, seta_dir, balao, camada_frente, camada_tras]:
 		if b.visible and (b as Control).get_global_rect().has_point(sp):
 			return true
 	return false
@@ -286,10 +290,9 @@ func soltar() -> void:
 		_cen = null
 		_salvar()
 	else:
-		c.sacudir(i)  # só tocou: dá uma balançadinha
+		c.sacudir(i)  # só tocou: dá uma balançadinha e mostra os botões (trás, guardar, frente)
 		_cen = null
-		if c.pode_guardar(i):
-			_mostrar_balao(c, i)
+		_mostrar_balao(c, i)
 	_novo = false
 	_grupo = []
 
@@ -321,7 +324,7 @@ func _process(delta: float) -> void:
 	if main.mapa and main.mapa.botao:
 		main.mapa.botao.visible = not loja_aberta and not main.mapa.aberto()  # loja aberta: só o X dela
 	_arruma_ui()
-	if balao.visible:
+	if _balao_i >= 0:
 		_balao_t -= delta
 		if _balao_t <= 0.0 or _balao_i < 0:
 			_esconder_balao()
@@ -731,7 +734,9 @@ func _tirar_lugar(c: Cenario, i: int) -> void:
 func _mostrar_balao(c: Cenario, i: int) -> void:
 	_balao_i = i
 	_balao_t = 4.0
-	balao.visible = true
+	balao.visible = c.pode_guardar(i)
+	camada_frente.visible = true
+	camada_tras.visible = true
 	_pos_balao()
 
 
@@ -742,13 +747,45 @@ func _pos_balao() -> void:
 		return
 	var r := c._rect_peca(_balao_i)
 	var sp: Vector2 = main.world_to_screen(Vector2(r.get_center().x, r.position.y))
-	balao.position = sp - Vector2(balao.size.x / 2.0, balao.size.y + 6.0)
+	# [trás] [guardar] [frente] em cima da peça; sem o balão, as duas setas lado a lado
+	var meio := balao.size.x + 16.0 if balao.visible else 16.0
+	var base := sp.y - 6.0
+	balao.position = Vector2(sp.x - balao.size.x / 2.0, base - balao.size.y)
+	camada_tras.position = Vector2(sp.x - meio / 2.0 - camada_tras.size.x, base - camada_tras.size.y)
+	camada_frente.position = Vector2(sp.x + meio / 2.0, base - camada_frente.size.y)
+	# não deixa sair da tela (peça alta: os botões descem para dentro dela)
+	var tela: Vector2 = get_viewport().get_visible_rect().size
+	var dy := maxf(0.0, 8.0 - minf(balao.position.y, camada_tras.position.y))
+	var dx := maxf(0.0, 8.0 - camada_tras.position.x) - maxf(0.0, camada_frente.position.x + camada_frente.size.x - (tela.x - 8.0))
+	for b in [balao, camada_tras, camada_frente]:
+		b.position += Vector2(dx, dy)
 
 
 func _esconder_balao() -> void:
 	_balao_i = -1
-	if balao:
-		balao.visible = false
+	for b in [balao, camada_frente, camada_tras]:
+		if b:
+			b.visible = false
+
+
+## Botões de camada: a peça tocada passa para a frente (1) ou para trás (-1) da vizinha que ela encosta.
+func _camada(dir: int) -> void:
+	var i := _balao_i
+	if i < 0 or not pode():
+		return
+	var c := _cenario()
+	_balao_t = 4.0
+	if c.trocar_camada(i, dir):
+		c.sacudir(i)
+		Sons.tocar("soltar", 1.15 if dir > 0 else 0.9)
+		main._log("decorou: %s foi para %s" % [c.chave_peca(i), "a frente" if dir > 0 else "trás"])
+		_salvar()
+	else:
+		var b := camada_frente if dir > 0 else camada_tras
+		var t := create_tween()
+		for x in [10.0, -10.0, 6.0, 0.0]:
+			t.tween_property(b, "rotation_degrees", x, 0.06)
+		Sons.tocar("nao")
 
 
 func _guardar_balao() -> void:

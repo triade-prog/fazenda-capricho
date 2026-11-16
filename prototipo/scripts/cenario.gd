@@ -785,6 +785,43 @@ func reordenar(grupo: Array) -> void:
 	queue_redraw()
 
 
+## Escolha da criança no modo Decorar: passa a peça (com o que vai junto) para a frente (dir = 1)
+## ou para trás (dir = -1) da peça vizinha que ela encosta. Devolve false se não tem o que passar.
+func trocar_camada(i: int, dir: int) -> bool:
+	var grupo := [i]
+	for j in carga(i):
+		grupo.append(j)
+	var o := ordem_desenho().duplicate()
+	var bloco := []
+	for j in o:
+		if j in grupo:
+			bloco.append(j)
+	var r := Rect2()
+	for k in bloco.size():
+		r = _rect_peca(int(bloco[k])) if k == 0 else r.merge(_rect_peca(int(bloco[k])))
+	var p0 := o.find(bloco[0])
+	var p1 := o.find(bloco[bloco.size() - 1])
+	var alvo := -1
+	var k := p1 + 1 if dir > 0 else p0 - 1
+	while k >= 0 and k < o.size():
+		var j := int(o[k])
+		if not (j in grupo) and not guardadas.has(j) and not _de_fundo(j) and _aparece(str(pecas[j][0])) \
+				and _rect_peca(j).intersects(r):
+			alvo = j
+			break
+		k += dir
+	if alvo < 0:
+		return false
+	for j in bloco:
+		o.erase(j)
+	var pos := o.find(alvo) + (1 if dir > 0 else 0)
+	for n in bloco.size():
+		o.insert(pos + n, bloco[n])
+	ordem = o
+	queue_redraw()
+	return true
+
+
 ## Fundo e peças enormes que não mudam de lugar (chão, gramado, cerca comprida): sempre por trás.
 func _de_fundo(i: int) -> bool:
 	if i == 0:

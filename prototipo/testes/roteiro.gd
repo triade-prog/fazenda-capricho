@@ -563,6 +563,18 @@ func _decorar() -> void:
 	var pega_ab := ab0.position + Vector2(ab0.size.x / 2.0, 12.0)   # o alto do abajur (o resto pode estar atrás do sofá)
 	await _leva(pega_ab, pega_ab + Vector2(sofa_r.get_center().x - ab0.get_center().x, sofa_r.position.y + 60.0 - ab0.position.y))
 	_confere(sala._rect_peca(i_abajur).intersects(sofa_r), "o abajur foi parar em cima do sofá")
+	# a criança escolhe: tocar no abajur mostra os botões de camada; "para trás" põe ele atrás do sofá
+	var ab2: Rect2 = sala._rect_peca(i_abajur)
+	await _toca(ab2.position + Vector2(ab2.size.x / 2.0, 12.0))
+	_confere(dc.camada_frente.visible and dc.camada_tras.visible, "tocar numa peça mostra os botões de frente e trás")
+	dc.camada_tras.pressed.emit()
+	await _espera(0.1)
+	_confere(sala.ordem_desenho().find(i_abajur) < sala.ordem_desenho().find(i_sofa), "o botão 'para trás' põe o abajur atrás do sofá")
+	_foto("decorar_camada")
+	dc.camada_frente.pressed.emit()
+	await _espera(0.1)
+	_confere(sala.ordem_desenho().find(i_abajur) > sala.ordem_desenho().find(i_sofa), "o botão 'para a frente' traz o abajur de volta")
+	dc._esconder_balao()
 	var sofa_antes: Vector2 = sala._rect_peca(i_sofa).position
 	var ab1: Rect2 = sala._rect_peca(i_abajur)
 	await _leva(ab1.get_center(), ab1.get_center() + Vector2(0, 180))

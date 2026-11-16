@@ -1,7 +1,9 @@
 """Botões do modo Decorar (arrumar móveis e enfeites dos cenários), no mesmo estilo do botão do mapa.
 
 - botao_decorar: poltrona com uma mãozinha de arrastar (liga o modo Decorar);
-- botao_pronto: certinho verde (sai do modo e guarda a arrumação).
+- botao_pronto: certinho verde (sai do modo e guarda a arrumação);
+- camada_frente / camada_tras: dois quadradinhos, um na frente do outro, com setinha para cima ou
+  para baixo (a peça tocada passa para a frente ou para trás da que está encostada nela).
 Sem letras (regra do GDD). Gera arte/interface/decorar/*.png e copia para prototipo/assets/decorar/.
 Uso: python3 ferramentas/cenario2d/botoes_decorar.py
 """
@@ -35,11 +37,21 @@ def poltrona():
                  extra=f'stroke="{C["rosa_forte"]}" stroke-width="5"'))
 
 
+def camadas(frente):
+    # a peça escolhida (rosa forte) fica na frente ou atrás do outro quadradinho (lilás)
+    escolhida = rr(34, 52, 44, 44, 9, C["rosa_forte"], 'stroke-width="3"')
+    outra = rr(58, 34, 44, 44, 9, C["lilas_claro"], 'stroke-width="3"')
+    seta = ("M104,96 L104,66 M95,75 L104,64 L113,75" if frente else "M104,64 L104,94 M95,85 L104,96 L113,85")
+    return (outra + escolhida if frente else escolhida + outra) + path(seta, extra=f'stroke="{C["roxo"]}" stroke-width="6"')
+
+
 P = {
     "botao_decorar": svg(140, 140, base("#fff5fa") + poltrona()),
     "botao_pronto": svg(140, 140, base("#effbe9") +
                         path("M44,70 L62,88 L98,50", extra=f'stroke="{C["verde_esc"]}" stroke-width="14"') +
                         path("M44,70 L62,88 L98,50", extra=f'stroke="{C["verde"]}" stroke-width="7"')),
+    "camada_frente": svg(140, 140, base("#fff5fa") + camadas(True)),
+    "camada_tras": svg(140, 140, base("#fff5fa") + camadas(False)),
 }
 salvar(P, os.path.join(dest, "svg"), dest)
 for f in os.listdir(dest):
