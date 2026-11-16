@@ -112,7 +112,9 @@ func _botao_imagem(arquivo: String, tamanho: Vector2) -> TextureButton:
 	b.custom_minimum_size = tamanho
 	b.size = tamanho
 	b.pivot_offset = tamanho / 2.0
-	b.button_down.connect(func() -> void: b.scale = Vector2(0.94, 0.94))
+	b.button_down.connect(func() -> void:
+		b.scale = Vector2(0.94, 0.94)
+		Sons.tocar("toque"))
 	b.button_up.connect(func() -> void: b.scale = Vector2.ONE)
 	return b
 

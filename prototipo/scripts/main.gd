@@ -78,6 +78,7 @@ var idle_timer := 4.0
 
 
 func _ready() -> void:
+	add_child(Sons.new())
 	_load_data()
 	var room: Node2D = RoomScript.new()
 	add_child(room)
@@ -503,8 +504,16 @@ func _on_press(sp: Vector2) -> void:
 		elif iid != "":
 			press_ui = "i:" + iid
 		else:
-			var pi: int = (cenarios[cena] as Cenario).peca_em(p)
-			press_ui = "p:%d" % pi if pi >= 0 else "rolar"
+			# nada embaixo do dedo: coisa pequena perto dele vale (área de toque maior, sem mudar o desenho)
+			var perto := _toy_at(p, [], Toy.FOLGA_TOQUE)
+			var iid_perto: String = (cenarios[cena] as Cenario).interativo_perto(p)
+			if perto:
+				press_toy = perto
+			elif iid_perto != "":
+				press_ui = "i:" + iid_perto
+			else:
+				var pi: int = (cenarios[cena] as Cenario).peca_em(p)
+				press_ui = "p:%d" % pi if pi >= 0 else "rolar"
 	elif t and t.z_index > castle.z_index:
 		press_toy = t
 	elif castle.door_hit(p):
@@ -661,6 +670,7 @@ func _start_drag(t: Toy, p: Vector2) -> void:
 	if t.has_meta("guardado"):
 		t.remove_meta("guardado")
 	t.z_index = 450
+	Sons.tocar("pegar")
 	drag_offset = -t.grab_offset + Vector2(0, -LIFT)
 	last_x = p.x
 
@@ -721,6 +731,7 @@ func _resolve(t: Toy, p: Vector2) -> Dictionary:
 
 func _drop(t: Toy, p: Vector2) -> void:
 	t.play_state("idle")
+	Sons.tocar("soltar")
 	if t.is_character:
 		var dest := _porta_em(p)
 		if dest != "":
@@ -754,11 +765,12 @@ func _drop(t: Toy, p: Vector2) -> void:
 ## Reação de "não deu": orelhas baixas (folha de pet) ou balançar a cabeça.
 func _blocked(t: Toy) -> void:
 	_log("%s não cabe aqui" % t.kind)
+	Sons.tocar("nao")
 	if t.has_anim("failed"):
 		t.play_state("failed", "idle")
 	else:
 		_add_wiggle(t.play_anim(), t, 4, 5.0)
-	_bubble(t, "Hmm, aqui não cabe...")
+	_float_text(t.head_global() + Vector2(0, -24), "Hmm, aqui não cabe...", 34, "nao")
 
 
 func _update_highlight(p: Vector2) -> void:
@@ -947,6 +959,7 @@ func _climb_end(t: Toy) -> void:
 
 func _tap(t: Toy) -> void:
 	_log("toque " + t.kind)
+	Sons.bicho(t.kind)
 	if t.pose == "deitado" or t.pose == "cochilando":
 		_bubble(t, "Zzz...")
 		_hop(t, 8.0)
@@ -1115,7 +1128,8 @@ func _nap_end(alvo: Toy, item: Toy) -> void:
 
 func _spawn_cookie() -> void:
 	if _count("biscoito") >= MAX_COOKIES:
-		_float_text(JAR_RECT.get_center() + Vector2(0, -60), "Já tem biscoito!", 28)
+		_float_text(JAR_RECT.get_center() + Vector2(0, -60), "Já tem biscoito!", 28, "nao")
+		Sons.tocar("nao")
 		return
 	var c := _add_item("biscoito", 26.0, Vector2(1414, 470))
 	_log("pote deu biscoito")
@@ -1124,6 +1138,7 @@ func _spawn_cookie() -> void:
 	tw.tween_property(c, "squash", Vector2.ONE, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	_fall(c, Vector2(1414 + randf_range(-110, -55), 470))
 	_sparkle(JAR_RECT.get_center(), 4)
+	Sons.tocar("brilho")
 
 
 # ---------------------------------------------------------------- animações e efeitos
@@ -1161,7 +1176,9 @@ func _bubble(t: Toy, text: String) -> void:
 	_float_text(t.head_global() + Vector2(0, -24), text, 34)
 
 
-func _float_text(p: Vector2, text: String, font_size: int) -> void:
+## Texto que sobe e some. Com `icone` ("ferradurinha", "estrela" ou "nao"), um desenho vai na frente
+## da frase, para quem ainda não lê entender o aviso pelo desenho.
+func _float_text(p: Vector2, text: String, font_size: int, icone: String = "") -> void:
 	if text.is_empty():
 		return
 	var l := Label.new()
@@ -1178,6 +1195,26 @@ func _float_text(p: Vector2, text: String, font_size: int) -> void:
 	l.position = Vector2(clampf(p.x - 210.0, 0.0, W - 420.0), maxf(p.y - font_size * 1.6, 0.0))
 	l.z_index = 430
 	add_child(l)
+	if icone != "":
+		var lado := float(font_size) * 1.5
+		var largura_txt := l.get_theme_default_font().get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+		var ix := (l.size.x - largura_txt) / 2.0 - lado - 6.0
+		var iy := (l.size.y - lado) / 2.0
+		match icone:
+			"ferradurinha":
+				var img := TextureRect.new()
+				img.texture = load("res://assets/loja/ferradurinha.png")
+				img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				img.size = Vector2(lado, lado)
+				img.position = Vector2(ix, iy)
+				img.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				l.add_child(img)
+			"estrela", "nao":
+				var f := FxShape.new("estrela" if icone == "estrela" else "nao",
+						Color("#ffd23f") if icone == "estrela" else Color("#e0507a"), lado * 0.42)
+				f.position = Vector2(ix + lado / 2.0, iy + lado / 2.0)
+				l.add_child(f)
 	var tw := l.create_tween().set_parallel(true)
 	tw.tween_property(l, "position:y", l.position.y - 50.0, 1.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tw.tween_property(l, "modulate:a", 0.0, 0.5).set_delay(0.9)
@@ -1284,6 +1321,7 @@ func _porta_para(dest: String) -> String:
 
 ## Toque numa peça interativa de um cenário montado por dados.
 func _tocar_interativo(iid: String) -> void:
+	Sons.tocar("toque")
 	var c := cenarios[cena] as Cenario
 	var r := c.rect_de(iid)
 	if cena == Fazendinha.CENA and fazenda.toque_cenario(iid):
@@ -1304,32 +1342,22 @@ func _tocar_interativo(iid: String) -> void:
 	_log("%s -> %s" % [iid, c.interativos[iid]["estados"][e]])
 
 
-## Viagem pelo mapa da fazenda: só a câmera vai (os personagens ficam onde estão).
+## Viagem pelo mapa da fazenda: a câmera vai e a Catarina vai junto (com quem está montado com ela,
+## no colo ou na mão), como pela porta. Decisão da Carol em 15/11/2026.
 func _ir_pelo_mapa(dest: String) -> void:
 	if trocando or dest == cena or not cenarios.has(dest):
 		return
-	trocando = true
-	_log("mapa: a câmera vai para %s" % dest)
 	var x: float = MAPA_CHEGADA.get(dest, -1.0)
-	var veu := ColorRect.new()
-	veu.color = Color(1, 0.88, 0.94, 0.0)
-	veu.set_anchors_preset(Control.PRESET_FULL_RECT)
-	veu.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var camada := CanvasLayer.new()
-	camada.layer = 5
-	camada.add_child(veu)
-	add_child(camada)
-	var tw := create_tween()
-	tw.tween_property(veu, "color:a", 1.0, 0.2)
-	tw.tween_callback(func() -> void:
-		var origem := cena
-		_fechar_portas(origem)
-		_mostrar_cenario(dest)
-		camera_to(x if x >= 0.0 else W / 2.0))
-	tw.tween_property(veu, "color:a", 0.0, 0.25)
-	tw.tween_callback(func() -> void:
-		camada.queue_free()
-		trocando = false)
+	if x < 0.0:
+		x = ((cenarios[dest] as Cenario).largura if cenarios[dest] is Cenario else 2200.0) / 2.0
+	var cat: Toy = null
+	for t in toys:
+		if t.kind == "catarina":
+			cat = t
+	if cat and cat.busy:
+		cat = null  # no meio de uma animação (escorregador, escada): fica onde está
+	_log("mapa: %s vai para %s" % ["a câmera" if cat == null else "a Catarina", dest])
+	_viajar(cat, dest, x, 0.0)
 
 
 ## Abre a porta e passa para o outro cenário; com `t`, o personagem (e quem vai com ele) vai junto.
@@ -1344,19 +1372,31 @@ func _abrir_e_ir(t: Toy, dest: String) -> void:
 		if iid != "":
 			(cenarios[cena] as Cenario).set_estado(iid, 1)
 			_sparkle((cenarios[cena] as Cenario).rect_de(iid).get_center(), 4)
-	var x := _chegada(dest)
-	var grupo: Array[Toy] = []
-	if t:
-		for o in [t, t.held_item, t.rider, t.mount]:
-			if o and not (o in grupo):
-				grupo.append(o)
-		var cavalo := t.mount if t.mount else t
-		if cavalo.rider and not (cavalo.rider in grupo):
-			grupo.append(cavalo.rider)
-		if cavalo.rider and cavalo.rider.held_item and not (cavalo.rider.held_item in grupo):
-			grupo.append(cavalo.rider.held_item)
-	trocando = true
 	_log("%s vai para %s" % ["a câmera" if t == null else t.kind, dest])
+	_viajar(t, dest, _chegada(dest), 0.25)
+
+
+## Quem viaja junto com `t`: o cavalo, quem está montado e o que estão segurando.
+func _grupo_de(t: Toy) -> Array[Toy]:
+	var grupo: Array[Toy] = []
+	if t == null:
+		return grupo
+	for o in [t, t.held_item, t.rider, t.mount]:
+		if o and not (o in grupo):
+			grupo.append(o)
+	var cavalo := t.mount if t.mount else t
+	if cavalo.rider and not (cavalo.rider in grupo):
+		grupo.append(cavalo.rider)
+	if cavalo.rider and cavalo.rider.held_item and not (cavalo.rider.held_item in grupo):
+		grupo.append(cavalo.rider.held_item)
+	return grupo
+
+
+## Passagem de um cenário para outro com o véu rosa (mapa e portas usam a mesma).
+func _viajar(t: Toy, dest: String, x: float, espera: float) -> void:
+	var grupo := _grupo_de(t)
+	trocando = true
+	Sons.tocar("passagem")
 	var veu := ColorRect.new()
 	veu.color = Color(1, 0.88, 0.94, 0.0)
 	veu.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -1366,17 +1406,22 @@ func _abrir_e_ir(t: Toy, dest: String) -> void:
 	camada.add_child(veu)
 	add_child(camada)
 	var tw := create_tween()
-	tw.tween_interval(0.25)
+	if espera > 0.0:
+		tw.tween_interval(espera)
 	tw.tween_property(veu, "color:a", 1.0, 0.2)
 	tw.tween_callback(func() -> void:
 		var origem := cena
 		_mostrar_cenario(dest)
 		_fechar_portas(origem)
-		for o in grupo:
-			o.cena = dest
-			o.visible = true
 		if t:
 			var cavalo := t.mount if t.mount else t
+			if cavalo.slot:
+				_leave_slot(cavalo)  # estava deitada ou no castelinho: levanta para viajar
+				cavalo.pose = "em_pe"
+				cavalo.play_state("idle")
+			for o in grupo:
+				o.cena = dest
+				o.visible = true
 			cavalo.kill_move()
 			cavalo.global_position = Vector2(x, FLOOR_Y + 120.0)
 			if cavalo.held_item:

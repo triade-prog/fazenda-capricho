@@ -20,8 +20,9 @@ extends CanvasLayer
 
 static var arquivo := "user://decoracao.json"
 
-const BOTAO_POS := Vector2(18, 172)
 const BOTAO_TAM := Vector2(140, 140)
+const BOTAO_VAO := 40.0            # espaço entre um botão e o outro na coluna da esquerda (~27 pontos no iPad)
+const BOTAO_POS := Vector2(18, 18 + 140 + BOTAO_VAO)   # embaixo da ferradura do mapa (18, 18)
 const ALTURA := 900.0              # altura dos cenários (main.H)
 const BORDA := 110.0               # faixa da borda da tela que rola o cenário (BORDA)
 const ROLAGEM := 650.0             # velocidade dessa rolagem (ROLAGEM)
@@ -110,7 +111,9 @@ func _botao(tex: Texture2D, tam: Vector2, acao: Callable) -> TextureButton:
 	b.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
 	b.size = tam
 	b.pivot_offset = tam / 2.0
-	b.button_down.connect(func() -> void: b.scale = Vector2(0.92, 0.92))
+	b.button_down.connect(func() -> void:
+		b.scale = Vector2(0.92, 0.92)
+		Sons.tocar("toque"))
 	b.button_up.connect(func() -> void: b.scale = Vector2.ONE)
 	b.pressed.connect(acao)
 	add_child(b)
@@ -147,6 +150,15 @@ func pode() -> bool:
 
 
 func alternar() -> void:
+	if not ligado and not pode():
+		# quarto da Catarina: ainda não dá para decorar; o botão balança dizendo "aqui não"
+		Sons.tocar("nao")
+		var tw := botao.create_tween()
+		for k in 4:
+			tw.tween_property(botao, "rotation", 0.18 if k % 2 == 0 else -0.18, 0.06)
+		tw.tween_property(botao, "rotation", 0.0, 0.06)
+		return
+	Sons.tocar("toque")
 	if ligado:
 		desligar()
 	else:
@@ -303,8 +315,11 @@ func _lugar_certo(c: Cenario, i: int) -> bool:
 func _process(delta: float) -> void:
 	if main == null:
 		return
-	var mostra: bool = pode() and not (main.mapa and main.mapa.aberto())
-	botao.visible = mostra
+	# sempre no mesmo lugar (no quarto também, onde só balança): botão que some parece quebrado
+	var loja_aberta: bool = main.fazenda != null and main.fazenda.loja != null and main.fazenda.loja.aberta()
+	botao.visible = not (main.mapa and main.mapa.aberto()) and not loja_aberta
+	if main.mapa and main.mapa.botao:
+		main.mapa.botao.visible = not loja_aberta and not main.mapa.aberto()  # loja aberta: só o X dela
 	_arruma_ui()
 	if balao.visible:
 		_balao_t -= delta
@@ -505,7 +520,7 @@ func _arruma_ui() -> void:
 	var vis: Vector2 = main.get_viewport().get_visible_rect().size
 	var mapa_aberto: bool = main.mapa != null and main.mapa.aberto()
 	botao_loja.visible = not mapa_aberto and not (main.fazenda and main.fazenda.loja and main.fazenda.loja.aberta())
-	botao_loja.position = BOTAO_POS + Vector2(0, BOTAO_TAM.y + 16.0)
+	botao_loja.position = BOTAO_POS + Vector2(0, BOTAO_TAM.y + BOTAO_VAO)
 	selo_loja.visible = main.fazenda != null and main.fazenda.tem_novidade()
 	botao_bau.visible = ligado and not mapa_aberto
 	botao_bau.position = Vector2(BOTAO_POS.x, vis.y - BOTAO_TAM.y - 18.0)

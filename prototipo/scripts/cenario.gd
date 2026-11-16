@@ -42,6 +42,8 @@ var _sup_dono := {}               # índice da superfície -> peça em que ela e
 var _sac := {}                    # índice da peça -> tempo que falta da balançadinha
 var _t := 0.0
 var _tex := {}
+var _sombras := {}                 # nomes de peça que ganham sombrinha desenhada pelo jogo (dados/sombras.json)
+const SOMBRA_COR := Color(0.3, 0.17, 0.1, 0.2)
 var guardadas := {}               # índice da peça original -> true: foi para o baú (não aparece)
 var uids := {}                    # índice da peça nova (vinda do baú) -> número fixo dela ("n12")
 var itens := {}                   # índice da peça nova -> item ("poltrona", "sala/vaso_flores")
@@ -66,6 +68,10 @@ func carregar(cena: String) -> Cenario:
 	fundos = data.get("fundos", [])
 	moveis = data.get("moveis", [])
 	so_se = data.get("so_se", {})
+	var sombras: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://dados/sombras.json"))
+	if sombras is Dictionary:
+		for nome in (sombras as Dictionary).get(cena, []):
+			_sombras[str(nome)] = true
 	set_process(false)
 	for s in data.get("superficies", []):
 		superficies.append(Vector3(s[0], s[1], s[2]))
@@ -109,6 +115,8 @@ func _draw() -> void:
 		if t == null:
 			continue
 		var r := _rect_peca(i)
+		if _sombras.has(chave.trim_prefix("@")):
+			_sombra(r)
 		if itens.has(i):
 			# item do baú: desenho inteiro, sem esticar, apoiado no pé do lugar dele
 			var k := minf(r.size.x / t.get_width(), r.size.y / t.get_height())
@@ -212,6 +220,20 @@ func _process(delta: float) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_VISIBILITY_CHANGED:
 		set_process(is_visible_in_tree() and not (animacoes.is_empty() and _sac.is_empty() and not _visitas))
+		if not is_visible_in_tree():
+			# cenário que ficou para trás solta as imagens: no iPad a memória de vídeo é pouca e o
+			# Safari recarrega a página se passar do limite. Ao voltar, _textura() carrega de novo.
+			_tex.clear()
+		queue_redraw()  # escondido: só limpa os desenhos; visível de novo: redesenha com as imagens
+
+
+## Sombrinha oval no pé da peça (a mesma para todas, como as dos personagens).
+func _sombra(r: Rect2) -> void:
+	var rx := r.size.x * 0.46
+	var ry := clampf(r.size.x * 0.06, 8.0, 26.0)
+	draw_set_transform(Vector2(r.get_center().x, r.end.y - ry * 0.35), 0.0, Vector2(1.0, ry / rx))
+	draw_circle(Vector2.ZERO, rx, SOMBRA_COR, true, -1.0, true)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 
 func _aparece(chave: String) -> bool:
@@ -276,6 +298,32 @@ func interativo_em(p: Vector2) -> String:
 		if rect_de(iid).has_point(p):
 			achou = iid
 	return achou
+
+
+## Coisa de tocar pequena (abelha, lanterna, tigela) perto do dedo: vale o toque numa área de pelo menos
+## TOQUE_MIN x TOQUE_MIN (cerca de 75 pontos no iPad); ganha a mais perto. Só quando nada foi acertado.
+func interativo_perto(p: Vector2) -> String:
+	var achou := ""
+	var melhor := INF
+	for iid in interativos:
+		var r := area_de_toque(iid)
+		if r.has_point(p):
+			var d := r.get_center().distance_squared_to(p)
+			if d < melhor:
+				melhor = d
+				achou = iid
+	return achou
+
+
+const TOQUE_MIN := 82.0   # unidades do cenário (900 de altura = altura da tela)
+
+
+## Área que aceita o toque: o desenho, aumentado até TOQUE_MIN nos lados que forem menores.
+func area_de_toque(iid: String) -> Rect2:
+	var r := rect_de(iid)
+	var gx := maxf(0.0, (TOQUE_MIN - r.size.x) / 2.0)
+	var gy := maxf(0.0, (TOQUE_MIN - r.size.y) / 2.0)
+	return r.grow_individual(gx, gy, gx, gy)
 
 
 func estado(iid: String) -> int:

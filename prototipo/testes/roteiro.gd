@@ -445,7 +445,7 @@ func _roteiro() -> void:
 	main.mapa.figurinhas["pet_care"].pressed.emit()
 	await _espera(0.8)
 	_confere(not main.mapa.aberto() and main.cena == "pet_care", "tocar na figurinha do Pet Care leva para lá e fecha o mapa")
-	_confere(cat.cena == "sede", "pelo mapa só a câmera viaja (a Catarina fica na Sede)")
+	_confere(cat.cena == "pet_care" and cat.visible, "pelo mapa a Catarina vai junto para o Pet Care")
 	main.mapa.abrir()
 	main.mapa.figurinhas["quarto"].pressed.emit()
 	await _espera(0.8)
@@ -461,7 +461,9 @@ func _roteiro() -> void:
 
 func _decorar() -> void:
 	var dc: Decoracao = main.decoracao
-	_confere(not dc.botao.visible, "no quarto da Catarina não aparece o botão de decorar")
+	_confere(dc.botao.visible and not dc.pode(), "no quarto da Catarina a poltrona aparece, mas só balança")
+	dc.alternar()
+	_confere(not dc.ligado, "tocar na poltrona no quarto não liga o modo Decorar")
 	main._ir_pelo_mapa("sala")
 	await _espera(1.2)
 	var sala: Cenario = main.cenarios["sala"]

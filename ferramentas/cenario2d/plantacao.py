@@ -598,7 +598,7 @@ POS = [("fundo", 0, 0), ("nuvem_chovendo", 560, 150), ("bica", 30, 570), ("regad
        ("@catarina", 1550, 860), ("girassol_caule", 1690, 280), ("girassol_cabeca", 1690, 250), ("girassol_caule", 1790, 300), ("girassol_cabeca", 1790, 270),
        ("canteiro_flores", 1890, 700), ("borboleta_aberta", 1960, 560), ("abelha_aberta", 2050, 600), ("flor_arco_iris_rosa", 2180, 640), ("frutinhas_magicas_com", 2350, 530),
        ("arbusto_coracoes", 2160, 450), ("macieira_com_macas", 2540, 140), ("laranjeira_com", 2800, 170), ("bananeira_com", 3040, 140), ("escadinha", 2740, 610),
-       ("banca", 2530, 770), ("maca", 2700, 860), ("minhoca", 3000, 860), ("matinho", 3150, 850), ("quadro_pedidos", 3130, 620)]
+       ("banca", 2530, 730), ("maca", 2700, 860), ("minhoca", 3000, 860), ("matinho", 3150, 850), ("quadro_pedidos", 3130, 620)]
 POS[1:1] = S.pos
 
 
